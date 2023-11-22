@@ -14,4 +14,10 @@ router
     return res.status(200).json({test: 'success', data});
   });
 
+
+router.route('/:id').get(async (req, res) => {
+  const data = await lastfm.searchArtistByName(req.params.id);
+  return res.status(200).json({test: 'success', data});
+});
+
 export default router;
