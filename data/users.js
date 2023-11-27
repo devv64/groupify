@@ -1,11 +1,11 @@
 import { users } from '../config/mongoCollections.js';
-import { ObjectId, ReturnDocument } from 'mongodb';
+import { ObjectId } from 'mongodb';
 
 // import validation functions
 // validateUser, handleId, etc.
 
 // import api functions
-// this is needed to attach lastfm user to user object
+// this is needed to attach lastfm user/data to user object
 import * as lastfm from '../api/lastfm.js';
 
 
