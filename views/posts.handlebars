@@ -1,0 +1,12 @@
+<div>
+    <h1>Feed</h1>
+    <p>Feed content</p>
+
+    <div>
+      {{post.userId}}
+      {{post.body}}
+      {{#each post.comments}}
+        {{this.body}}
+      {{/each}}
+    </div>
+</div>
