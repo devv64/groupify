@@ -22,6 +22,7 @@ export async function createPost(body, userId, lastfmSong, lastfmArtist) {
 
   // ? Should we have tags on posts.. need to check the doc if this was required or extra
   const newPost = {
+    // need to also give username, pfp, etc. to post
     userId,
     body,
     comments: [], // ? comment objects or ids to comment objects
@@ -29,7 +30,6 @@ export async function createPost(body, userId, lastfmSong, lastfmArtist) {
     artist: lastfmArtist_ || null,
     likes: [], 
     createdAt: new Date(),
-    // can be useful to have updatedAt to limit how often user can update their profile
     // updatedAt: new Date()
   };
   const insertInfo = await postCollection.insertOne(newPost);
@@ -73,6 +73,16 @@ export async function getPostsByArtist(name) {
   if (!post) throw "Post not found";
   post._id = post._id.toString();
   return post;
+}
+
+// get some posts
+// this is for the feed, so we can get the most recent posts
+export async function getSomePosts(n=25) {
+  const postCollection = await posts();
+  const _posts = await postCollection.find().sort({ createdAt: -1}).limit(n).toArray();
+  if (!_posts || _posts.length === 0) throw "Posts not found";
+  _posts.forEach(post => post._id = post._id.toString());
+  return _posts;
 }
 
 // remove post by id

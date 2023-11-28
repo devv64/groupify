@@ -1,0 +1,14 @@
+<div>
+    <h1>Feed</h1>
+    <p>Feed content</p>
+
+    <ul>
+        {{#each posts}}
+            <li>{{this.userId}}</li>
+            <li>{{this.body}}</li>
+            {{#each comments}}
+                <li>{{this.body}}</li>
+            {{/each}}
+        {{/each}}
+    </ul>
+</div>
