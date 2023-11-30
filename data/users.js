@@ -1,11 +1,11 @@
 import { users } from '../config/mongoCollections.js';
-import { ObjectId } from 'mongodb';
+import { ObjectId, ReturnDocument } from 'mongodb';
 
 // import validation functions
 // validateUser, handleId, etc.
 
 // import api functions
-// this is needed to attach lastfm user/data to user object
+// this is needed to attach lastfm user to user object
 import * as lastfm from '../api/lastfm.js';
 
 
@@ -51,13 +51,25 @@ export async function getUserById(id) {
 }
 
 // get user by username
+export async function getUserByUsername(username) {
+  const userCollection = await users();
+  const user = await userCollection.findOne({ username: username });
+  if (!user) throw "User not found";
+  user._id = user._id.toString();
+  return user;  
+}
 
 // get user by email
-
+export async function getUserByEmail(email) {
+  const userCollection = await users();
+  const email = await userCollection.findOne({ email: email });
+  if (!email) throw "User not found";
+  email._id = email._id.toString();
+  return email;
+}
 // get user by lastfm
 
 // get all users
-
 export async function getAllUsers() {
   const userCollection = await users();
   const allUsers = await userCollection.find({}).toArray();
@@ -67,7 +79,6 @@ export async function getAllUsers() {
 }
 
 // remove user by id
-
 export async function removeUserById(id) {
   // handleId(id);
   const userCollection = await users();
@@ -78,7 +89,6 @@ export async function removeUserById(id) {
 }
 
 // update user by id
-
 export async function updateUserById(id, username, password, email, pfp, lastfmUsername) {
   // todo
   // handleId(id);
