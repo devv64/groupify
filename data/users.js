@@ -52,6 +52,14 @@ export async function getUserById(id) {
 
 // get user by username
 
+export async function getUserByUsername(username) {
+  const userCollection = await users();
+  const user = await userCollection.findOne({ username: username });
+  if (!user) throw "User not found";
+  user._id = user._id.toString();
+  return user;
+}
+
 // get user by email
 
 // get user by lastfm
