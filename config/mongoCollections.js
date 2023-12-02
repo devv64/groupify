@@ -5,9 +5,7 @@ const getCollectionFn = (collection) => {
 
   return async () => {
     if (!_col) {
-      console.log('her')
       const db = await dbConnection();
-      console.log('him')
       _col = await db.collection(collection);
     }
 
@@ -15,7 +13,8 @@ const getCollectionFn = (collection) => {
   };
 };
 
-console.log('mongoCollections.js: getCollectionFn()');
 export const users = getCollectionFn('users');
 export const posts = getCollectionFn('posts');
 export const comments = getCollectionFn('comments');
+// console.log(users, posts, comments)
+// const pst = await posts();
