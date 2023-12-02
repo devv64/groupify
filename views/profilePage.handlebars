@@ -1,0 +1,50 @@
+
+<main>
+    <h1>{{username}}</h1>
+    <h1>{{profilePic}}</h1> 
+    {{!-- follow unfollow button --}}
+
+    <section>
+        <a href="/{{username}}/followers">
+            {{followers.length}} Followers
+        </a>
+    </section>
+
+    <section>
+        <a href="/{{username}}/following">
+            {{following.length}} Following
+        </a>
+    </section>
+
+    {{!-- following and followers should be in line or right under each other --}}
+
+    <section>
+        <h2>Posts</h2>
+        {{#if posts}}
+            <ul>
+                {{#each posts}}
+                <li>
+                    {{this.body}} {{!-- not sure about this --}}\
+                </li>
+                {{/each}}
+            </ul>
+        {{else}}
+        <p>No posts yet</p>
+        {{/if}}
+    </section>
+    
+    <section>
+        <h2>Posts {{username}} liked</h2>
+        {{#if likedPosts}}
+            <ul>
+                {{#each likedPosts}}
+                <li>
+                    {{this.likes}} {{!-- not sure about this --}}
+                </li>
+                {{/each}}
+            </ul>
+        {{else}}
+            <p>No liked posts yet</p>
+        {{/if}}
+    </section>
+</main>
