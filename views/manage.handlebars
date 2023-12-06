@@ -2,29 +2,22 @@
 <main>
     <h1>Manage Account</h1>
 
-    <input type="button" value="Change Username" id="changeUsername" onclick="showUsernameForm()">
-    <form method="POST" id="usernameForm">
+    <input type="button" value="Edit Profile" id="editProfile" onclick="showForm()">
+    <form method="PUT" id="editForm">
         <label for="username" id="usernameLabel"></label>
         <input type="text" name="username" id="username" placeholder="New Username">
 
-        <input type="submit" value="Submit" id="submit">
-    </form>
+        <label for="oldPassword" id="passwordLabel"></label>
+        <input type="password" name="oldPassword" id="oldPassword" placeholder="Old Password">
 
-    <input type="button" value="Change Password" id="changePassword" onclick="showPasswordForm()">
-    <form method="POST" id="passwordForm">
-        <label for="password" id="passwordLabel"></label>
-        <input type="password" name="password" id="password" placeholder="New Password">
+        <label for="newPassword" id="passwordLabel"></label>
+        <input type="password" name="newPassword" id="newPassword" placeholder="New Password">
 
-        <input type="submit" value="Submit" id="submit">
-    </form>
-
-    <input type="button" value="Change Profile Picture" id="changePicture" onclick="showPictureForm()">
-    <form method="POST" id="pictureForm">
         <label for="picture" id="pictureLabel"></label>
         <input type="file" name="picture" id="picture" placeholder="New Profile Picture">
 
         <input type="submit" value="Submit" id="submit">
-    </form>
 
+    </form>
     <a href="/{{username}}">Back to Profile Page</a>
 </main>

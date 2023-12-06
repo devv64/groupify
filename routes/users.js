@@ -2,7 +2,7 @@ import { Router } from 'express';
 const router = Router();
 // import data functions
 import * as lastfm from '../api/lastfm.js';
-import { getUserByUsername } from '../data/users.js';
+import { getUserByUsername, updateUserById } from '../data/users.js';
 // import validation functions
 
 
@@ -19,10 +19,10 @@ router
 router.route('/:username').get(async (req, res) => { //public profile page / personal page
   try{
     const user = await getUserByUsername(req.params.username);
-    //check if username is same as logged in user
-    //if so, render profile page delete post option and no follow button
-    
-    const personalAccount = true; //make logic
+    const personalAccount = false;
+    if(req.session.user && req.session.user.username === user.username){
+      personalAccount = true
+    }
       res.render('profilePage', {
         profilePic: user.pfp,
         username: user.username,
@@ -75,9 +75,37 @@ router.route('/:username/manage')
   catch(e){
   }
 })
-  .post(async (req, res) => {
-    
+  .put(async (req, res) => {
+    const user = await getUserByUsername(req.params.username);
+    try{
+      let {
+        username,
+        oldPassword,
+        newPassword,
+        picture
+      } = req.body;
+      //validation
+    }
+    catch(e){
+      return res.status(400).render('error', {error: e});
+    }
 
+    try{
+      let {
+        username,
+        oldPassword,
+        newPassword,
+        picture
+      } = req.body;
+
+      const id = user._id;
+      const updatedUser = await updateUserById(id, username, newPassword, picture);
+      req.session.user = updatedUser;
+      return res.redirect("/:username");
+    }
+    catch(e){
+      return res.status(400).render('error', {error: e});
+    }
 });
 
 
