@@ -3,6 +3,17 @@
     <h1>{{username}}</h1>
     <h1>{{profilePic}}</h1> 
     {{!-- follow unfollow button --}}
+    {{!-- manage profile page button if personal account --}}
+
+    {{#if isPersonalAccount}}
+        <a href="/{{username}}/manage">Manage Profile Account</a>
+    {{else}}
+        {{#if isFollowing}}
+            <button>Unfollow</button> {{!-- add functionality to remove user from profile followers  --}}
+        {{else}}
+            <button>Follow</button> {{!-- add functionality to add user to profile followers  --}}
+        {{/if}}
+    {{/if}}
 
     <section>
         <a href="/{{username}}/followers">
