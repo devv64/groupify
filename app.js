@@ -38,6 +38,21 @@ app.use(
   })
 );
 
+
+app.use('/', (req, res, next) => {
+  console.log(`[${new Date().toUTCString()}]: ${req.method} ${req.originalUrl} (${req.session.user ? 'Authenticated' : 'Non-Authenticated User'})]`)
+
+  if (req.path === '/') {
+    if (req.session.user) {
+      return res.redirect('/feed');
+    } else {
+      return res.redirect('/login')
+    }   
+  } else {
+    next();
+  }
+})
+
 app.use('/profile', (req, res, next) => {
   if (!req.session.user) {
     res.redirect('/login');

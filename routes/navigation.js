@@ -59,10 +59,9 @@ try {
 
 //destroy session when logging out
 router.get('/logout', async (req, res) => {
-  res.send("Logged out");
   req.session.destroy();
   res.clearCookie('AuthCookie', { expires: new Date(0) });
-  return res.redirect('/');
+  return res.redirect('/login');
 });
 
 router

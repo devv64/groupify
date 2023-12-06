@@ -9,11 +9,11 @@ router.get('/login', async (req, res) => {
 });
 
 //destroy session when logging out
-router.get('/logout', async (req, res) => {
-  req.session.destroy();
-  res.send("Logged out");
-  res.redirect('/');
-});
+// router.get('/logout', async (req, res) => {
+//   req.session.destroy();
+//   res.send("Logged out");
+//   res.redirect('/');
+// });
 
 
 router
