@@ -12,7 +12,7 @@ import { getSomePosts, createPost } from '../data/posts.js';
 
 router.get('/register', async (req, res) => {
   // if (res.session.user !== undefined) res.redirect('/profile');
-  res.status(200).render('register');
+  return res.status(200).render('register');
 });
 router.post('/register', async (req, res) => {
 try {
@@ -32,15 +32,15 @@ try {
 
   const newUser = await userData.createUser(cleanUsername, cleanPassword, cleanEmail);
   if (!newUser) throw "User not found";
-  res.redirect('/login');
+  return res.redirect('/login');
 } catch (e) {
-  res.status(400).render('register', { error: e });
+  return res.status(400).render('register', { error: e });
 }
 });
 
 router.get('/login', async (req, res) => {
   // if (res.session.user !== undefined) res.redirect('/profile');
-  res.status(200).render('login');
+  return res.status(200).render('login');
 });
 router.post('/login', async (req, res) => {
 try {
@@ -48,21 +48,22 @@ try {
   let cleanPassword = xss(req.body.lipasswordinput);
   cleanEmail = validate.validEmail(cleanEmail);
   cleanPassword = validate.validPassword(cleanPassword);
-  const user = await userData.loginUser(cleanUsername, cleanPassword);
+  const user = await userData.loginUser(cleanEmail, cleanPassword);
   if (!user) throw "User not found";
   req.session.user = user;
-  res.redirect('/profile');
+  console.log(req.session.user);
+  return res.redirect('/profile');
 } catch (e) {
-  res.status(400).render('login', { error: e });
+  return res.status(400).render('login', { error: e });
 }
 });
 
 //destroy session when logging out
 router.get('/logout', async (req, res) => {
+  res.send("Logged out");
   req.session.destroy();
   res.clearCookie('AuthCookie', { expires: new Date(0) });
-  res.send("Logged out");
-  res.redirect('/');
+  return res.redirect('/');
 });
 
 router
@@ -76,9 +77,9 @@ router
     try {
       const post = await createPost(body, userId, lastfmSong, lastfmArtist);
       console.log(post);
-      res.redirect(`/posts/${post._id}`, { post });
+      return res.redirect(`/posts/${post._id}`, { post });
     } catch (e) {
-      res.status(400).render('feed', { error: e });
+      return res.status(400).render('feed', { error: e });
     }
   })
 

@@ -16,10 +16,10 @@ export async function checkUsernameAndEmail(username, email) {
   email = validate.validEmail(email);
 
   const userCollection = await users();
-  const existingUsername = await userCollection.findOne({ username: username });
   const existingEmail = await userCollection.findOne({ email: email });
-  if (existingUsername) throw "Username already exists";
   if (existingEmail) throw "Email already exists";
+  const existingUsername = await userCollection.findOne({ username: username });
+  if (existingUsername) throw "Username already exists";
   return true;
 }
 
@@ -40,14 +40,14 @@ export async function createUser(username, password, email, pfp, lastfmUsername)
 
   // Do we really want this, its an object from lastfm with stats like playcount, artistcount, etc.
   // for an extra feature btw
-  const lastfmData = await lastfm.getInfoByUser(lastfmUsername);
+  // const lastfmData = await lastfm.getInfoByUser(lastfmUsername);
   const newUser = {
     username: username,
     password: hash,
     // * Should I make these default to null in function def instead? also should it be empty string or null 
     email : email || null,
     pfp : pfp || null,
-    lastfm : lastfmData || null,
+    // lastfm : lastfmData || null,
     followers: [],
     following: [],
     notifications: [],
