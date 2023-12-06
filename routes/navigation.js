@@ -28,13 +28,9 @@ try {
   cleanConfirmPass = validate.validPassword(cleanConfirmPass);
   if (cleanPassword !== cleanConfirmPass) throw "Passwords do not match";
   //check if user already exists
-  const user = await userData.getUserByUsername(cleanUsername);
-  if (user) throw "Username already exists";
-  const email = await userData.getUserByEmail(cleanEmail);
-  if (email) throw "Email already exists";
+  await userData.checkUsernameAndEmail(cleanUsername, cleanEmail);
 
   const newUser = await userData.createUser(cleanUsername, cleanPassword, cleanEmail);
-  console.log(newUser);
   if (!newUser) throw "User not found";
   res.redirect('/login');
 } catch (e) {

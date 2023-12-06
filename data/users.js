@@ -11,6 +11,18 @@ import * as validate from './validation.js';
 import * as lastfm from '../api/lastfm.js';
 
 
+export async function checkUsernameAndEmail(username, email) {
+  username = validate.validName(username);
+  email = validate.validEmail(email);
+
+  const userCollection = await users();
+  const existingUsername = await userCollection.findOne({ username: username });
+  const existingEmail = await userCollection.findOne({ email: email });
+  if (existingUsername) throw "Username already exists";
+  if (existingEmail) throw "Email already exists";
+  return true;
+}
+
 // create user
 export async function createUser(username, password, email, pfp, lastfmUsername) {
   // validateUser(username, password, email, pfp, lastfm);
@@ -21,10 +33,7 @@ export async function createUser(username, password, email, pfp, lastfmUsername)
   const userCollection = await users();
 
   // check if username or email already exists
-  const existingUsername = await userCollection.findOne({ username: username });
-  if (existingUsername) throw "Username already exists";
-  const existingEmail = await userCollection.findOne({ email: email });
-  if (existingEmail) throw "Email already exists";
+  await checkUsernameAndEmail(username, email);
 
   //encrypt password
   const hash = await bycrypt.hash(password, 16);
@@ -52,7 +61,6 @@ export async function createUser(username, password, email, pfp, lastfmUsername)
   if (!insertInfo.acknowledged || !insertInfo.insertedId) throw "Could not add user";  
   const newId = insertInfo.insertedId.toString();
   const user = await getUserById(newId);
-  console.log(user);
   return user;
 }
 
@@ -60,7 +68,7 @@ export async function createUser(username, password, email, pfp, lastfmUsername)
 export async function getUserById(id) {
   // handleId(id);
   const userCollection = await users();
-  const user = await userCollection.findOne({ _id: ObjectId(id) });
+  const user = await userCollection.findOne({ _id: new ObjectId(id) });
   if (!user) throw "User not found";
   user._id = user._id.toString();
   return user;
