@@ -16,10 +16,12 @@ router.get('/register', async (req, res) => {
 });
 router.post('/register', async (req, res) => {
 try {
+  // console.log(req.body.regemailinput);
   let cleanEmail = xss(req.body.regemailinput);
   let cleanUsername = xss(req.body.regusernameinput);
   let cleanPassword = xss(req.body.regpasswordinput);
   let cleanConfirmPass = xss(req.body.regconfirmpasswordinput);
+  // console.log(cleanEmail);
   cleanEmail = validate.validEmail(cleanEmail);
   cleanUsername = validate.validName(cleanUsername);
   cleanPassword = validate.validPassword(cleanPassword);
@@ -32,6 +34,7 @@ try {
   if (email) throw "Email already exists";
 
   const newUser = await userData.createUser(cleanUsername, cleanPassword, cleanEmail);
+  console.log(newUser);
   if (!newUser) throw "User not found";
   res.redirect('/login');
 } catch (e) {

@@ -52,6 +52,7 @@ export async function createUser(username, password, email, pfp, lastfmUsername)
   if (!insertInfo.acknowledged || !insertInfo.insertedId) throw "Could not add user";  
   const newId = insertInfo.insertedId.toString();
   const user = await getUserById(newId);
+  console.log(user);
   return user;
 }
 
