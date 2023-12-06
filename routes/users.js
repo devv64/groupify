@@ -5,6 +5,17 @@ import * as lastfm from '../api/lastfm.js';
 import { getUserByUsername, updateUserById } from '../data/users.js';
 // import validation functions
 
+router.get('/login', async (req, res) => {
+  res.render('signuplogin');
+});
+
+//destroy session when logging out
+// router.get('/logout', async (req, res) => {
+//   req.session.destroy();
+//   res.send("Logged out");
+//   res.redirect('/');
+// });
+
 
 router
   .route('/')

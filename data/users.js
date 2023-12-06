@@ -1,29 +1,52 @@
 import { users } from '../config/mongoCollections.js';
-import { ObjectId } from 'mongodb';
+import { ObjectId, ReturnDocument } from 'mongodb';
+import bycrypt from 'bcrypt';
+import * as validate from './validation.js';
 
 // import validation functions
 // validateUser, handleId, etc.
 
 // import api functions
-// this is needed to attach lastfm user/data to user object
+// this is needed to attach lastfm user to user object
 import * as lastfm from '../api/lastfm.js';
 
 
+export async function checkUsernameAndEmail(username, email) {
+  username = validate.validName(username);
+  email = validate.validEmail(email);
+
+  const userCollection = await users();
+  const existingEmail = await userCollection.findOne({ email: email });
+  if (existingEmail) throw "Email already exists";
+  const existingUsername = await userCollection.findOne({ username: username });
+  if (existingUsername) throw "Username already exists";
+  return true;
+}
+
 // create user
-export async function createUser(username, password, email, pfp, lastfmUsername) {
+export async function createUser(username, password, email) {
   // validateUser(username, password, email, pfp, lastfm);
+  username = validate.validName(username);
+  password = validate.validPassword(password);
+  email = validate.validEmail(email);
+
   const userCollection = await users();
 
-  // Do we really want this, its an object from lastfm with stats like playcount, artistcount, etc.
-  // for an extra feature btw
-  const lastfmData = await lastfm.getInfoByUser(lastfmUsername);
+  // check if username or email already exists
+  await checkUsernameAndEmail(username, email);
+
+  //encrypt password
+  const hash = await bycrypt.hash(password, 16);
+
+  const pfp = 'https://source.unsplash.com/1600x900/?' + username;
+
   const newUser = {
-    username,
-    password,
+    username: username,
+    password: hash,
     // * Should I make these default to null in function def instead? also should it be empty string or null 
-    email : email || null,
-    pfp : pfp || null,
-    lastfm : lastfmData || null,
+    email : email,
+    pfp : pfp,
+    lastfm: null,
     followers: [],
     following: [],
     notifications: [],
@@ -31,7 +54,7 @@ export async function createUser(username, password, email, pfp, lastfmUsername)
     createdPosts: [],
     createdAt: new Date(),
     // can be useful to have updatedAt to limit how often user can update their profile
-    // updatedAt: new Date()
+    updatedAt: new Date()
   };
   const insertInfo = await userCollection.insertOne(newUser);
   if (!insertInfo.acknowledged || !insertInfo.insertedId) throw "Could not add user";  
@@ -44,13 +67,21 @@ export async function createUser(username, password, email, pfp, lastfmUsername)
 export async function getUserById(id) {
   // handleId(id);
   const userCollection = await users();
-  const user = await userCollection.findOne({ _id: ObjectId(id) });
+  const user = await userCollection.findOne({ _id: new ObjectId(id) });
   if (!user) throw "User not found";
   user._id = user._id.toString();
   return user;
 }
 
 // get user by username
+export async function getUserByUsername(username) {
+  username = validate.validName(username);
+  const userCollection = await users();
+  const user = await userCollection.findOne({ username: username });
+  if (!user) throw "User not found";
+  user._id = user._id.toString();
+  return user;  
+}
 
 export async function getUserByUsername(username) {
   const userCollection = await users();
@@ -61,11 +92,17 @@ export async function getUserByUsername(username) {
 }
 
 // get user by email
-
+export async function getUserByEmail(email) {
+  email = validate.validEmail(email);
+  const userCollection = await users();
+  const user = await userCollection.findOne({ email: email });
+  if (!user) throw "User not found";
+  user._id = user._id.toString();
+  return user;
+}
 // get user by lastfm
 
 // get all users
-
 export async function getAllUsers() {
   const userCollection = await users();
   const allUsers = await userCollection.find({}).toArray();
@@ -75,7 +112,6 @@ export async function getAllUsers() {
 }
 
 // remove user by id
-
 export async function removeUserById(id) {
   // handleId(id);
   const userCollection = await users();
@@ -86,7 +122,6 @@ export async function removeUserById(id) {
 }
 
 // update user by id
-
 export async function updateUserById(id, username, password, email, pfp, lastfmUsername) {
   // todo
   // handleId(id);
@@ -120,3 +155,17 @@ export async function updateUserById(id, username, password, email, pfp, lastfmU
   if (!updateInfo) throw `Error: Update failed! Could not update user with id of ${id}`;
   return updateInfo;
 }
+
+export const loginUser = async (email, password) => {
+  // validateUser(username, password);
+  email = validate.validEmail(email);
+  password = validate.validPassword(password); 
+
+  const userCollection = await users();
+  const user = await userCollection.findOne({ email: email });
+  if (!user) throw "User not found";
+  const compare = await bycrypt.compare(password, user.password);
+  if (!compare) throw "Incorrect password";
+  user._id = user._id.toString();
+  return user;
+};
