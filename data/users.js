@@ -24,7 +24,7 @@ export async function checkUsernameAndEmail(username, email) {
 }
 
 // create user
-export async function createUser(username, password, email, pfp, lastfmUsername) {
+export async function createUser(username, password, email, lastfmUsername) {
   // validateUser(username, password, email, pfp, lastfm);
   username = validate.validName(username);
   password = validate.validPassword(password);
@@ -38,16 +38,20 @@ export async function createUser(username, password, email, pfp, lastfmUsername)
   //encrypt password
   const hash = await bycrypt.hash(password, 16);
 
+  // const pfp = await axios.fetch('https://source.unsplash.com/1600x900/?' + username)
+  let pfp = null;
+  if (username) pfp = 'https://source.unsplash.com/1600x900/?' + username;
   // Do we really want this, its an object from lastfm with stats like playcount, artistcount, etc.
   // for an extra feature btw
-  // const lastfmData = await lastfm.getInfoByUser(lastfmUsername);
+  let lastfmData = null;
+  if (lastfmUsername) lastfmData = await lastfm.getInfoByUser(lastfmUsername);
   const newUser = {
     username: username,
     password: hash,
     // * Should I make these default to null in function def instead? also should it be empty string or null 
-    email : email || null,
-    pfp : pfp || null,
-    // lastfm : lastfmData || null,
+    email : email,
+    pfp : pfp,
+    lastfm : lastfmData,
     followers: [],
     following: [],
     notifications: [],
@@ -55,7 +59,7 @@ export async function createUser(username, password, email, pfp, lastfmUsername)
     createdPosts: [],
     createdAt: new Date(),
     // can be useful to have updatedAt to limit how often user can update their profile
-    // updatedAt: new Date()
+    updatedAt: new Date()
   };
   const insertInfo = await userCollection.insertOne(newUser);
   if (!insertInfo.acknowledged || !insertInfo.insertedId) throw "Could not add user";  
