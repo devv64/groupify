@@ -24,7 +24,7 @@ export async function checkUsernameAndEmail(username, email) {
 }
 
 // create user
-export async function createUser(username, password, email, lastfmUsername) {
+export async function createUser(username, password, email) {
   // validateUser(username, password, email, pfp, lastfm);
   username = validate.validName(username);
   password = validate.validPassword(password);
@@ -38,20 +38,15 @@ export async function createUser(username, password, email, lastfmUsername) {
   //encrypt password
   const hash = await bycrypt.hash(password, 16);
 
-  // const pfp = await axios.fetch('https://source.unsplash.com/1600x900/?' + username)
-  let pfp = null;
-  if (username) pfp = 'https://source.unsplash.com/1600x900/?' + username;
-  // Do we really want this, its an object from lastfm with stats like playcount, artistcount, etc.
-  // for an extra feature btw
-  let lastfmData = null;
-  if (lastfmUsername) lastfmData = await lastfm.getInfoByUser(lastfmUsername);
+  const pfp = 'https://source.unsplash.com/1600x900/?' + username;
+
   const newUser = {
     username: username,
     password: hash,
     // * Should I make these default to null in function def instead? also should it be empty string or null 
     email : email,
     pfp : pfp,
-    lastfm : lastfmData,
+    lastfm: null,
     followers: [],
     following: [],
     notifications: [],
