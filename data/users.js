@@ -1,5 +1,7 @@
 import { users } from '../config/mongoCollections.js';
 import { ObjectId, ReturnDocument } from 'mongodb';
+import bycrypt from 'bcrypt';
+import * as validate from './validation.js';
 
 // import validation functions
 // validateUser, handleId, etc.
@@ -12,14 +14,27 @@ import * as lastfm from '../api/lastfm.js';
 // create user
 export async function createUser(username, password, email, pfp, lastfmUsername) {
   // validateUser(username, password, email, pfp, lastfm);
+  username = validate.validName(username);
+  password = validate.validPassword(password);
+  email = validate.validEmail(email);
+
   const userCollection = await users();
+
+  // check if username or email already exists
+  const existingUsername = await userCollection.findOne({ username: username });
+  if (existingUsername) throw "Username already exists";
+  const existingEmail = await userCollection.findOne({ email: email });
+  if (existingEmail) throw "Email already exists";
+
+  //encrypt password
+  const hash = await bycrypt.hash(password, 16);
 
   // Do we really want this, its an object from lastfm with stats like playcount, artistcount, etc.
   // for an extra feature btw
   const lastfmData = await lastfm.getInfoByUser(lastfmUsername);
   const newUser = {
-    username,
-    password,
+    username: username,
+    password: hash,
     // * Should I make these default to null in function def instead? also should it be empty string or null 
     email : email || null,
     pfp : pfp || null,
@@ -52,6 +67,7 @@ export async function getUserById(id) {
 
 // get user by username
 export async function getUserByUsername(username) {
+  username = validate.validName(username);
   const userCollection = await users();
   const user = await userCollection.findOne({ username: username });
   if (!user) throw "User not found";
@@ -61,11 +77,12 @@ export async function getUserByUsername(username) {
 
 // get user by email
 export async function getUserByEmail(email) {
+  email = validate.validEmail(email);
   const userCollection = await users();
-  const email = await userCollection.findOne({ email: email });
-  if (!email) throw "User not found";
-  email._id = email._id.toString();
-  return email;
+  const user = await userCollection.findOne({ email: email });
+  if (!user) throw "User not found";
+  user._id = user._id.toString();
+  return user;
 }
 // get user by lastfm
 
@@ -122,3 +139,17 @@ export async function updateUserById(id, username, password, email, pfp, lastfmU
   if (!updateInfo) throw `Error: Update failed! Could not update user with id of ${id}`;
   return updateInfo;
 }
+
+export const loginUser = async (email, password) => {
+  // validateUser(username, password);
+  email = validate.validEmail(email);
+  password = validate.validPassword(password); 
+
+  const userCollection = await users();
+  const user = await userCollection.findOne({ email: email });
+  if (!user) throw "User not found";
+  const compare = await bycrypt.compare(password, user.password);
+  if (!compare) throw "Incorrect password";
+  user._id = user._id.toString();
+  return user;
+};
