@@ -16,19 +16,21 @@ router
   });
 
 
-router.route('/:username').get(async (req, res) => { //profile page
+router.route('/:username').get(async (req, res) => { //public profile page / personal page
   try{
     const user = await getUserByUsername(req.params.username);
-    //check if profile page is same as logged in user
+    //check if username is same as logged in user
     //if so, render profile page delete post option and no follow button
-
+    
+    const personalAccount = true; //make logic
       res.render('profilePage', {
         profilePic: user.pfp,
         username: user.username,
         posts: user.createdPosts,
         followers: user.followers,
         following: user.following,
-        likedPosts: user.likedPosts
+        likedPosts: user.likedPosts,
+        isPersonalAccount: personalAccount
     })
   }
   catch(e){
@@ -59,5 +61,24 @@ router.route('/:username/:following').get(async (req, res) => { //following page
   catch(e){
   }
 });
+
+router.route('/:username/manage')
+  .get(async (req, res) => { //manage profile page
+  try{
+    const user = await getUserByUsername(req.params.username);
+      res.render('manage', {
+        username: user.username,
+        password: user.password,
+        profilePic: user.pfp,
+    })
+  }
+  catch(e){
+  }
+})
+  .post(async (req, res) => {
+    
+
+});
+
 
 export default router;
