@@ -1,0 +1,20 @@
+
+<main>
+    <h1>Manage Account</h1>
+
+    <input type="button" value="Edit Profile" id="editProfile" onclick="showForm()">
+    <form method="PUT" id="editForm">
+        <label for="username" id="usernameLabel"></label>
+        <input type="text" name="username" id="username" placeholder="New Username">
+
+        <label for="oldPassword" id="passwordLabel"></label>
+        <input type="password" name="oldPassword" id="oldPassword" placeholder="Old Password">
+
+        <label for="newPassword" id="passwordLabel"></label>
+        <input type="password" name="newPassword" id="newPassword" placeholder="New Password">
+
+        <input type="submit" value="Submit" id="submit">
+
+    </form>
+    <a href="/users/{{username}}">Back to Profile Page</a>
+</main>
