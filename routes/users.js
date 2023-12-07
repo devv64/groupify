@@ -29,14 +29,11 @@ router
 
 router.route('/:username').get(async (req, res) => { //public profile page / personal page
   try{
-    console.log(req.params.username);
     const user = await getUserByUsername(req.params.username);
-    console.log('hi')
     let personalAccount = false;
     if(req.session.user && req.session.user.username === user.username){
       personalAccount = true
     }
-    console.log('hi2')
     return res.render('profilePage', {
         profilePic: user.pfp,
         username: user.username,
@@ -52,7 +49,7 @@ router.route('/:username').get(async (req, res) => { //public profile page / per
   }
 });
 
-router.route('/:username/:followers').get(async (req, res) => { //followers page
+router.route('/:username/followers').get(async (req, res) => { //followers page
   try{
     const user = await getUserByUsername(req.params.username);
       res.render('followers', {
@@ -64,7 +61,7 @@ router.route('/:username/:followers').get(async (req, res) => { //followers page
   }
 });
 
-router.route('/:username/:following').get(async (req, res) => { //following page
+router.route('/:username/following').get(async (req, res) => { //following page
   try{
     const user = await getUserByUsername(req.params.username);
       res.render('following', {
@@ -82,8 +79,7 @@ router.route('/:username/manage')
     const user = await getUserByUsername(req.params.username);
       res.render('manage', {
         username: user.username,
-        password: user.password,
-        profilePic: user.pfp,
+        password: user.password
     })
   }
   catch(e){
