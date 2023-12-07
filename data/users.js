@@ -36,7 +36,7 @@ export async function createUser(username, password, email) {
   await checkUsernameAndEmail(username, email);
 
   //encrypt password
-  const hash = await bycrypt.hash(password, 16);
+  const hash = await bycrypt.hash(password, 2);
 
   const pfp = 'https://source.unsplash.com/1600x900/?' + username;
 
@@ -81,14 +81,6 @@ export async function getUserByUsername(username) {
   if (!user) throw "User not found";
   user._id = user._id.toString();
   return user;  
-}
-
-export async function getUserByUsername(username) {
-  const userCollection = await users();
-  const user = await userCollection.findOne({ username: username });
-  if (!user) throw "User not found";
-  user._id = user._id.toString();
-  return user;
 }
 
 // get user by email

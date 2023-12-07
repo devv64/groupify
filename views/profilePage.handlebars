@@ -6,7 +6,7 @@
     {{!-- manage profile page button if personal account --}}
 
     {{#if isPersonalAccount}}
-        <a href="/{{username}}/manage">Manage Profile Account</a>
+        <a href="/users/{{username}}/manage">Manage Profile Account</a>
     {{else}}
         {{#if isFollowing}}
             <button>Unfollow</button> {{!-- add functionality to remove user from profile followers  --}}
@@ -16,13 +16,13 @@
     {{/if}}
 
     <section>
-        <a href="/{{username}}/followers">
+        <a href="/users/{{username}}/followers">
             {{followers.length}} Followers
         </a>
     </section>
 
     <section>
-        <a href="/{{username}}/following">
+        <a href="/users/{{username}}/following">
             {{following.length}} Following
         </a>
     </section>

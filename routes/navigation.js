@@ -51,7 +51,7 @@ try {
   const user = await userData.loginUser(cleanEmail, cleanPassword);
   if (!user) throw "User not found";
   req.session.user = user;
-  return res.redirect('/profile');
+  return res.redirect(`/users/${user.username}`);
 } catch (e) {
   return res.status(400).render('login', { error: e });
 }

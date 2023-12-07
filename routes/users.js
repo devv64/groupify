@@ -29,12 +29,15 @@ router
 
 router.route('/:username').get(async (req, res) => { //public profile page / personal page
   try{
+    console.log(req.params.username);
     const user = await getUserByUsername(req.params.username);
-    const personalAccount = false;
+    console.log('hi')
+    let personalAccount = false;
     if(req.session.user && req.session.user.username === user.username){
       personalAccount = true
     }
-      res.render('profilePage', {
+    console.log('hi2')
+    return res.render('profilePage', {
         profilePic: user.pfp,
         username: user.username,
         posts: user.createdPosts,
