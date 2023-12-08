@@ -6,7 +6,7 @@ import { ObjectId } from 'mongodb';
 
 // import api functions
 // this is needed to attach lastfm song/artist data to post object
-import * as lastfm from '../api/lastfm.js';
+import {searchTrackByName, searchArtistByName} from "../api/lastfm.js"
 
 
 // create post
@@ -17,8 +17,8 @@ export async function createPost(body, userId, lastfmSong, lastfmArtist) {
 
   // Need to decide how to handle picking a song/artist, this might be fine
   // why is it saying await is unnecessary here
-  const lastfmSong_ = await lastfm.searchTrackByName(lastfmSong, 1);
-  const lastfmArtist_ = await lastfm.searchArtistByName(lastfmArtist, 1);
+  const lastfmSong_ = await searchTrackByName(lastfmSong, 1);
+  const lastfmArtist_ = await searchArtistByName(lastfmArtist, 1);
 
   // ? Should we have tags on posts.. need to check the doc if this was required or extra
   const newPost = {
@@ -43,7 +43,7 @@ export async function createPost(body, userId, lastfmSong, lastfmArtist) {
 export async function getPostById(id) {
   // handleId(id);
   const postCollection = await posts();
-  const post = await postCollection.findOne({ _id: ObjectId(id) });
+  const post = await postCollection.findOne({ _id: new ObjectId(id) });
   if (!post) throw "Post not found";
   post._id = post._id.toString();
   return post;
