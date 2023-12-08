@@ -8,7 +8,7 @@ const router = Router();
 // import { posts } from '../config/mongoCollections.js';
 
 // TODO: clean up the way this is being done
-import { getSomePosts, createPost } from '../data/posts.js';
+import * as postsData from '../data/posts.js';
 
 router.get('/register', async (req, res) => {
   // if (res.session.user !== undefined) res.redirect('/profile');
@@ -67,17 +67,30 @@ router.get('/logout', async (req, res) => {
 router
   .route('/feed')
   .get(async (req, res) => {
-    const posts = await getSomePosts();
+    const posts = await postsData.getSomePosts();
     res.render('feed', { posts })
   })
   .post(async (req, res) => {
     const { body, userId, lastfmSong, lastfmArtist } = req.body;
     try {
-      const post = await createPost(body, userId, lastfmSong, lastfmArtist);
+      const post = await postsData.createPost(body, userId, lastfmSong, lastfmArtist);
       console.log(post);
-      return res.redirect(`/posts/${post._id}`, { post });
+      return res.redirect(`/posts/${post._id}`);
     } catch (e) {
       return res.status(400).render('feed', { error: e });
+    }
+  })
+
+router
+  .route('/posts/:post_id')
+  // ! Need to fix when it isn't a proper post_id
+  .get(async (req, res) => {
+    try {
+      const post_id = req.params.post_id
+      const post = await postsData.getPostById(post_id)
+      return res.render('posts', { post })
+    } catch (e) {
+      return res.status(400).render('feed', { error: e })
     }
   })
 
