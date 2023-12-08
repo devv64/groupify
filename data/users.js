@@ -155,9 +155,9 @@ export const loginUser = async (email, password) => {
 
   const userCollection = await users();
   const user = await userCollection.findOne({ email: email });
-  if (!user) throw "User not found";
+  if (!user) throw "Incorrect Email or Password";
   const compare = await bycrypt.compare(password, user.password);
-  if (!compare) throw "Incorrect password";
+  if (!compare) throw "Incorrect Email or Password";
   user._id = user._id.toString();
   return user;
 };
