@@ -56,10 +56,10 @@ export async function getPostById(id) {
 export async function getPostsByUser(id) {
   // handleId(id);
   const postCollection = await posts();
-  const post = await postCollection.find({ userId: id }).toArray();
-  if (!post) throw "Post not found";
-  post._id = post._id.toString();
-  return post;
+  const userPosts = await postCollection.find({ userId: id }).toArray();
+  if (!userPosts) throw "Post not found";
+  userPosts.forEach(post => post._id = post._id.toString());
+  return userPosts;
 }
 
 // get all posts by artist
@@ -69,10 +69,10 @@ export async function getPostsByArtist(name) {
   const postCollection = await posts();
   const lastfmArtist_ = await lastfm.searchArtistByName(name, 1);
   // only trying to find lastfmArtist_ object because idk what we're actually gonna be storing
-  const post = await postCollection.find({ artist: lastfmArtist_ }).toArray();
-  if (!post) throw "Post not found";
-  post._id = post._id.toString();
-  return post;
+  const artistPosts = await postCollection.find({ artist: lastfmArtist_ }).toArray();
+  if (!artistPosts) throw "Post not found";
+  artistPosts.forEach(post => post._id = post._id.toString());
+  return artistPosts;
 }
 
 // get some posts
