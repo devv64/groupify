@@ -3,6 +3,8 @@ const router = Router();
 // import data functions
 import * as lastfm from '../api/lastfm.js';
 import { getUserByUsername, updateUserById } from '../data/users.js';
+import { getPostsByUser } from '../data/posts.js';
+import { validUsername, validPassword } from '../data/validation.js';
 // import validation functions
 
 router.get('/login', async (req, res) => {
@@ -30,6 +32,7 @@ router
 router.route('/:username').get(async (req, res) => { //public profile page / personal page
   try{
     const user = await getUserByUsername(req.params.username);
+    // const posts = await getPostsByUser(user._id);
     let personalAccount = false;
     if(req.session.user && req.session.user.username === user.username){
       personalAccount = true
@@ -42,6 +45,7 @@ router.route('/:username').get(async (req, res) => { //public profile page / per
         following: user.following,
         likedPosts: user.likedPosts,
         isPersonalAccount: personalAccount
+        // comments
     })
   }
   catch(e){
@@ -58,6 +62,7 @@ router.route('/:username/followers').get(async (req, res) => { //followers page
     })
   }
   catch(e){
+    return res.status(404).render('error', {error: e});
   }
 });
 
@@ -70,6 +75,7 @@ router.route('/:username/following').get(async (req, res) => { //following page
     })
   }
   catch(e){
+    return res.status(404).render('error', {error: e});
   }
 });
 
@@ -83,6 +89,7 @@ router.route('/:username/manage')
     })
   }
   catch(e){
+    return res.status(404).render('error', {error: e});
   }
 })
   .put(async (req, res) => {
@@ -91,10 +98,13 @@ router.route('/:username/manage')
       let {
         username,
         oldPassword,
-        newPassword,
-        picture
+        newPassword
       } = req.body;
       //validation
+      username = validUsername(username);
+      oldPassword = validPassword(oldPassword);
+      newPassword = validPassword(newPassword);
+      if(oldPassword !== user.password) throw "Password does not match";
     }
     catch(e){
       return res.status(400).render('error', {error: e});
@@ -104,12 +114,11 @@ router.route('/:username/manage')
       let {
         username,
         oldPassword,
-        newPassword,
-        picture
+        newPassword
       } = req.body;
 
       const id = user._id;
-      const updatedUser = await updateUserById(id, username, newPassword, picture);
+      const updatedUser = await updateUserById(id, username, newPassword, user.email);
       req.session.user = updatedUser;
       return res.redirect("/:username");
     }
@@ -117,6 +126,23 @@ router.route('/:username/manage')
       return res.status(400).render('error', {error: e});
     }
 });
+
+router.route('/:username/delete')
+  .get(async (req, res) => { //delete post page
+  try{
+    const user = await getUserByUsername(req.params.username);
+    // const post = await getPostsByUser(user._id);
+    res.render('delete', {
+        username: user.username,
+    })
+  }
+  catch(e){
+    return res.status(404).render('error', {error: e});
+  }
+})
+  .delete(async (req, res) => {
+  
+})
 
 
 export default router;

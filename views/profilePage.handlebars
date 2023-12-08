@@ -7,6 +7,7 @@
 
     {{#if isPersonalAccount}}
         <a href="/users/{{username}}/manage">Manage Profile Account</a>
+        <a href="/users/{{username}}/delete">Delete Post</a>
     {{else}}
         {{#if isFollowing}}
             <button>Unfollow</button> {{!-- add functionality to remove user from profile followers  --}}

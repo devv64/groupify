@@ -50,3 +50,11 @@ export const validName = (name) => {
     if (!/^[a-zA-Z0-9]+$/.test(name)) throw "name must be a valid string";
     return name;
 }
+
+export const validUsername = (username) => {
+    if (typeof username !== 'string') throw "username must be a string";
+    if (username.trim().length === 0) throw "username must be a non-empty string";
+    if (username.length < 5 || username.length > 15) throw "username must be between 5 and 15 characters";
+    if (!/^[a-zA-Z0-9]+$/.test(username)) throw "username must be a valid string";
+    return username;
+}

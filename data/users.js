@@ -114,7 +114,7 @@ export async function removeUserById(id) {
 }
 
 // update user by id
-export async function updateUserById(id, username, password, email, pfp, lastfmUsername) {
+export async function updateUserById(id, username, password, email, lastfmUsername) {
   // todo
   // handleId(id);
   
