@@ -1,8 +1,4 @@
-
-const container = document.getElementById('container');
-const registerBtn = document.getElementById('register');
-const loginBtn = document.getElementById('login');
-
+// Client side validation for login and signup forms
 
 const validEmail = (email) => {
     if (email.split("@").length !== 2) throw "invalid email";; //throw "More than one @ in email";
@@ -45,16 +41,8 @@ const validName = (name) => {
     return name;
 };
 
-let errid = document.getElementById('errid');
-
-registerBtn.addEventListener('click', () => {
-    container.classList.add("active");
-});
-
-loginBtn.addEventListener('click', () => {
-    container.classList.remove("active");
-
-});    
+let errid = document.getElementById('errid');   
+let successid = document.getElementById('successid');
 
 const loginForm = document.getElementById('login-form');
 const registerForm = document.getElementById('register-form');
@@ -65,6 +53,7 @@ if (!loginForm) console.log("login form not found");
 registerForm.addEventListener('submit', (event) => {
     event.preventDefault();
     errid.hidden = true;
+    errid.textContent = "";
     const email = document.getElementById('regemailinput').value;
     const username = document.getElementById('regusernameinput').value;
     const password = document.getElementById('regpasswordinput').value;
@@ -76,6 +65,7 @@ registerForm.addEventListener('submit', (event) => {
         let cleanPassword = validPassword(password);
         let cleanConfirmPass = validPassword(confirmpassword);
         if (cleanPassword !== cleanConfirmPass) throw "Passwords do not match";
+        successid.textContent = "Loading...";
         registerForm.submit();
     } catch (error) {
         errid.hidden = false;
@@ -96,6 +86,7 @@ loginForm.addEventListener('submit', (event) => {
     try {
         let cleanEmail = validEmail(email);
         let cleanPassword = validPassword(password);
+        successid.textContent = "Loading...";
         loginForm.submit();
     } catch (error) {
         errid.hidden = false;

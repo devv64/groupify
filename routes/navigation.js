@@ -8,11 +8,11 @@ const router = Router();
 // import { posts } from '../config/mongoCollections.js';
 
 // TODO: clean up the way this is being done
-import { getSomePosts, createPost } from '../data/posts.js';
+import * as postsData from '../data/posts.js';
 
 router.get('/register', async (req, res) => {
   // if (res.session.user !== undefined) res.redirect('/profile');
-  return res.status(200).render('register');
+  return res.status(200).render('loginsignup');
 });
 router.post('/register', async (req, res) => {
 try {
@@ -32,15 +32,15 @@ try {
 
   const newUser = await userData.createUser(cleanUsername, cleanPassword, cleanEmail);
   if (!newUser) throw "User not found";
-  return res.redirect('/login');
+  return res.render('loginsignup', { success: "Please use your new account to login!" });
 } catch (e) {
-  return res.status(400).render('register', { error: e });
+  return res.status(400).render('loginsignup', { error: e });
 }
 });
 
 router.get('/login', async (req, res) => {
   // if (res.session.user !== undefined) res.redirect('/profile');
-  return res.status(200).render('login');
+  return res.status(200).render('loginsignup');
 });
 router.post('/login', async (req, res) => {
 try {
@@ -53,7 +53,7 @@ try {
   req.session.user = user;
   return res.redirect(`/users/${user.username}`);
 } catch (e) {
-  return res.status(400).render('login', { error: e });
+  return res.status(400).render('loginsignup', { error: e });
 }
 });
 
@@ -61,23 +61,36 @@ try {
 router.get('/logout', async (req, res) => {
   req.session.destroy();
   res.clearCookie('AuthCookie', { expires: new Date(0) });
-  return res.redirect('/login');
+  return res.redirect('/loginsignup');
 });
 
 router
   .route('/feed')
   .get(async (req, res) => {
-    const posts = await getSomePosts();
+    const posts = await postsData.getSomePosts();
     res.render('feed', { posts })
   })
   .post(async (req, res) => {
     const { body, userId, lastfmSong, lastfmArtist } = req.body;
     try {
-      const post = await createPost(body, userId, lastfmSong, lastfmArtist);
+      const post = await postsData.createPost(body, userId, lastfmSong, lastfmArtist);
       console.log(post);
-      return res.redirect(`/posts/${post._id}`, { post });
+      return res.redirect(`/posts/${post._id}`);
     } catch (e) {
       return res.status(400).render('feed', { error: e });
+    }
+  })
+
+router
+  .route('/posts/:post_id')
+  // ! Need to fix when it isn't a proper post_id
+  .get(async (req, res) => {
+    try {
+      const post_id = req.params.post_id
+      const post = await postsData.getPostById(post_id)
+      return res.render('posts', { post })
+    } catch (e) {
+      return res.status(400).render('feed', { error: e })
     }
   })
 

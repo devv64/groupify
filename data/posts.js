@@ -6,7 +6,7 @@ import { ObjectId } from 'mongodb';
 
 // import api functions
 // this is needed to attach lastfm song/artist data to post object
-import * as lastfm from '../api/lastfm.js';
+import {searchTrackByName, searchArtistByName} from "../api/lastfm.js"
 
 
 // create post
@@ -17,8 +17,8 @@ export async function createPost(body, userId, lastfmSong, lastfmArtist) {
 
   // Need to decide how to handle picking a song/artist, this might be fine
   // why is it saying await is unnecessary here
-  const lastfmSong_ = await lastfm.searchTrackByName(lastfmSong, 1);
-  const lastfmArtist_ = await lastfm.searchArtistByName(lastfmArtist, 1);
+  const lastfmSong_ = await searchTrackByName(lastfmSong, 1);
+  const lastfmArtist_ = await searchArtistByName(lastfmArtist, 1);
 
   // ? Should we have tags on posts.. need to check the doc if this was required or extra
   const newPost = {
@@ -43,7 +43,7 @@ export async function createPost(body, userId, lastfmSong, lastfmArtist) {
 export async function getPostById(id) {
   // handleId(id);
   const postCollection = await posts();
-  const post = await postCollection.findOne({ _id: ObjectId(id) });
+  const post = await postCollection.findOne({ _id: new ObjectId(id) });
   if (!post) throw "Post not found";
   post._id = post._id.toString();
   return post;
@@ -56,10 +56,10 @@ export async function getPostById(id) {
 export async function getPostsByUser(id) {
   // handleId(id);
   const postCollection = await posts();
-  const post = await postCollection.find({ userId: id }).toArray();
-  if (!post) throw "Post not found";
-  post._id = post._id.toString();
-  return post;
+  const userPosts = await postCollection.find({ userId: id }).toArray();
+  if (!userPosts) throw "Post not found";
+  userPosts.forEach(post => post._id = post._id.toString());
+  return userPosts;
 }
 
 // get all posts by artist
@@ -69,10 +69,10 @@ export async function getPostsByArtist(name) {
   const postCollection = await posts();
   const lastfmArtist_ = await lastfm.searchArtistByName(name, 1);
   // only trying to find lastfmArtist_ object because idk what we're actually gonna be storing
-  const post = await postCollection.find({ artist: lastfmArtist_ }).toArray();
-  if (!post) throw "Post not found";
-  post._id = post._id.toString();
-  return post;
+  const artistPosts = await postCollection.find({ artist: lastfmArtist_ }).toArray();
+  if (!artistPosts) throw "Post not found";
+  artistPosts.forEach(post => post._id = post._id.toString());
+  return artistPosts;
 }
 
 // get some posts
