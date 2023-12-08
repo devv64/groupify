@@ -96,37 +96,6 @@ export async function removePostById(id) {
   return post;
 }
 
-// update post by id
-// ? should we allow the post to be updated, or just comments and likes
-
-
-// ! These two should be in comments.js
-// add comment to post
-export async function addCommentToPost(postId, commentId) {
-  // handleId(postId);
-  // handleId(commentId);
-  const postCollection = await posts();
-  const updateInfo = await postCollection.updateOne(
-    { _id: ObjectId(postId) },
-    { $addToSet: { comments: commentId } }
-  );
-  if (!updateInfo.acknowledged || updateInfo.modifiedCount === 0) throw "Could not update post";
-  return await getPostById(postId);
-}
-
-// remove comment from post
-export async function removeCommentFromPost(postId, commentId) {
-  // handleId(postId);
-  // handleId(commentId);
-  const postCollection = await posts();
-  const updateInfo = await postCollection.updateOne(
-    { _id: ObjectId(postId) },
-    { $pull: { comments: commentId } }
-  );
-  if (!updateInfo.acknowledged || updateInfo.modifiedCount === 0) throw "Could not update post";
-  return await getPostById(postId);
-}
-
 // add like to post
 export async function addLikeToPost(postId, userId) {
   // handleId(postId);
