@@ -80,3 +80,15 @@ export const validEditedPassword = (password) => {
       throw "Password must contain at least one uppercase character, one number and one special character";
   return password;
 };
+
+export const validId = (id) => {
+    //Validates id strings
+    //Throws {status, errMsg}
+    if (!id) throw {status:400, errMsg:"Error: You must provide an id to search for"};
+    if (typeof id !== "string") throw {status:400, errMsg:"Error: id must be a string"};
+    id = id.trim();
+    if(id.length === 0) throw {status:400, errMsg:"Error: id cannot be an empty string or just spaces"};
+    if (!ObjectId.isValid(id)) throw {status:400, errMsg:"Error: invalid object ID"};
+
+    return id;
+}
