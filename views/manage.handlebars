@@ -2,8 +2,7 @@
 <main>
     <h1>Manage Account</h1>
 
-    <input type="button" value="Edit Profile" id="editProfile">
-    <form method="PUT" id="editForm">
+    <form method="PATCH" id="editForm" action="/users/{{username}}">
         <label for="username" id="usernameLabel"></label>
         <input type="text" name="username" id="username" placeholder="New Username">
 

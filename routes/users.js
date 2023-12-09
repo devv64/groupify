@@ -3,8 +3,8 @@ const router = Router();
 // import data functions
 import * as lastfm from '../api/lastfm.js';
 import { getUserByUsername, updateUserById } from '../data/users.js';
-import { getPostsByUser } from '../data/posts.js';
-import { validUsername, validPassword } from '../data/validation.js';
+// import { getPostsByUser } from '../data/posts.js';
+import { validEditedUsername, validEditedPassword } from '../data/validation.js';
 // import validation functions
 
 router.get('/login', async (req, res) => {
@@ -81,6 +81,7 @@ router.route('/:username/following').get(async (req, res) => { //following page
 
 router.route('/:username/manage')
   .get(async (req, res) => { //manage profile page
+    console.log("manage profile page")
   try{
     const user = await getUserByUsername(req.params.username);
       res.render('manage', {
@@ -92,7 +93,8 @@ router.route('/:username/manage')
     return res.status(404).render('error', {error: e});
   }
 })
-  .put(async (req, res) => {
+  .patch(async (req, res) => {
+    console.log("put request received")
     const user = await getUserByUsername(req.params.username);
     try{
       let {
@@ -101,14 +103,16 @@ router.route('/:username/manage')
         newPassword
       } = req.body;
       //validation
-      username = validUsername(username);
-      oldPassword = validPassword(oldPassword);
-      newPassword = validPassword(newPassword);
+      username = validEditedUsername(username);
+      oldPassword = validEditedPassword(oldPassword);
+      newPassword = validEditedPassword(newPassword);
       if(oldPassword !== user.password) throw "Password does not match";
     }
     catch(e){
       return res.status(400).render('error', {error: e});
     }
+
+    console.log("validation passed:", username, oldPassword, newPassword)
 
     try{
       let {
@@ -118,7 +122,8 @@ router.route('/:username/manage')
       } = req.body;
 
       const id = user._id;
-      const updatedUser = await updateUserById(id, username, newPassword, user.email);
+      const updatedUser = await updateUserById(id, username, newPassword);
+      console.log("updated user:", updatedUser)
       req.session.user = updatedUser;
       return res.redirect("/:username");
     }
