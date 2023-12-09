@@ -93,7 +93,7 @@ router.route('/:username/manage')
     return res.status(404).render('error', {error: e});
   }
 })
-  .patch(async (req, res) => {
+  .post(async (req, res) => {
     console.log("put request received")
     const user = await getUserByUsername(req.params.username);
     try{
@@ -101,31 +101,32 @@ router.route('/:username/manage')
         username,
         oldPassword,
         newPassword
-      } = req.body;
+      } = req.  body;
       //validation
       username = validEditedUsername(username);
       oldPassword = validEditedPassword(oldPassword);
       newPassword = validEditedPassword(newPassword);
-      if(oldPassword !== user.password) throw "Password does not match";
+      // if(oldPassword !== user.password) throw "Password does not match";
     }
     catch(e){
       return res.status(400).render('error', {error: e});
     }
 
-    console.log("validation passed:", username, oldPassword, newPassword)
+    console.log("validation passed:")
 
     try{
       let {
         username,
         oldPassword,
-        newPassword
+        newPassword,
+        newLastfmUsername
       } = req.body;
 
       const id = user._id;
-      const updatedUser = await updateUserById(id, username, newPassword);
+      const updatedUser = await updateUserById(id, username, newPassword, newLastfmUsername);
       console.log("updated user:", updatedUser)
       req.session.user = updatedUser;
-      return res.redirect("/:username");
+      return res.redirect(`/users/${username}`);
     }
     catch(e){
       return res.status(400).render('error', {error: e});

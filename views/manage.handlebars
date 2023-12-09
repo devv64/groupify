@@ -1,20 +1,20 @@
-
-<main>
-    <h1>Manage Account</h1>
-
-    <form method="PATCH" id="editForm" action="/users/{{username}}">
-        <label for="username" id="usernameLabel"></label>
+<h1>Manage Account</h1>
+    <form method="POST" id="editForm" action="/users/{{username}}/manage">
+        <label for="username" id="usernameLabel">Username</label>
         <input type="text" name="username" id="username" placeholder="New Username">
 
-        <label for="oldPassword" id="passwordLabel"></label>
+        <label for="oldPassword" id="passwordLabel">Old Password</label>
         <input type="password" name="oldPassword" id="oldPassword" placeholder="Old Password">
 
-        <label for="newPassword" id="passwordLabel"></label>
+        <label for="newPassword" id="passwordLabel">New Password</label>
         <input type="password" name="newPassword" id="newPassword" placeholder="New Password">
 
-        <input type="submit" value="Submit" id="submit">
+        <label for="lastfmUsername" id="lastfmUsernameLabel">Lastfm Username (optional)</label>
+        <input type="text" name="lastfmUsername" id="lastfmUsername" placeholder="New Lastfm Username">
 
+        {{!-- <input type="submit" value="Submit" id="submit"> --}}
+        <button type="submit">Submit</button>
     </form>
     <a href="/users/{{username}}">Back to Profile Page</a>
-</main>
-<script src = "../public/main.js">  </script>
+
+<script src="../public/main.js"></script>

@@ -36,7 +36,7 @@ export async function createUser(username, password, email) {
   await checkUsernameAndEmail(username, email);
 
   //encrypt password
-  const hash = await bycrypt.hash(password, 2);
+  const hash = await bycrypt.hash(password, 16);
 
   const pfp = 'https://source.unsplash.com/1600x900/?' + username;
 
@@ -121,13 +121,15 @@ export async function updateUserById(id, username, password, email, lastfmUserna
   // validateUser(updatedUser);
   const userCollection = await users();
   const user = await getUserById(id);
-  const lastfmData = await lastfm.getInfoByUser(lastfmUsername);
+  const lastfmData = lastfmUsername ? await lastfm.getInfoByUser(lastfmUsername) : null;
+
+  const hash = await bycrypt.hash(password, 16);
 
   const updatedUser = {
     username: username || user.username,
-    password: password || user.password,
+    password: hash || user.password,
     email: email || user.email,
-    pfp: pfp || user.pfp,
+    pfp: 'https://source.unsplash.com/1600x900/?' + username || user.pfp,
     lastfm: lastfmData || user.lastfm,
     followers: user.followers,
     following: user.following,
@@ -140,7 +142,7 @@ export async function updateUserById(id, username, password, email, lastfmUserna
 
   // there might be a better way to do this
   const updateInfo = await userCollection.findOneAndReplace(
-    { _id: ObjectId(id) }, 
+    { _id: new ObjectId(id) }, 
     updatedUser,
     { returnDocument: 'after' }
     );

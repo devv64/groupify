@@ -25,17 +25,20 @@ if(editForm){
     editForm.addEventListener("submit", (event) => {
         event.preventDefault();
         try{
-            const username = document.getElementById("username").value;
-            const oldPassword = document.getElementById("oldPassword").value;
-            const newPassword = document.getElementById("newPassword").value;
+            let username = document.getElementById("username").value;
+            let oldPassword = document.getElementById("oldPassword").value;
+            let newPassword = document.getElementById("newPassword").value;
+            let newLastfmUsername = document.getElementById("lastfmUsername").value;
             username = validEditedUsername(username);
             oldPassword = validEditedPassword(oldPassword);
             newPassword = validEditedPassword(newPassword);
+            newLastfmUsername = validEditedUsername(newLastfmUsername);
+            editForm.submit();
             //check if old password is the same as the one in the database
 
         }
         catch(e){
-            console.log(e);
+            console.log("Client side error");
         }
     })
 }
