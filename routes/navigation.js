@@ -50,6 +50,8 @@ try {
   cleanPassword = validate.validPassword(cleanPassword);
   const user = await userData.loginUser(cleanEmail, cleanPassword);
   if (!user) throw "User not found";
+  // ? how do I keep track of user in session
+  // ? do I need to store user in session
   req.session.user = user;
   return res.redirect(`/users/${user.username}`);
 } catch (e) {
@@ -67,11 +69,18 @@ router.get('/logout', async (req, res) => {
 router
   .route('/feed')
   .get(async (req, res) => {
-    const posts = await postsData.getSomePosts();
-    res.render('feed', { posts })
+    try {
+      const posts = await postsData.getSomePosts();
+      console.log(posts);
+      res.render('feed', { posts })      
+    } catch (e) {
+      return res.status(400).render('feed', { error: e });
+    }
   })
   .post(async (req, res) => {
-    const { body, userId, lastfmSong, lastfmArtist } = req.body;
+    // ? how do I send userId here (from session), is this valid
+    const { body, lastfmSong, lastfmArtist } = req.body;
+    const userId = res.locals.username;
     try {
       const post = await postsData.createPost(body, userId, lastfmSong, lastfmArtist);
       console.log(post);
