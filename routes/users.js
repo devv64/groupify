@@ -5,6 +5,8 @@ import * as lastfm from '../api/lastfm.js';
 import { getUserByUsername, updateUserById } from '../data/users.js';
 // import { getPostsByUser } from '../data/posts.js';
 import { validEditedUsername, validEditedPassword } from '../data/validation.js';
+import bycrypt from 'bcrypt';
+
 // import validation functions
 
 router.get('/login', async (req, res) => {
@@ -99,22 +101,28 @@ router.route('/:username/manage')
         username,
         oldPassword,
         newPassword,
-        newLastfmUsername //not reading this
+        confirmPassword,
+        lastfmUsername //not reading this
       } = req.body;
 
       username = validEditedUsername(username);
       oldPassword = validEditedPassword(oldPassword);
-      // if(oldPassword !== user.password) throw "Password does not match"; //not working
       newPassword = validEditedPassword(newPassword);
-      newLastfmUsername = validEditedUsername(newLastfmUsername);
+      confirmPassword = validEditedPassword(confirmPassword);
       if(
         (newPassword === null && oldPassword !== null) || 
         (newPassword !== null && oldPassword === null)) 
         throw "Enter old and new password to change password";
 
+      const checkOldPassword = await bycrypt.compare(oldPassword, user.password);
+      if (!checkOldPassword) throw "Incorrect Old Password";
+
+      if (newPassword !== confirmPassword) throw "New Password and Confirm Password do not match";
+
+      lastfmUsername = validEditedUsername(lastfmUsername);      
     }
     catch(e){
-      return res.status(400).render('error', {error: e}); //redirect to manage page and display error message instead of error page
+      return res.status(400).render('manage', {error: e}); //redirect to manage page and display error message instead of error page
     }
 
     try{
@@ -122,16 +130,18 @@ router.route('/:username/manage')
         username,
         oldPassword,
         newPassword,
-        newLastfmUsername
+        confirmPassword,
+        lastfmUsername
       } = req.body;
 
       const id = user._id;
-      const updatedUser = await updateUserById(id, username, newPassword, newLastfmUsername);
+      if(username ==='') username = user.username;
+      const updatedUser = await updateUserById(id, username, newPassword, lastfmUsername); //wont work since lastfm is not connected i think
       req.session.user = updatedUser;
       return res.redirect(`/users/${username}`);
     }
     catch(e){
-      return res.status(400).render('error', {error: e});
+      return res.status(400).render('error', {error: "Error updating user"});
     }
 });
 

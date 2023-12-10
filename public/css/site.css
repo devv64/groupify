@@ -20,7 +20,7 @@ img{
 
 input {
     display: block;
-    margin: 0 auto;
+    margin: 5px auto;
     padding: 8px;
     border-radius: 5px;
 }
@@ -79,10 +79,18 @@ a:hover {
     display: inline-block;
 }
 
-.manage, .delete{
-    display: block;
+.backToProfile, .logout{
+    border: 1px solid black;
 }
 
-.backToProfile{
-    border: 1px solid black;
+.logout{
+    display: block;
+    width: 10%;
+    margin: 0 auto;
+}
+
+.manage {
+    display: block;
+    width: 30%;
+    margin: 5px auto;
 }

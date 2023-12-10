@@ -28,11 +28,13 @@ if(editForm){
             let username = document.getElementById("username").value;
             let oldPassword = document.getElementById("oldPassword").value;
             let newPassword = document.getElementById("newPassword").value;
-            let newLastfmUsername = document.getElementById("lastfmUsername").value;
+            let lastfmUsername = document.getElementById("lastfmUsername").value;
+            let confirmPassword = document.getElementById("confirmPassword").value;
             username = validEditedUsername(username);
             oldPassword = validEditedPassword(oldPassword);
             newPassword = validEditedPassword(newPassword);
-            newLastfmUsername = validEditedUsername(newLastfmUsername);
+            confirmPassword = validEditedPassword(confirmPassword);
+            lastfmUsername = validEditedUsername(lastfmUsername);
             editForm.submit();
             //check if old password is the same as the one in the database
         }

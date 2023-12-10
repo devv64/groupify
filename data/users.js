@@ -114,7 +114,7 @@ export async function removeUserById(id) {
 }
 
 // update user by id
-export async function updateUserById(id, username, password, email, lastfmUsername) {
+export async function updateUserById(id, username, password, lastfmUsername) {
   // todo
   // handleId(id);
   
@@ -128,7 +128,7 @@ export async function updateUserById(id, username, password, email, lastfmUserna
   const updatedUser = {
     username: username || user.username,
     password: hash || user.password,
-    email: email || user.email,
+    email: user.email,
     pfp: 'https://source.unsplash.com/1600x900/?' + username || user.pfp,
     lastfm: lastfmData || user.lastfm,
     followers: user.followers,

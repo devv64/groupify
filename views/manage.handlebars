@@ -11,10 +11,21 @@
         <label for="newPassword" id="passwordLabel">New Password</label>
         <input type="password" name="newPassword" id="newPassword" placeholder="New Password">
 
+        <label for="confirmPassword" id="confirmPasswordLabel">Confirm Password</label>
+        <input type="password" name="confirmPassword" id="confirmPassword" placeholder="Confirm Password">
+
         <label for="lastfmUsername" id="lastfmUsernameLabel">Lastfm Username</label>
-        <input type="text" name="lastfmUsername" id="lastfmUsername" placeholder="New Lastfm Username">
+        <input type="text" name="lastfmUsername" id="lastfmUsername" placeholder="New Lastfm Username (optional)">
 
         <button type="submit">Submit</button>
     </form>
     <a href="/users/{{username}}" class="backToProfile">Back to Profile Page</a>
+    <a href="/logout" class="logout">Logout</a>
+
+    {{#if error}}
+        <div class="error">
+            <p>{{error}}</p>
+        </div>
+    {{/if}}
+
 </div>

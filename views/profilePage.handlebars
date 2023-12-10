@@ -1,17 +1,27 @@
 
+{{!-- TODO : 
+functionality for follow/unfollow button ; 
+display posts ; 
+display posts liked ; 
+delete posts ; 
+display comments 
+make sure everything works from when viewing another profile
+input validation
+styling--}}
+
+
 <div>
     <h1>{{username}}</h1>
     <img src="{{profilePic}}" alt="">
     <div class="manage">
         {{#if isPersonalAccount}}
-            <a href="/users/{{username}}/manage">Manage Profile Account</a>
-            <br> {{!-- figure out css for this  --}}
-            <a href="/users/{{username}}/delete">Delete Post</a>
+            <a href="/users/{{username}}/manage" class="manage">Manage Profile Account</a>
+            <a href="/users/{{username}}/delete" class="delete">Delete Post</a>
         {{else}}
             {{#if isFollowing}}
-                <button class="unfollow">Unfollow</button> {{!-- add functionality to remove user from profile followers  --}}
+                <button class="unfollow">Unfollow</button> 
             {{else}}
-                <button class="follow">Follow</button> {{!-- add functionality to add user to profile followers  --}}
+                <button class="follow">Follow</button> 
             {{/if}}
         {{/if}}
     </div>
