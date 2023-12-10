@@ -1,5 +1,5 @@
 
-<main>
+<div>
     <h1>{{username}}'s' Followers</h1>
     <section>
         {{#if followers}}
@@ -14,5 +14,6 @@
             <p>No followers yet</p>
         {{/if}}
     </section>
-    <a href="/users/{{username}}">Go back to profile page</a>
-</main>
+    <a href="/users/{{username}}" class="backToProfile">Go back to profile page</a>
+</div>
+

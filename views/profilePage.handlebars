@@ -1,34 +1,32 @@
 
-<main>
+<div>
     <h1>{{username}}</h1>
     <img src="{{profilePic}}" alt="">
-    {{!-- follow unfollow button --}}
-    {{!-- manage profile page button if personal account --}}
-
-    {{#if isPersonalAccount}}
-        <a href="/users/{{username}}/manage">Manage Profile Account</a>
-        <a href="/users/{{username}}/delete">Delete Post</a>
-    {{else}}
-        {{#if isFollowing}}
-            <button>Unfollow</button> {{!-- add functionality to remove user from profile followers  --}}
+    <div class="manage">
+        {{#if isPersonalAccount}}
+            <a href="/users/{{username}}/manage">Manage Profile Account</a>
+            <br> {{!-- figure out css for this  --}}
+            <a href="/users/{{username}}/delete">Delete Post</a>
         {{else}}
-            <button>Follow</button> {{!-- add functionality to add user to profile followers  --}}
+            {{#if isFollowing}}
+                <button class="unfollow">Unfollow</button> {{!-- add functionality to remove user from profile followers  --}}
+            {{else}}
+                <button class="follow">Follow</button> {{!-- add functionality to add user to profile followers  --}}
+            {{/if}}
         {{/if}}
-    {{/if}}
+    </div>
 
-    <section>
+    <section class="followers">
         <a href="/users/{{username}}/followers">
             {{followers.length}} Followers
         </a>
     </section>
 
-    <section>
+    <section class="following">
         <a href="/users/{{username}}/following">
             {{following.length}} Following
         </a>
     </section>
-
-    {{!-- following and followers should be in line or right under each other --}}
 
     <section>
         <h2>Posts</h2>
@@ -44,7 +42,7 @@
         <p>No posts yet</p>
         {{/if}}
     </section>
-    
+
     <section>
         <h2>Posts {{username}} liked</h2>
         {{#if likedPosts}}
@@ -59,4 +57,4 @@
             <p>No liked posts yet</p>
         {{/if}}
     </section>
-</main>
+</div>

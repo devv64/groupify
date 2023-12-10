@@ -81,7 +81,6 @@ router.route('/:username/following').get(async (req, res) => { //following page
 
 router.route('/:username/manage')
   .get(async (req, res) => { //manage profile page
-    console.log("manage profile page")
   try{
     const user = await getUserByUsername(req.params.username);
       res.render('manage', {
@@ -93,26 +92,30 @@ router.route('/:username/manage')
     return res.status(404).render('error', {error: e});
   }
 })
-  .post(async (req, res) => {
-    console.log("put request received")
+  .post(async (req, res) => { //edit profile page
     const user = await getUserByUsername(req.params.username);
     try{
       let {
         username,
         oldPassword,
-        newPassword
-      } = req.  body;
-      //validation
+        newPassword,
+        newLastfmUsername //not reading this
+      } = req.body;
+
       username = validEditedUsername(username);
       oldPassword = validEditedPassword(oldPassword);
+      // if(oldPassword !== user.password) throw "Password does not match"; //not working
       newPassword = validEditedPassword(newPassword);
-      // if(oldPassword !== user.password) throw "Password does not match";
+      newLastfmUsername = validEditedUsername(newLastfmUsername);
+      if(
+        (newPassword === null && oldPassword !== null) || 
+        (newPassword !== null && oldPassword === null)) 
+        throw "Enter old and new password to change password";
+
     }
     catch(e){
-      return res.status(400).render('error', {error: e});
+      return res.status(400).render('error', {error: e}); //redirect to manage page and display error message instead of error page
     }
-
-    console.log("validation passed:")
 
     try{
       let {
@@ -124,7 +127,6 @@ router.route('/:username/manage')
 
       const id = user._id;
       const updatedUser = await updateUserById(id, username, newPassword, newLastfmUsername);
-      console.log("updated user:", updatedUser)
       req.session.user = updatedUser;
       return res.redirect(`/users/${username}`);
     }

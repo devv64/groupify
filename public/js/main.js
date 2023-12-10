@@ -19,8 +19,8 @@ const validEditedPassword = (password) => {
     return password;
   };
 
+// for edit profile page  
 let editForm = document.getElementById("editForm");
-
 if(editForm){
     editForm.addEventListener("submit", (event) => {
         event.preventDefault();
@@ -35,10 +35,16 @@ if(editForm){
             newLastfmUsername = validEditedUsername(newLastfmUsername);
             editForm.submit();
             //check if old password is the same as the one in the database
-
         }
         catch(e){
             console.log("Client side error");
         }
     })
 }
+
+//for delete posts page
+
+
+// for followers page
+
+//for following page

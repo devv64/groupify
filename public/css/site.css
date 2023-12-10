@@ -1,0 +1,88 @@
+
+div{
+    text-align: center;
+}
+
+img{
+    max-width: 30%;
+    height: auto;
+}
+
+.container {
+    max-width: 40%;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: lightblue;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+input {
+    display: block;
+    margin: 0 auto;
+    padding: 8px;
+    border-radius: 5px;
+}
+
+.follow {
+    font-size: 16px;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: #3498db;
+    color: #fff;
+    transition: background-color 0.3s ease, font-size 0.3s ease;
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+
+.unfollow{
+    font-size: 16px;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: grey;
+    color: #fff;
+    transition: background-color 0.3s ease, font-size 0.3s ease;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+
+.follow:hover {
+    background-color: #2980b9;
+    font-size: 20px; 
+}
+
+a{
+    display: inline-block;
+    padding: 8px 16px;
+    background-color: lightgray; 
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+    color: black;
+    font-size: 15px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+a:hover {
+    background-color: darkgray;
+}
+
+.followers, .following{
+    display: inline-block;
+}
+
+.manage, .delete{
+    display: block;
+}
+
+.backToProfile{
+    border: 1px solid black;
+}

@@ -1,4 +1,4 @@
-<main>
+<div>
     <h1>{{username}}'s' Following</h1>
     <section>
         {{#if following}}
@@ -13,5 +13,5 @@
             <p>No following yet</p>
         {{/if}}
     </section>
-    <a href="/users/{{username}}">Go back to profile page</a>
-</main>
+    <a href="/users/{{username}}" class="backToProfile">Go back to profile page</a>
+</div>

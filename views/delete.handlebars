@@ -1,20 +1,17 @@
-<main>
-    <h1>Delete Posts</h1>
-    <section>
-        {{#if posts}}
-            <ul>
-                {{#each posts}}
-                <li>
-                    {{this.body}} {{!-- not sure about this --}}
-                </li>
-                {{/each}}
-            </ul>
-        {{else}}
-            <p>No posts yet</p>
-        {{/if}}
-    </section>
 
+<h1>Delete Posts</h1>
+<section>
+    {{#if posts}}
+        <ul>
+            {{#each posts}}
+            <li>
+                {{this.body}} {{!-- not sure about this --}}
+            </li>
+            {{/each}}
+        </ul>
+    {{else}}
+        <p>No posts yet</p>
+    {{/if}}
+</section>
 
-    <a href="/users/{{username}}">Back to Profile Page</a>
-
-</main>
+<a href="/users/{{username}}" class="backToProfile">Back to Profile Page</a>

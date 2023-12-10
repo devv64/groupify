@@ -1,4 +1,6 @@
-<h1>Manage Account</h1>
+
+<div class="container">
+    <h1>Manage Account</h1>
     <form method="POST" id="editForm" action="/users/{{username}}/manage">
         <label for="username" id="usernameLabel">Username</label>
         <input type="text" name="username" id="username" placeholder="New Username">
@@ -9,12 +11,10 @@
         <label for="newPassword" id="passwordLabel">New Password</label>
         <input type="password" name="newPassword" id="newPassword" placeholder="New Password">
 
-        <label for="lastfmUsername" id="lastfmUsernameLabel">Lastfm Username (optional)</label>
+        <label for="lastfmUsername" id="lastfmUsernameLabel">Lastfm Username</label>
         <input type="text" name="lastfmUsername" id="lastfmUsername" placeholder="New Lastfm Username">
 
-        {{!-- <input type="submit" value="Submit" id="submit"> --}}
         <button type="submit">Submit</button>
     </form>
-    <a href="/users/{{username}}">Back to Profile Page</a>
-
-<script src="../public/main.js"></script>
+    <a href="/users/{{username}}" class="backToProfile">Back to Profile Page</a>
+</div>
