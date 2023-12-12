@@ -62,7 +62,6 @@ a{
     padding: 8px 16px;
     background-color: lightgray; 
     color: #fff;
-    text-decoration: none;
     border-radius: 5px;
     transition: background-color 0.3s ease;
     color: black;
@@ -93,4 +92,22 @@ a:hover {
     display: block;
     width: 30%;
     margin: 5px auto;
+}
+
+.manageSubmit{
+    display: inline-block;
+    margin: 5px auto;
+    padding: 5px 10px;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    cursor: pointer;
+    background-color: #3498db; /* Button color */
+    color: #fff; /* Text color */
+    border: 2px solid #2980b9; /* Border color */
+    border-radius: 5px; /* Rounded corners */
+
+    &:hover {
+        background-color: #2980b9; /* Button color on hover */
+      }
 }

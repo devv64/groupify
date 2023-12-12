@@ -31,29 +31,34 @@ router
   });
 
 
-router.route('/:username').get(async (req, res) => { //public profile page / personal page
-  try{
-    const user = await getUserByUsername(req.params.username);
-    // const posts = await getPostsByUser(user._id);
-    let personalAccount = false;
-    if(req.session.user && req.session.user.username === user.username){
-      personalAccount = true
+router.route('/:username')
+  .get(async (req, res) => { //public profile page / personal page
+    try{
+      const user = await getUserByUsername(req.params.username);
+      // const posts = await getPostsByUser(user._id);
+      let personalAccount = false;
+      if(req.session.user && req.session.user.username === user.username){
+        personalAccount = true
+      }
+      return res.render('profilePage', {
+          profilePic: user.pfp,
+          username: user.username,
+          posts: user.createdPosts,
+          followers: user.followers,
+          following: user.following,
+          likedPosts: user.likedPosts,
+          isPersonalAccount: personalAccount,
+          isFollowing: req.session.user.following.includes(user._id)
+      })
     }
-    return res.render('profilePage', {
-        profilePic: user.pfp,
-        username: user.username,
-        posts: user.createdPosts,
-        followers: user.followers,
-        following: user.following,
-        likedPosts: user.likedPosts,
-        isPersonalAccount: personalAccount
-        // comments
-    })
-  }
-  catch(e){
-    res.status(404).render('error', {error: e});
-  }
-});
+    catch(e){
+      res.status(404).render('profilePage', {error: "Profile page error"});
+    }
+})
+  .post(async (req, res) => { //for following and unfollowing functionality
+
+  }) 
+;
 
 router.route('/:username/followers').get(async (req, res) => { //followers page
   try{
@@ -64,7 +69,7 @@ router.route('/:username/followers').get(async (req, res) => { //followers page
     })
   }
   catch(e){
-    return res.status(404).render('error', {error: e});
+    return res.status(404).render('followers', {error: "Followers page error"});
   }
 });
 
@@ -77,7 +82,7 @@ router.route('/:username/following').get(async (req, res) => { //following page
     })
   }
   catch(e){
-    return res.status(404).render('error', {error: e});
+    return res.status(404).render('following', {error: "Following page error"});
   }
 });
 
@@ -91,7 +96,7 @@ router.route('/:username/manage')
     })
   }
   catch(e){
-    return res.status(404).render('error', {error: e});
+    return res.status(400).render('manage', {error: "Manage page error"});
   }
 })
   .post(async (req, res) => { //edit profile page
@@ -141,7 +146,7 @@ router.route('/:username/manage')
       return res.redirect(`/users/${username}`);
     }
     catch(e){
-      return res.status(400).render('error', {error: "Error updating user"});
+      return res.status(400).render('manage', {error: "Error updating user"});
     }
 });
 

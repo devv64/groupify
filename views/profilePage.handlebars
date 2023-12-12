@@ -19,9 +19,9 @@ styling--}}
             <a href="/users/{{username}}/delete" class="delete">Delete Post</a>
         {{else}}
             {{#if isFollowing}}
-                <button class="unfollow">Unfollow</button> 
+                <button type="submit" class="unfollow" id="unfollowButton">Unfollow</button> 
             {{else}}
-                <button class="follow">Follow</button> 
+                <button type="submit" class="follow" id="followButton">Follow</button> 
             {{/if}}
         {{/if}}
     </div>

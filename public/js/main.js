@@ -35,8 +35,11 @@ if(editForm){
             newPassword = validEditedPassword(newPassword);
             confirmPassword = validEditedPassword(confirmPassword);
             lastfmUsername = validEditedUsername(lastfmUsername);
+            if(
+                (newPassword === null && oldPassword !== null) || 
+                (newPassword !== null && oldPassword === null)) 
+                throw "Enter old and new password to change password";
             editForm.submit();
-            //check if old password is the same as the one in the database
         }
         catch(e){
             console.log("Client side error");
@@ -44,9 +47,16 @@ if(editForm){
     })
 }
 
+let unfollowButton = document.getElementById("unfollowButton");
+let followButton = document.getElementById("followButton");
+
+// if(unfollowButton){
+//     unfollowButton.addEventListener("click", (event) => {
+//         event.preventDefault();
+        
+
+//     })
+// }
+
+
 //for delete posts page
-
-
-// for followers page
-
-//for following page
