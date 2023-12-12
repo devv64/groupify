@@ -1,5 +1,6 @@
 import { posts } from '../config/mongoCollections.js';
 import { ObjectId } from 'mongodb';
+import * as validate from './validation.js';
 
 // import validation functions
 // validatePost, handleId, etc.
@@ -13,10 +14,18 @@ import {searchTrackByName, searchArtistByName} from "../api/lastfm.js"
 // how should we design this, would lastfmSong and lastfmArtist be params like this? seems fine to me
 export async function createPost(body, userId, lastfmSong, lastfmArtist) {
   // validatePost(body, userId, lastfmSong, lastfmArtist);
+  body = validate.validString(body);
+  // userId = validate.validId(userId);
+
+  // TODO: Need to figure out how this should work
+  // lastfmSong = validate.validString(lastfmSong);
+  // lastfmArtist = validate.validString(lastfmArtist);  
+
   const postCollection = await posts();
 
   // Need to decide how to handle picking a song/artist, this might be fine
   // why is it saying await is unnecessary here
+  // TODO: probably some error handling needed here
   const lastfmSong_ = await searchTrackByName(lastfmSong, 1);
   const lastfmArtist_ = await searchArtistByName(lastfmArtist, 1);
 

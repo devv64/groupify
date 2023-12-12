@@ -1,4 +1,13 @@
 //You can add and export any helper functions you want here. If you aren't using any, then you can just leave this file as is.
+export const validString = (str) => {
+    console.log(str);
+    if (!str) throw "String must be provided";
+    if (typeof str !== 'string') throw "String must be a string";
+    str = str.trim();
+    if (str.length === 0) throw "String must be a non-empty string";
+    return str
+}
+
 export const validEmail = (email) => {
     if (!email) throw "Email must be provided";
     if (typeof email !== 'string') throw "Email must be a string";
