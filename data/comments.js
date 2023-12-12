@@ -64,7 +64,7 @@ export const getCommentById = async (commentId) => {
 
 //Get all comments for a post
 //Returns array of comment objs
-const getAllCommentsByPostId = async (postId) => {
+export const getAllCommentsByPostId = async (postId) => {
     postId = validId(postId);
     
     const commentsCollection = await comments();
