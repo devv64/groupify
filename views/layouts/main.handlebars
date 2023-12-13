@@ -4,18 +4,38 @@
 <head>
     <meta charset="utf-8">
     <title>Harmoniq</title>
-    <link rel="stylesheet" href="/public/site.css">
+    <link rel="stylesheet" href="/public/css/site.css">
 </head>
 
-<body>
 
+
+<body>
+    <header>
+        <ul class="navbar-nav ml-auto">
+            {{#if login}}
+            <li class="nav-item">
+                <a class="nav-link" href="/search">Search</a>
+            <li class="nav-item">
+                <a class="nav-link" href="/profile">Profile</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/logout">Logout</a>
+            </li>
+            {{else}}
+            <li class="nav-item">
+                <a class="nav-link" href="/register">Register</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/login">Login</a>
+            </li>
+            {{/if}}
+        </ul>
+    </header>
     <main>
         {{{body}}}
     </main>
 
     <footer>Harmoniq CS546 </footer>
-
-    <script src="/public/main.js"></script>
 
     <script src="/public/main.js"></script>
 

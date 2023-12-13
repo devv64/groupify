@@ -1,0 +1,17 @@
+<link rel="stylesheet" href="../public/css/loginsignup.css">
+
+<div class="container" id="container">
+    <div class = "error" id="errid">{{error}}</div>
+    <div class = "success" id="successid">{{success}}</div>
+    <div class="form-container sign-in">
+        <form id = 'login-form' action="/login" method="POST">
+            <h1>Sign In</h1>
+            <input type="email" placeholder="Email" name= "liemailinput" id = 'liemailinput'>
+            <input type="password" placeholder="Password" name= "lipasswordinput" id = 'lipasswordinput'>
+            <button type="submit" >Sign In</button>
+        </form>
+    </div>
+    <a href="/register">Click Here to Register Instead</a>
+</div>
+
+    <script src="../public/js/loginsignup.js"></script>

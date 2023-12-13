@@ -10,9 +10,13 @@ const router = Router();
 // TODO: clean up the way this is being done
 import * as postsData from '../data/posts.js';
 
+router.get('/home', async (req, res) => {
+  res.status(200).render('home');
+});
+
 router.get('/register', async (req, res) => {
   // if (res.session.user !== undefined) res.redirect('/profile');
-  return res.status(200).render('loginsignup');
+  return res.status(200).render('register');
 });
 router.post('/register', async (req, res) => {
 try {
@@ -32,15 +36,15 @@ try {
 
   const newUser = await userData.createUser(cleanUsername, cleanPassword, cleanEmail);
   if (!newUser) throw "User not found";
-  return res.render('loginsignup', { success: "Please use your new account to login!" });
+  return res.render('login', { success: "Please use your new account to login!" });
 } catch (e) {
-  return res.status(400).render('loginsignup', { error: e });
+  return res.status(400).render('register', { error: e });
 }
 });
 
 router.get('/login', async (req, res) => {
   // if (res.session.user !== undefined) res.redirect('/profile');
-  return res.status(200).render('loginsignup');
+  return res.status(200).render('login');
 });
 router.post('/login', async (req, res) => {
 try {
@@ -53,7 +57,7 @@ try {
   req.session.user = user;
   return res.redirect(`/users/${user.username}`);
 } catch (e) {
-  return res.status(400).render('loginsignup', { error: e });
+  return res.status(400).render('login', { error: e });
 }
 });
 
@@ -61,7 +65,7 @@ try {
 router.get('/logout', async (req, res) => {
   req.session.destroy();
   res.clearCookie('AuthCookie', { expires: new Date(0) });
-  return res.redirect('/loginsignup');
+  return res.redirect('/login');
 });
 
 router
