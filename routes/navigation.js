@@ -63,7 +63,7 @@ try {
 router.get('/logout', async (req, res) => {
   req.session.destroy();
   res.clearCookie('AuthCookie', { expires: new Date(0) });
-  return res.redirect('/loginsignup');
+  return res.redirect('/login');
 });
 
 router
@@ -72,21 +72,27 @@ router
     try {
       const posts = await postsData.getSomePosts();
       console.log(posts);
-      res.render('feed', { posts })      
+      res.render('feed', { posts })   
     } catch (e) {
       return res.status(400).render('feed', { error: e });
     }
   })
   .post(async (req, res) => {
     // ? how do I send userId here (from session), is this valid
+    // ! I don't like this code, theres definitely some stuff wrong with rendering posts
     const { body, lastfmSong, lastfmArtist } = req.body;
-    const userId = res.locals.username;
+    const username = req.session.user.username;
     try {
-      const post = await postsData.createPost(body, userId, lastfmSong, lastfmArtist);
+      const post = await postsData.createPost(body, username, lastfmSong, lastfmArtist);
       console.log(post);
       return res.redirect(`/posts/${post._id}`);
     } catch (e) {
-      return res.status(400).render('feed', { error: e });
+      try {
+        const posts = await postsData.getSomePosts();
+        return res.render('feed', { posts: posts, error: e });
+      } catch (e) {
+        return res.render('feed', { error: e } )
+      }
     }
   })
 
