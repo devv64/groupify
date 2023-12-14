@@ -2,10 +2,11 @@
     <h1>Post</h1>
 
     <div>
-      <a href="/users/{{post.userId}}">{{post.userId}}</a>
+      <a href="/users/{{post.username}}">{{post.username}}</a>
       {{post.body}}
       {{#each post.comments}}
         {{this.body}}
       {{/each}}
+      {{post.likes.length}}
     </div>
 </div>
