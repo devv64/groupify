@@ -13,10 +13,10 @@ import { getUserById } from './users.js';
 
 // create post
 // how should we design this, would lastfmSong and lastfmArtist be params like this? seems fine to me
-export async function createPost(body, username, lastfmSong, lastfmArtist) {
+export async function createPost(body, userId, lastfmSong, lastfmArtist) {
   // validatePost(body, username, lastfmSong, lastfmArtist);
   body = validate.validString(body);
-  username = validate.validString(username);
+  // username = validate.validString(username);
 
   // TODO: Need to figure out how this should work
   // lastfmSong = validate.validString(lastfmSong);
@@ -31,9 +31,13 @@ export async function createPost(body, username, lastfmSong, lastfmArtist) {
   const lastfmSong_ = await searchTrackByName(lastfmSong, 1);
   const lastfmArtist_ = await searchArtistByName(lastfmArtist, 1);
 
+  const user = await getUserById(userId);
+  const username = user.username
+
   // ? Should we have tags on posts.. need to check the doc if this was required or extra
   const newPost = {
     // need to also give username, pfp, etc. to post
+    userId,
     username,
     body,
     comments: [], // ? comment objects or ids to comment objects
@@ -48,13 +52,13 @@ export async function createPost(body, username, lastfmSong, lastfmArtist) {
   const newId = insertInfo.insertedId.toString();
   const post = await getPostById(newId);
 
-  let user = await userCollection.findOneAndUpdate(
-    { username: username },
+  let newUser = await userCollection.findOneAndUpdate(
+    { _id: new ObjectId(userId) },
     { $push: {createdPosts: new ObjectId(newId)} },
     { returnDocument: 'after' }
     )
 
-    // ! error check user
+    // ! error check newUser
 
   return post;
 }
@@ -140,7 +144,7 @@ export async function addLikeToPost(postId, userId) {
   );
 
   let user = await userCollection.findOneAndUpdate(
-    { username: username },
+    { _id: new ObjectId(userId) },
     { $push: {likedPosts: new ObjectId(postId)} },
     { returnDocument: 'after' }
     )
@@ -162,7 +166,7 @@ export async function removeLikeFromPost(postId, userId) {
   );
 
   let user = await userCollection.findOneAndUpdate(
-    { username: username },
+    { _id: new ObjectId(userId) },
     { $pull: {likedPosts: new ObjectId(newId)} },
     { returnDocument: 'after' }
     )

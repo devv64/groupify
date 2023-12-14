@@ -81,10 +81,10 @@ router
     // ? how do I send userId here (from session), is this valid
     // ! I don't like this code, theres definitely some stuff wrong with rendering posts
     const { body, lastfmSong, lastfmArtist } = req.body;
-    const username = req.session.user.username;
+    const userId = req.session.user._id;
     try {
-      const post = await postsData.createPost(body, username, lastfmSong, lastfmArtist);
-      console.log(post);
+      const post = await postsData.createPost(body, userId, lastfmSong, lastfmArtist);
+      console.log('FISH:', post)
       return res.redirect(`/posts/${post._id}`);
     } catch (e) {
       try {
@@ -103,6 +103,7 @@ router
     try {
       const post_id = req.params.post_id
       const post = await postsData.getPostById(post_id)
+      console.log(post.username)
       return res.render('posts', { post })
     } catch (e) {
       return res.status(400).render('feed', { error: e })
