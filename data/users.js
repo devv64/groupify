@@ -123,7 +123,7 @@ export async function updateUserById(id, username, password, lastfmUsername) {
   const user = await getUserById(id);
   const lastfmData = lastfmUsername ? await lastfm.getInfoByUser(lastfmUsername) : null;
 
-  const hash = await bycrypt.hash(password, 16);
+  const hash = await bycrypt.hash(password, 10);
 
   const updatedUser = {
     username: username || user.username,
