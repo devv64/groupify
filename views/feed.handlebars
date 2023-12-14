@@ -8,9 +8,10 @@
         {{error}}
     </div>
 
+    {{!-- ! MAKE SURE U CAN'T POST WITH ONLY SPECIAL CHARACTERS --}}
     <form action="/feed" method="POST" class="create-post" id="create-post">
         <label for="body">Post something: </label>
-        <input type="text" name="body" placeholder="Post something">
+        <input type="text" name="body" id="body" placeholder="Post something">
         <button type="submit">Create Post</button>
     </form>
 
@@ -24,4 +25,6 @@
             {{/each}}
         {{/each}}
     </ul>
+
 </div>
+<script src="../public/js/feed.js"></script>

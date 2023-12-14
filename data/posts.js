@@ -1,4 +1,4 @@
-import { posts } from '../config/mongoCollections.js';
+import { posts, users } from '../config/mongoCollections.js';
 import { ObjectId } from 'mongodb';
 import * as validate from './validation.js';
 
@@ -8,20 +8,22 @@ import * as validate from './validation.js';
 // import api functions
 // this is needed to attach lastfm song/artist data to post object
 import {searchTrackByName, searchArtistByName} from "../api/lastfm.js"
+import { getUserById } from './users.js';
 
 
 // create post
 // how should we design this, would lastfmSong and lastfmArtist be params like this? seems fine to me
-export async function createPost(body, userId, lastfmSong, lastfmArtist) {
-  // validatePost(body, userId, lastfmSong, lastfmArtist);
+export async function createPost(body, username, lastfmSong, lastfmArtist) {
+  // validatePost(body, username, lastfmSong, lastfmArtist);
   body = validate.validString(body);
-  // userId = validate.validId(userId);
+  username = validate.validString(username);
 
   // TODO: Need to figure out how this should work
   // lastfmSong = validate.validString(lastfmSong);
   // lastfmArtist = validate.validString(lastfmArtist);  
 
   const postCollection = await posts();
+  const userCollection = await users();
 
   // Need to decide how to handle picking a song/artist, this might be fine
   // why is it saying await is unnecessary here
@@ -32,7 +34,7 @@ export async function createPost(body, userId, lastfmSong, lastfmArtist) {
   // ? Should we have tags on posts.. need to check the doc if this was required or extra
   const newPost = {
     // need to also give username, pfp, etc. to post
-    userId,
+    username,
     body,
     comments: [], // ? comment objects or ids to comment objects
     track: lastfmSong_ || null,
@@ -45,6 +47,15 @@ export async function createPost(body, userId, lastfmSong, lastfmArtist) {
   if (!insertInfo.acknowledged || !insertInfo.insertedId) throw "Could not add post";  
   const newId = insertInfo.insertedId.toString();
   const post = await getPostById(newId);
+
+  let user = await userCollection.findOneAndUpdate(
+    { username: username },
+    { $push: {createdPosts: new ObjectId(newId)} },
+    { returnDocument: 'after' }
+    )
+
+    // ! error check user
+
   return post;
 }
 
@@ -98,8 +109,20 @@ export async function getSomePosts(n=25) {
 export async function removePostById(id) {
   // handleId(id);
   const postCollection = await posts();
+  const userCollection = await users();
   // ! should I just do findOneAndDelete instead
   const post = await getPostById(id);
+
+  let user = await userCollection.findOneAndUpdate(
+    { username: username },
+    { $pull: {createdPosts: new ObjectId(id)} },
+    { returnDocument: 'after' }
+    )
+
+    // ! error check
+
+    // ? maybe remove from everyone that liekd thsi post
+
   const deletionInfo = await postCollection.deleteOne({ _id: ObjectId(id) });
   if (!deletionInfo.acknowledged || deletionInfo.deletedCount === 0) throw `Could not delete post with id of ${id}`;
   return post;
@@ -110,10 +133,18 @@ export async function addLikeToPost(postId, userId) {
   // handleId(postId);
   // handleId(userId);
   const postCollection = await posts();
+  const userCollection = await user();
   const updateInfo = await postCollection.updateOne(
     { _id: ObjectId(postId) },
     { $addToSet: { likes: userId } }
   );
+
+  let user = await userCollection.findOneAndUpdate(
+    { username: username },
+    { $push: {likedPosts: new ObjectId(postId)} },
+    { returnDocument: 'after' }
+    )
+
   if (!updateInfo.acknowledged || updateInfo.modifiedCount === 0) throw "Could not update post";
   return await getPostById(postId);
 }
@@ -123,11 +154,19 @@ export async function removeLikeFromPost(postId, userId) {
   // handleId(postId);
   // handleId(userId);
   const postCollection = await posts();
+  const userCollection = await users();
   const updateInfo = await postCollection.updateOne(
     { _id: ObjectId(postId) },
     // not sure if this works, from stackoverflow
     { $pull: { likes: userId } }
   );
+
+  let user = await userCollection.findOneAndUpdate(
+    { username: username },
+    { $pull: {likedPosts: new ObjectId(newId)} },
+    { returnDocument: 'after' }
+    )
+
   if (!updateInfo.acknowledged || updateInfo.modifiedCount === 0) throw "Could not update post";
   return await getPostById(postId);
 }
