@@ -2,7 +2,8 @@ import { Router } from 'express';
 const router = Router();
 // import data functions
 import * as lastfm from '../api/lastfm.js';
-import { getUserByUsername, updateUserById } from '../data/users.js';
+import { getUserByUsername, updateUserById, followUser, unfollowUser, getUserById } from '../data/users.js';
+import { getPostsByUser } from '../data/posts.js';
 // import { getPostsByUser } from '../data/posts.js';
 import { validEditedUsername, validEditedPassword } from '../data/validation.js';
 import bycrypt from 'bcrypt';
@@ -36,20 +37,25 @@ router.route('/:username')
   .get(async (req, res) => { //public profile page / personal page
     try{
       const user = await getUserByUsername(req.params.username);
-      // const posts = await getPostsByUser(user._id);
+      const posts = await getPostsByUser(user._id);
       let personalAccount = false;
       if(req.session.user && req.session.user.username === user.username){
         personalAccount = true
       }
+
+      let followClass = !user.followers.includes(req.session.user._id) ? "follow"  : "unfollow";
+      let followText = !user.followers.includes(req.session.user._id) ? "Follow" : "Unfollow";
+
       return res.render('profilePage', {
           profilePic: user.pfp,
           username: user.username,
-          posts: user.createdPosts,
+          posts: posts,
           followers: user.followers,
           following: user.following,
           likedPosts: user.likedPosts,
           isPersonalAccount: personalAccount,
-          isFollowing: req.session.user.following.includes(user._id)
+          followClass: followClass,
+          followingText: followText
       })
     }
     catch(e){
@@ -58,15 +64,61 @@ router.route('/:username')
 })
   .post(async (req, res) => { //for following and unfollowing functionality
 
+    let profile;
+    try{
+      profile = await getUserByUsername(req.params.username);
+    }
+    catch(e){
+      return res.status(404).render('profilePage', {error: "Profile page error"});
+    }
+
+    if(!(req.session.user.following.includes(profile._id))){ //check if user is not following profile
+      try{
+        let follow = await followUser(req.session.user._id, profile._id);
+        req.session.user = follow;
+        return res.status(200).json(
+          {
+            followers: profile.followers.length,
+            didJustFollow:true,
+            didJustUnfollow:false
+          }
+        )
+      }
+      catch(e){
+        return res.status(400).render('profilePage', {error: "Error following user"});
+      }
+    }
+    else{
+      try{
+        let unfollow = await unfollowUser(req.session.user._id, profile._id);
+        req.session.user = unfollow;
+        return res.status(200).json(
+          {
+            followers: profile.followers.length,
+            didJustFollow:false,
+            didJustUnfollow:true
+          }
+        )
+      }
+      catch(e){
+        return res.status(400).render('profilePage', {error: "Error unfollowing user"});
+      }
+    }
+    
   }) 
 ;
 
 router.route('/:username/followers').get(async (req, res) => { //followers page
   try{
     const user = await getUserByUsername(req.params.username);
+    let followersList = [];
+    for(let i = 0; i < user.followers.length; i++){
+      let follower = await getUserById(user.followers[i]);
+      followersList.push(follower);
+    }
       res.render('followers', {
         username: user.username,
-        followers: user.followers
+        followers: followersList
     })
   }
   catch(e){
@@ -77,9 +129,14 @@ router.route('/:username/followers').get(async (req, res) => { //followers page
 router.route('/:username/following').get(async (req, res) => { //following page
   try{
     const user = await getUserByUsername(req.params.username);
+    let followingList = [];
+    for(let i = 0; i < user.following.length; i++){
+      let followingUser = await getUserById(user.following[i]);
+      followingList.push(followingUser);
+    }
       res.render('following', {
         username: user.username,
-        following: user.following
+        following: followingList
     })
   }
   catch(e){

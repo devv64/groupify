@@ -33,8 +33,7 @@ app.use(
     name: 'AuthCookie',
     secret: 'some secret string!',
     saveUninitialized: false,
-    resave: false,
-    cookie: { maxAge: 60000 }
+    resave: false
   })
 );
 

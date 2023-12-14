@@ -11,23 +11,26 @@ styling--}}
 
 
 <div>
-    <h1>{{username}}</h1>
+    <h1 id="name">{{username}}</h1>
     <img src="{{profilePic}}" alt="">
     <div class="manage">
         {{#if isPersonalAccount}}
             <a href="/users/{{username}}/manage" class="manage">Manage Profile Account</a>
             <a href="/users/{{username}}/delete" class="delete">Delete Post</a>
         {{else}}
-            {{#if isFollowing}}
+            {{!-- {{#if isFollowing}}
                 <button type="submit" class="unfollow" id="unfollowButton">Unfollow</button> 
             {{else}}
                 <button type="submit" class="follow" id="followButton">Follow</button> 
-            {{/if}}
+            {{/if}} --}}
+            <div id="buttonContainer">
+                <button type="submit" class="{{followClass}}" id="followingButton">{{followingText}}</button>
+            </div>
         {{/if}}
     </div>
 
-    <section class="followers">
-        <a href="/users/{{username}}/followers">
+    <section class="followers" >
+        <a href="/users/{{username}}/followers" id="followers">
             {{followers.length}} Followers
         </a>
     </section>

@@ -47,16 +47,4 @@ if(editForm){
     })
 }
 
-let unfollowButton = document.getElementById("unfollowButton");
-let followButton = document.getElementById("followButton");
-
-// if(unfollowButton){
-//     unfollowButton.addEventListener("click", (event) => {
-//         event.preventDefault();
-        
-
-//     })
-// }
-
-
 //for delete posts page

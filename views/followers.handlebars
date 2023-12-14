@@ -1,12 +1,14 @@
 
 <div>
-    <h1>{{username}}'s' Followers</h1>
+    <h1 id="name">{{username}}'s' Followers</h1>
     <section>
         {{#if followers}}
             <ul>
                 {{#each followers}}
                 <li>
-                    {{this.username}} {{!-- not sure about this --}}
+                    <a href="/users/{{username}}">
+                        {{this.username}}
+                    </a>
                 </li>
                 {{/each}}
             </ul>

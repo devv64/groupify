@@ -163,3 +163,58 @@ export const loginUser = async (email, password) => {
   user._id = user._id.toString();
   return user;
 };
+
+export const followUser = async (userId, profileId) => { //adds profile to user following list and adds user to profile's followers list
+  // handleId(followerId); 
+  // handleId(followingId);
+  const userCollection = await users();
+  const user = await getUserById(userId);
+  const profile = await getUserById(profileId);
+  if(user.following.includes(profileId)) throw "Already following user 1";
+  if(profile.followers.includes(userId)) throw "Already following user 2";
+  
+  let addToFollowing = await userCollection.findOneAndUpdate( //pushes profile to user following list
+    { _id: new ObjectId(userId) },
+    { $push: { following: profileId } },
+    { returnDocument: 'after' }
+  );
+
+  if (!addToFollowing) throw "Error: Update failed! Could not follow user 1";
+
+  let addToFollowers = await userCollection.findOneAndUpdate( //pushes user to profile followers list
+    { _id: new ObjectId(profileId) },
+    { $push: { followers: userId } },
+    { returnDocument: 'after' }
+  );
+  if (!addToFollowers) throw "Error: Update failed! Could not follow user 2";
+
+  return addToFollowing;
+
+}
+
+export const unfollowUser = async (userId, profileId) => { //removes profile form user following list and removes user form profile's followers list
+  // handleId(followerId);
+  // handleId(followingId);
+  const userCollection = await users();
+  const user = await getUserById(userId);
+  const profile = await getUserById(profileId);
+  if (!user.following.includes(profileId)) throw "Not following user 1";
+  if (!profile.followers.includes(userId)) throw "Not following user 2";
+
+  let removeFromFollowing = await userCollection.findOneAndUpdate( //pulls profile from user following list
+    { _id: new ObjectId(userId) },
+    { $pull: { following: profileId } },
+    { returnDocument: 'after' }
+  );
+  if (!removeFromFollowing) throw "Error: Update failed! Could not unfollow user 1";
+    
+  let removeFromFollowers = await userCollection.findOneAndUpdate( //pulls user from profile followers list
+    { _id: new ObjectId(profileId) },
+    { $pull: { followers: userId } },
+    { returnDocument: 'after' }
+  );
+  if (!removeFromFollowers) throw "Error: Update failed! Could not unfollow user 2";
+
+  return removeFromFollowing;
+
+}
