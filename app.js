@@ -33,8 +33,7 @@ app.use(
     name: 'AuthCookie',
     secret: 'some secret string!',
     saveUninitialized: false,
-    resave: false,
-    cookie: { maxAge: 60000 }
+    resave: false
   })
 );
 
@@ -52,6 +51,23 @@ app.use('/', (req, res, next) => {
     next();
   }
 })
+
+// ? Should user be able to access profile page without being logged in
+app.use('/feed', (req, res, next) => {
+  if (!req.session.user) {
+    res.redirect('/login');
+  } else {
+    next();
+  }
+});
+
+app.use('/posts', (req, res, next) => {
+  if (!req.session.user) {
+    res.redirect('/login');
+  } else {
+    next();
+  }
+});
 
 app.use('/profile', (req, res, next) => {
   if (!req.session.user) {

@@ -4,20 +4,41 @@
 <head>
     <meta charset="utf-8">
     <title>Harmoniq</title>
-    <link rel="stylesheet" href="/public/site.css">
+    <link rel="stylesheet" href="/public/css/site.css">
 </head>
 
 <body>
 
     <main>
+
+        {{!-- should we do it like this --}}
+        {{#if error}}
+        <div class="error" id="error" hidden>
+            {{error}}
+        </div>
+        {{/if}}
+
+        {{#if success}}
+        <div class="success" id="success" hidden>
+            {{success}}
+        </div>
+        {{/if}}
+        {{!--  --}}
+
+        {{!-- do we want this also how do I get profile to link properly --}}
+        <a href="/feed">Feed</a>
+        <a href="/users/{{ username }}">Profile</a>
+        
         {{{body}}}
     </main>
 
     <footer>Harmoniq CS546 </footer>
-
-    <script src="/public/main.js"></script>
-
-    <script src="/public/main.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
+		crossorigin="anonymous"></script>
+    <script src="/public/js/main.js"></script>
+    <script src="/public/js/follow_functionality.js"></script>
+    {{!-- <script src="https://code.jquery.com/jquery-2.2.4.min.js"
+        integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script> --}}
 
 </body>
 

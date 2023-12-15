@@ -1,12 +1,12 @@
 <div>
-    <h1>Feed</h1>
-    <p>Feed content</p>
+    <h1>Post</h1>
 
     <div>
-      {{post.userId}}
+      <a href="/users/{{post.username}}">{{post.username}}</a>
       {{post.body}}
       {{#each post.comments}}
         {{this.body}}
       {{/each}}
+      {{post.likes.length}}
     </div>
 </div>

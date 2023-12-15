@@ -1,17 +1,15 @@
-<main>
-    <h1>{{username}}'s' Following</h1>
+<div>
+    <h1 id="name">{{username}}'s' Following</h1>
     <section>
         {{#if following}}
-            <ul>
-                {{#each following}}
-                <li>
-                    {{this.username}} {{!-- not sure about this --}}
-                </li>
-                {{/each}}
-            </ul>
+            {{#each following}}
+                <a href="/users/{{username}}">
+                    {{this.username}}
+                </a>
+            {{/each}}
         {{else}}
             <p>No following yet</p>
         {{/if}}
     </section>
-    <a href="/users/{{username}}">Go back to profile page</a>
-</main>
+    <a href="/users/{{username}}" class="backToProfile">Go back to profile page</a>
+</div>

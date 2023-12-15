@@ -1,6 +1,6 @@
 import { users } from '../config/mongoCollections.js';
 import { ObjectId, ReturnDocument } from 'mongodb';
-import bycrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import * as validate from './validation.js';
 
 // import validation functions
@@ -36,7 +36,7 @@ export async function createUser(username, password, email) {
   await checkUsernameAndEmail(username, email);
 
   //encrypt password
-  const hash = await bycrypt.hash(password, 2);
+  const hash = await bcrypt.hash(password, 16);
 
   const pfp = 'https://source.unsplash.com/1600x900/?' + username;
 
@@ -114,20 +114,21 @@ export async function removeUserById(id) {
 }
 
 // update user by id
-export async function updateUserById(id, username, password, email, pfp, lastfmUsername) {
+export async function updateUserById(id, username, password, lastfmUsername) {
   // todo
   // handleId(id);
   
   // validateUser(updatedUser);
   const userCollection = await users();
   const user = await getUserById(id);
-  const lastfmData = await lastfm.getInfoByUser(lastfmUsername);
+  const lastfmData = lastfmUsername ? await lastfm.getInfoByUser(lastfmUsername) : null;
+  let hash = (password === '') ? null : await bcrypt.hash(password, 10); //if password is empty string, dont update password
 
   const updatedUser = {
     username: username || user.username,
-    password: password || user.password,
-    email: email || user.email,
-    pfp: pfp || user.pfp,
+    password: hash || user.password,
+    email: user.email,
+    pfp: 'https://source.unsplash.com/1600x900/?' + username || user.pfp,
     lastfm: lastfmData || user.lastfm,
     followers: user.followers,
     following: user.following,
@@ -140,7 +141,7 @@ export async function updateUserById(id, username, password, email, pfp, lastfmU
 
   // there might be a better way to do this
   const updateInfo = await userCollection.findOneAndReplace(
-    { _id: ObjectId(id) }, 
+    { _id: new ObjectId(id) }, 
     updatedUser,
     { returnDocument: 'after' }
     );
@@ -156,8 +157,81 @@ export const loginUser = async (email, password) => {
   const userCollection = await users();
   const user = await userCollection.findOne({ email: email });
   if (!user) throw "Incorrect Email or Password";
-  const compare = await bycrypt.compare(password, user.password);
+  const compare = await bcrypt.compare(password, user.password);
   if (!compare) throw "Incorrect Email or Password";
   user._id = user._id.toString();
   return user;
 };
+
+export const followUser = async (userId, profileId) => { //adds profile to user following list and adds user to profile's followers list
+  // handleId(followerId); 
+  // handleId(followingId);
+  const userCollection = await users();
+  const user = await getUserById(userId);
+  const profile = await getUserById(profileId);
+  if(user.following.includes(profileId)) throw "Already following user 1";
+  if(profile.followers.includes(userId)) throw "Already following user 2";
+  
+  let addToFollowing = await userCollection.findOneAndUpdate( //pushes profile to user following list
+    { _id: new ObjectId(userId) },
+    { $push: { following: profileId } },
+    { returnDocument: 'after' }
+  );
+
+  if (!addToFollowing) throw "Error: Update failed! Could not follow user 1";
+
+  let addToFollowers = await userCollection.findOneAndUpdate( //pushes user to profile followers list
+    { _id: new ObjectId(profileId) },
+    { $push: { followers: userId } },
+    { returnDocument: 'after' }
+  );
+  if (!addToFollowers) throw "Error: Update failed! Could not follow user 2";
+
+  return addToFollowers;
+
+}
+
+export const unfollowUser = async (userId, profileId) => { //removes profile form user following list and removes user form profile's followers list
+  // handleId(followerId);
+  // handleId(followingId);
+  const userCollection = await users();
+  const user = await getUserById(userId);
+  const profile = await getUserById(profileId);
+  if (!user.following.includes(profileId)) throw "Not following user 1";
+  if (!profile.followers.includes(userId)) throw "Not following user 2";
+
+  let removeFromFollowing = await userCollection.findOneAndUpdate( //pulls profile from user following list
+    { _id: new ObjectId(userId) },
+    { $pull: { following: profileId } },
+    { returnDocument: 'after' }
+  );
+  if (!removeFromFollowing) throw "Error: Update failed! Could not unfollow user 1";
+    
+  let removeFromFollowers = await userCollection.findOneAndUpdate( //pulls user from profile followers list
+    { _id: new ObjectId(profileId) },
+    { $pull: { followers: userId } },
+    { returnDocument: 'after' }
+  );
+  if (!removeFromFollowers) throw "Error: Update failed! Could not unfollow user 2";
+
+  return removeFromFollowers;
+
+}
+
+export const addNotification = async (profileId, notification) => {
+  // handleId(userId);
+  const userCollection = await users();
+  const user = await getUserById(profileId);
+  let newNotification = {
+    _id : new ObjectId(),
+    notification : notification,
+    dateCreated : new Date()
+  }
+  const insertNotification = await userCollection.findOneAndUpdate(
+    { _id: new ObjectId(profileId) },
+    { $push: { notifications: newNotification } },
+    { returnDocument: 'after' }
+  );
+  if (!insertNotification) throw "Error: Update failed! Could not add notification";
+  return insertNotification;
+}
