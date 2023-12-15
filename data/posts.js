@@ -14,6 +14,8 @@ import {searchTrackByName, searchArtistByName} from "../api/lastfm.js"
 // how should we design this, would lastfmSong and lastfmArtist be params like this? seems fine to me
 export async function createPost(body, userId, lastfmSong, lastfmArtist) {
   // validatePost(body, userId, lastfmSong, lastfmArtist);
+//   console.log("*******************");
+//   console.log(body);
   body = validate.validString(body);
   // userId = validate.validId(userId);
 

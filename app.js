@@ -133,18 +133,6 @@ app.use("/logout", (req, res, next) => {
     }
 });
 
-app.use("/logout", (req, res, next) => {
-    if (req.method === "GET") {
-        if (req.session.user) {
-            next();
-        } else {
-            return res.redirect("/login");
-        }
-    } else {
-        next();
-    }
-});
-
 // Middleware to pass user data to views
 // ! This may not be how we want to do it, sorry its 3am
 app.use((req, res, next) => {

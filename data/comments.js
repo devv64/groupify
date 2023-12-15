@@ -1,5 +1,5 @@
 import { ObjectId } from "mongodb";
-import {posts, comments, users} from '../config/mongoCollections';
+import {posts, comments, users} from '../config/mongoCollections.js';
 import {getPostById} from "./posts.js";
 import { validId } from "./validation.js";
 
@@ -8,21 +8,22 @@ import { validId } from "./validation.js";
 export const createComment = async (postId, userId, commentBody) => {
     
     postId = validId(postId);
-    userId = validId(userId);
-    if(!commentBody || !(typeof commentBody === "string") || commentBody.trim().length === 0) throw {status: 400, errMsg: "Comment cannot be empty or all spaces"};
-    // if(!dateCreated || !(typeof dateCreated === "string")) throw {status: 400, errMsg: "Comment creation date must be provided"}
-
+    //userId is username
+    userId = userId;
+    console.log("Comment Body: '", commentBody,"'");
+    if(!commentBody || !(typeof commentBody === "string") || commentBody.trim().length === 0) throw  "Comment cannot be empty or all spaces";
+    // if(!dateCreated || !(typeof dateCreated === "string")) throw  "Comment creation date must be provided}
+    
     
     const commentsCollection = await comments();
     const userCollection = await users();
     const postCollection = await posts();
-
+    
 
     //Get User for userid
-    const commenter = await userCollection.findOne({ _id: new ObjectId(userId) });
-
+    // const commenter = await userCollection.findOne({ _id: new ObjectId(userId) });
     //Check if userId of commenter exists
-    if(commenter === null) throw {status: 404, errMsg:`No user with id ${userId}`};
+    // if(commenter === null) throw `No user with id ${userId}`;
 
     let newComment = {
         _id : new ObjectId(),
@@ -32,21 +33,21 @@ export const createComment = async (postId, userId, commentBody) => {
         // Date Format: Fri Dec 08 2023 12:07:55 GMT-0500 (Eastern Standard Time)
         dateCreated : new Date()
     }
-
     const insertComment = await commentsCollection.insertOne(newComment);
-    if (!insertComment.acknowledged || !insertComment.insertedId) throw {status:400, errMsg: "Could not add new comment"};
+    if (!insertComment.acknowledged || !insertComment.insertedId) throw  "Could not add new comment";
    
     const newCommentId = insertComment.insertedId.toString();
     const comment = await getCommentById(newCommentId);
     // return comment;
-    
+    // console.log(`--------------${postId}----------------`);
     const updatedPost = await postCollection.updateOne(
-        { _id: ObjectId(postId) },
+        { _id: new ObjectId(postId) },
         { $addToSet: { comments: newCommentId } }
     );
-    if (!updatedPost.acknowledged || updatedPost.modifiedCount === 0) throw {status:400, errMsg: "Could not add comment to post"};
+    if (!updatedPost.acknowledged || updatedPost.modifiedCount === 0) throw  "Could not add comment to post";
 
-    return await getPostById(postId);
+    // return await getPostById(postId);
+    return comment;
 };
 
 //Gets comment by comment Id
@@ -56,7 +57,7 @@ export const getCommentById = async (commentId) => {
     const commentsCollection = await comments();
 
     const comment = await commentsCollection.findOne({ _id: new ObjectId(commentId) });
-    if (comment === null) throw {status:404, errMsg:"Comment not found"};
+    if (comment === null) throw "Comment not found";
     comment._id = comment._id.toString();
     return comment;
 
@@ -74,7 +75,7 @@ export const getAllCommentsByPostId = async (postId) => {
         // .project({ _id: 1, body: 1, dateCreated:1 })
         .toArray();
 
-    if (!commentList) throw {status:404, errMsg:"Could not get all events"};
+    if (!commentList) throw "Could not get all comments";
     
     commentList.forEach(comment => {
         comment._id = comment._id.toString();
@@ -94,14 +95,14 @@ export const removeComment = async (commentId) =>{
 
     //Delete comment from the Comments Collection
     const deletionInfo = await commentsCollection.findOneAndDelete({ _id: new ObjectId(commentId) });
-    if(!deletionInfo) throw {status: 400, errMsg:`Could not delete comment with id of ${commentId}`};
+    if(!deletionInfo) throw `Could not delete comment with id of ${commentId}`;
 
     //Removes comment from it's post collection
     const updatedPost = await postCollection.updateOne(
         { _id: ObjectId(comment.postId) },
         { $pull: { comments: commentId } }
     );
-    if (!updatedPost.acknowledged || updatedPost.modifiedCount === 0) throw {status:400, errMsg: "Could not remove comment from post"};
+    if (!updatedPost.acknowledged || updatedPost.modifiedCount === 0) throw  "Could not remove comment from post";
 
     return updatedPost;
 };

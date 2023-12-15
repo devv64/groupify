@@ -9,6 +9,7 @@ const router = Router();
 
 // TODO: clean up the way this is being done
 import * as postsData from '../data/posts.js';
+import * as commentsData from '../data/comments.js';
 
 router.get('/register', async (req, res) => {
   // if (res.session.user !== undefined) res.redirect('/profile');
@@ -63,7 +64,7 @@ try {
 router.get('/logout', async (req, res) => {
   req.session.destroy();
   res.clearCookie('AuthCookie', { expires: new Date(0) });
-  return res.redirect('/loginsignup');
+  return res.redirect('/login');
 });
 
 router
@@ -71,7 +72,7 @@ router
   .get(async (req, res) => {
     try {
       const posts = await postsData.getSomePosts();
-      console.log(posts);
+    //   console.log(posts);
       res.render('feed', { posts })      
     } catch (e) {
       return res.status(400).render('feed', { error: e });
@@ -79,14 +80,20 @@ router
   })
   .post(async (req, res) => {
     // ? how do I send userId here (from session), is this valid
-    const { body, lastfmSong, lastfmArtist } = req.body;
-    const userId = res.locals.username;
+    // const { body, lastfmSong, lastfmArtist } = req.body;
     try {
-      const post = await postsData.createPost(body, userId, lastfmSong, lastfmArtist);
-      console.log(post);
-      return res.redirect(`/posts/${post._id}`);
+        const body = xss(req.body.body);
+        const lastfmSong = req.body.lastfmSong;
+        const lastfmArtist = req.body.lastfmArtist;
+
+        // const lastfmSong = xss(req.body.lastfmSong);
+        // const lastfmArtist = xss(req.body.lastfmArtist);
+
+        const userId = res.locals.username;
+        const post = await postsData.createPost(body, userId, lastfmSong, lastfmArtist);
+        return res.redirect(`/posts/${post._id}`);
     } catch (e) {
-      return res.status(400).render('feed', { error: e });
+        return res.status(400).render('feed', { error: e });
     }
   })
 
@@ -95,12 +102,52 @@ router
   // ! Need to fix when it isn't a proper post_id
   .get(async (req, res) => {
     try {
-      const post_id = req.params.post_id
-      const post = await postsData.getPostById(post_id)
-      return res.render('posts', { post })
+      const post_id = req.params.post_id;
+      const post = await postsData.getPostById(post_id);
+      const postComments = await commentsData.getAllCommentsByPostId(post_id);
+      console.log("Post Comments: ",postComments);
+      return res.render('posts', { post, postComments });
     } catch (e) {
-      return res.status(400).render('feed', { error: e })
+      return res.status(400).render('feed', { error: e });
     }
   })
+  .post(async (req, res) => {
+    // const body = xss(req.body.body);
+    // const lastfmSong = xss(req.body.lastfmSong);
+    // const lastfmArtist = xss(req.body.lastfmArtist);
 
+    try {
+        const post_id = req.params.post_id;
+        // console.log("Post Id: ", post_id);
+        const userId = res.locals.username;
+        const commentBody = xss(req.body.comment);
+        let post = await postsData.getPostById(post_id);
+        // console.log("Post: ", post);
+
+        // console.log("Req Body:", req.body);
+        const comment = await commentsData.createComment(post_id, userId, commentBody);
+        // console.log("Comment: ", comment);
+        post = await postsData.getPostById(post_id);
+        // console.log("Post 2: ", post);
+        
+        return res.render('partials/comment', {layout:null, ...comment});
+    } catch (e) {
+        // console.log("This is E", e, "||");
+        if (
+            e &&
+            (e.indexOf("No user with id") >= 0 ||
+                e.indexOf("Comment not found") >= 0 ||
+                e.indexOf("Could not get all events") >= 0)
+        ) {
+            // return res.status(404).render("posts", {post, error: e });
+            return res.status(404).render("feed", {error: e });
+        } else {
+            return res.status(400).render("feed", {error: e });
+        }
+        // return res.status(400).render('feed', { error: e.errMsg });
+    }
+  });
+
+router
+    .route('/posts/')
 export default router;

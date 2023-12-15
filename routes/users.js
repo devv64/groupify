@@ -6,7 +6,7 @@ import { getUserByUsername, updateUserById } from '../data/users.js';
 // import validation functions
 
 router.get('/login', async (req, res) => {
-  res.render('signuplogin');
+  res.render('loginsignup');
 });
 
 //destroy session when logging out
