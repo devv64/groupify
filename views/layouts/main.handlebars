@@ -10,12 +10,29 @@
 <body>
 
     <main>
+
+        {{!-- should we do it like this --}}
+        {{#if error}}
+        <div class="error" id="error" hidden>
+            {{error}}
+        </div>
+        {{/if}}
+
+        {{#if success}}
+        <div class="success" id="success" hidden>
+            {{success}}
+        </div>
+        {{/if}}
+        {{!--  --}}
+
+        {{!-- do we want this also how do I get profile to link properly --}}
+        <a href="/feed">Feed</a>
+        <a href="/users/{{ username }}">Profile</a>
+        
         {{{body}}}
     </main>
 
-    <footer>Harmoniq CS546 </footer>
-
-    <script src="/public/main.js"></script>
+    <footer>Harmoniq CS546</footer>
 
     <script src="/public/main.js"></script>
 

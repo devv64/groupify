@@ -2,10 +2,23 @@
     <h1>Feed</h1>
     <p>Feed content</p>
 
+    {{!-- ! need to fix this --}}
+    <div class="error" id="errid">
+    {{!-- <div class="error" id="errid" hidden> --}}
+        {{error}}
+    </div>
+
+    <form action="/feed" method="POST" class="create-post" id="create-post">
+        <label for="body">Post something: </label>
+        <input type="text" name="body" placeholder="Post something">
+        <button type="submit">Create Post</button>
+    </form>
+
     <ul>
         {{#each posts}}
-            <li>{{this.userId}}</li>
+            <li><a href="/users/{{this.userId}}">{{this.userId}}</a></li>
             <li>{{this.body}}</li>
+            <li>{{this.likes}}</li>
             {{#each comments}}
                 <li>{{this.body}}</li>
             {{/each}}

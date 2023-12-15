@@ -1,9 +1,8 @@
 <div>
-    <h1>Feed</h1>
-    <p>Feed content</p>
+    <h1>Post</h1>
 
     <div>
-      {{post.userId}}
+      <a href="/users/{{post.userId}}">{{post.userId}}</a>
       {{post.body}}
       {{#each post.comments}}
         {{this.body}}
