@@ -1,6 +1,6 @@
 import { users } from '../config/mongoCollections.js';
 import { ObjectId, ReturnDocument } from 'mongodb';
-import bcrypt from 'bcryptjs';
+import bcrypt from 'bcrypt';
 import * as validate from './validation.js';
 
 // import validation functions

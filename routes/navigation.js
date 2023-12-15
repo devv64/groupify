@@ -93,7 +93,6 @@ router
     const userId = req.session.user._id;
     try {
       const post = await postsData.createPost(body, userId, lastfmSong, lastfmArtist);
-      // console.log('FISH:', post)
       return res.redirect(`/posts/${post._id}`);
     } catch (e) {
       try {

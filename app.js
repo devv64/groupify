@@ -73,7 +73,16 @@ app.use('/profile', (req, res, next) => {
   if (!req.session.user) {
     res.redirect('/login');
   } else {
-    next();
+    return res.render('profilePage', { 
+      profilePic: req.session.user.pfp,
+      username: req.session.user.username,
+      posts: req.session.user.createdPosts,
+      followers: req.session.user.followers,
+      following: req.session.user.following,
+      likedPosts: req.session.user.likedPosts,
+      notifications: req.session.user.notifications,
+      isPersonalAccount: true
+    });
   }
 });
 
