@@ -1,9 +1,7 @@
 
 {{!-- TODO : 
 functionality for follow/unfollow button ; 
-display posts ; 
 display posts liked ; 
-delete posts ; 
 display comments 
 make sure everything works from when viewing another profile
 input validation
@@ -41,7 +39,7 @@ styling--}}
         </a>
     </section>
 
-    <section>
+    <section class="posts">
         <h2>Posts</h2>
         {{#if posts}}
             <ul>
@@ -56,13 +54,13 @@ styling--}}
         {{/if}}
     </section>
 
-    <section>
+    <section class="likedPosts">
         <h2>Posts {{username}} liked</h2>
         {{#if likedPosts}}
             <ul>
                 {{#each likedPosts}}
                 <li>
-                    {{this.likes}} {{!-- not sure about this --}}
+                    {{this.body}} 
                 </li>
                 {{/each}}
             </ul>

@@ -3,7 +3,7 @@ const router = Router();
 // import data functions
 import * as lastfm from '../api/lastfm.js';
 import { getUserByUsername, updateUserById, followUser, unfollowUser, getUserById } from '../data/users.js';
-import { getPostsByUser } from '../data/posts.js';
+import { getPostsByUser, removePostById } from '../data/posts.js';
 // import { getPostsByUser } from '../data/posts.js';
 import { validEditedUsername, validEditedPassword } from '../data/validation.js';
 import bycrypt from 'bcrypt';
@@ -36,23 +36,29 @@ router
 router.route('/:username')
   .get(async (req, res) => { //public profile page / personal page
     try{
-      const user = await getUserByUsername(req.params.username);
-      const posts = await getPostsByUser(user._id);
+      const profile = await getUserByUsername(req.params.username);
+      const posts = await getPostsByUser(profile._id);
       let personalAccount = false;
-      if(req.session.user && req.session.user.username === user.username){
+      if(req.session.user && req.session.user.username === profile.username){
         personalAccount = true
       }
 
-      let followClass = !user.followers.includes(req.session.user._id) ? "follow"  : "unfollow";
-      let followText = !user.followers.includes(req.session.user._id) ? "Follow" : "Unfollow";
+      let likedPosts = [];
+      for(let i = 0; i < profile.likedPosts.length; i++){
+        let likedPost = await getPostById(profile.likedPosts[i]);
+        likedPosts.push(likedPost);
+      }
+
+      let followClass = !profile.followers.includes(req.session.user._id) ? "follow"  : "unfollow";
+      let followText = !profile.followers.includes(req.session.user._id) ? "Follow" : "Unfollow";
 
       return res.render('profilePage', {
-          profilePic: user.pfp,
-          username: user.username,
+          profilePic: profile.pfp,
+          username: profile.username,
           posts: posts,
-          followers: user.followers,
-          following: user.following,
-          likedPosts: user.likedPosts,
+          followers: profile.followers,
+          following: profile.following,
+          likedPosts: likedPosts,
           isPersonalAccount: personalAccount,
           followClass: followClass,
           followingText: followText
@@ -177,8 +183,10 @@ router.route('/:username/manage')
         (newPassword !== null && oldPassword === null)) 
         throw "Enter old and new password to change password";
 
-      const checkOldPassword = await bycrypt.compare(oldPassword, user.password);
-      if (!checkOldPassword) throw "Incorrect Old Password";
+      if(oldPassword !== null){
+        const checkOldPassword = await bycrypt.compare(oldPassword, user.password);
+        if (!checkOldPassword) throw "Incorrect Old Password";
+      }
 
       if (newPassword !== confirmPassword) throw "New Password and Confirm Password do not match";
 
@@ -199,6 +207,8 @@ router.route('/:username/manage')
 
       const id = user._id;
       if(username ==='') username = user.username;
+      if(lastfmUsername ==='') lastfmUsername = user.lastfmUsername;
+      
       const updatedUser = await updateUserById(id, username, newPassword, lastfmUsername); //wont work since lastfm is not connected i think
       req.session.user = updatedUser;
       return res.redirect(`/users/${username}`);
@@ -212,18 +222,39 @@ router.route('/:username/delete')
   .get(async (req, res) => { //delete post page
   try{
     const user = await getUserByUsername(req.params.username);
-    // const post = await getPostsByUser(user._id);
+    const posts = await getPostsByUser(user._id);
     res.render('delete', {
         username: user.username,
+        posts : posts
     })
   }
   catch(e){
-    return res.status(404).render('error', {error: e});
+    return res.status(404).render('delete', {error: e});
   }
 })
-  .delete(async (req, res) => {
-  
+  .post(async (req, res) => {
+    try{
+      const user = await getUserByUsername(req.params.username);
+      const postToDelete = req.body.postToDelete;
+      await removePostById(postToDelete);
+      return res.redirect(`/users/${user.username}/postdeleted`)
+    }
+    catch(e){
+      return res.status(400).render('delete', {error: "Error deleting post"});
+    }
 })
+
+router.route('/:username/postdeleted')
+  .get(async (req, res) => {
+    try{
+      const user = await getUserByUsername(req.params.username);
+      res.render('postdeleted', 
+      {username : user.username})
+    }
+    catch(e){
+      return res.status(400).render('delete', {error: "Error deleting post"});
+    }
+  })
 
 
 export default router;

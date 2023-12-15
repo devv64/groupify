@@ -71,7 +71,7 @@ router
   .get(async (req, res) => {
     try {
       const posts = await postsData.getSomePosts();
-      console.log(posts);
+      // console.log(posts);
       res.render('feed', { posts })   
     } catch (e) {
       return res.status(400).render('feed', { error: e });
@@ -84,7 +84,7 @@ router
     const userId = req.session.user._id;
     try {
       const post = await postsData.createPost(body, userId, lastfmSong, lastfmArtist);
-      console.log('FISH:', post)
+      // console.log('FISH:', post)
       return res.redirect(`/posts/${post._id}`);
     } catch (e) {
       try {
@@ -103,7 +103,7 @@ router
     try {
       const post_id = req.params.post_id
       const post = await postsData.getPostById(post_id)
-      console.log(post.username)
+      // console.log(post.username)
       return res.render('posts', { post })
     } catch (e) {
       return res.status(400).render('feed', { error: e })

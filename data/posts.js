@@ -114,20 +114,23 @@ export async function removePostById(id) {
   // handleId(id);
   const postCollection = await posts();
   const userCollection = await users();
+  const user = await userCollection.findOne({ createdPosts : {$in: [new ObjectId(id)]}})
   // ! should I just do findOneAndDelete instead
   const post = await getPostById(id);
 
-  let user = await userCollection.findOneAndUpdate(
-    { username: username },
+  let updateUser = await userCollection.findOneAndUpdate(
+    { username: user.username },
     { $pull: {createdPosts: new ObjectId(id)} },
     { returnDocument: 'after' }
     )
+
+    if(!updateUser) throw "User not found"
 
     // ! error check
 
     // ? maybe remove from everyone that liekd thsi post
 
-  const deletionInfo = await postCollection.deleteOne({ _id: ObjectId(id) });
+  const deletionInfo = await postCollection.deleteOne({ _id: new ObjectId(id) });
   if (!deletionInfo.acknowledged || deletionInfo.deletedCount === 0) throw `Could not delete post with id of ${id}`;
   return post;
 }

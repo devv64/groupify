@@ -9,9 +9,9 @@ const user2 = await createUser('JaneSmith', "Password1!", 'janesmith@example.com
 const user3 = await createUser('MikeJohnson', "Password1!", 'mikejohnson@example.com');
 
 // Create dummy posts
-const post1 = await createPost('First Post', user1.username);
-const post2 = await createPost('Second Post', user2.username);
-const post3 = await createPost('Third Post', user3.username);
+const post1 = await createPost('First Post', user1._id);
+const post2 = await createPost('Second Post', user2._id);
+const post3 = await createPost('Third Post', user3._id);
 
 console.log('Dummy users and posts created successfully!');
 } catch (error) {

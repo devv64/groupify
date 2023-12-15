@@ -111,3 +111,8 @@ a:hover {
         background-color: #2980b9; /* Button color on hover */
       }
 }
+
+ul{
+    list-style: none;
+
+}

@@ -5,7 +5,10 @@
             <ul>
                 {{#each posts}}
                 <li>
-                    {{this.body}} {{!-- not sure about this --}}
+                    <form method="post">
+                        <input type="hidden" name="postToDelete" id="postToDelete" value="{{this._id}}">
+                        <button type="submit" >{{this.body}}</button>
+                    </form>
                 </li>
                 {{/each}}
             </ul>
