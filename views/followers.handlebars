@@ -1,17 +1,12 @@
-
 <div>
     <h1 id="name">{{username}}'s' Followers</h1>
     <section>
         {{#if followers}}
-            <ul>
-                {{#each followers}}
-                <li>
-                    <a href="/users/{{username}}">
-                        {{this.username}}
-                    </a>
-                </li>
-                {{/each}}
-            </ul>
+            {{#each followers}}
+                <a href="/users/{{username}}">
+                    {{this.username}}
+                </a>
+            {{/each}}
         {{else}}
             <p>No followers yet</p>
         {{/if}}

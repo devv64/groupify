@@ -39,12 +39,12 @@ router.route('/:username')
       const profile = await getUserByUsername(req.params.username);
       const posts = await getPostsByUser(profile._id);
       let personalAccount = false;
-      if(req.session.user && req.session.user.username === profile.username){
+      if(req.session.user && req.session.user.username === profile.username){ //check if user is viewing their own profile
         personalAccount = true
       }
 
       let likedPosts = [];
-      for(let i = 0; i < profile.likedPosts.length; i++){
+      for(let i = 0; i < profile.likedPosts.length; i++){ 
         let likedPost = await getPostById(profile.likedPosts[i]);
         likedPosts.push(likedPost);
       }
@@ -81,10 +81,11 @@ router.route('/:username')
     if(!(req.session.user.following.includes(profile._id))){ //check if user is not following profile
       try{
         let follow = await followUser(req.session.user._id, profile._id);
-        req.session.user = follow;
-        return res.status(200).json(
+        let updatedUser = await getUserById(req.session.user._id);
+        req.session.user = updatedUser; //update session user with new following list
+        return res.status(200).json( //return json to client side to update followers count and that user just followed
           {
-            followers: profile.followers.length,
+            followers: follow.followers.length,
             didJustFollow:true,
             didJustUnfollow:false
           }
@@ -97,10 +98,11 @@ router.route('/:username')
     else{
       try{
         let unfollow = await unfollowUser(req.session.user._id, profile._id);
-        req.session.user = unfollow;
-        return res.status(200).json(
+        let updatedUser = await getUserById(req.session.user._id);
+        req.session.user = updatedUser; //update session user with new following list
+        return res.status(200).json( //return json to client side to update followers count and that user just unfollowed
           {
-            followers: profile.followers.length,
+            followers: unfollow.followers.length,
             didJustFollow:false,
             didJustUnfollow:true
           }

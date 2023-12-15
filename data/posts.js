@@ -114,11 +114,11 @@ export async function removePostById(id) {
   // handleId(id);
   const postCollection = await posts();
   const userCollection = await users();
-  const user = await userCollection.findOne({ createdPosts : {$in: [new ObjectId(id)]}})
+  const user = await userCollection.findOne({ createdPosts : {$in: [new ObjectId(id)]}}) //finds user that created post by checking createdPosts for the id
   // ! should I just do findOneAndDelete instead
   const post = await getPostById(id);
 
-  let updateUser = await userCollection.findOneAndUpdate(
+  let updateUser = await userCollection.findOneAndUpdate( //removes post from createdPosts from that user
     { username: user.username },
     { $pull: {createdPosts: new ObjectId(id)} },
     { returnDocument: 'after' }

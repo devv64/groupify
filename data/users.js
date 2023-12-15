@@ -122,7 +122,7 @@ export async function updateUserById(id, username, password, lastfmUsername) {
   const userCollection = await users();
   const user = await getUserById(id);
   const lastfmData = lastfmUsername ? await lastfm.getInfoByUser(lastfmUsername) : null;
-  let hash = (password === '') ? null : await bycrypt.hash(password, 10);
+  let hash = (password === '') ? null : await bycrypt.hash(password, 10); //if password is empty string, dont update password
 
   const updatedUser = {
     username: username || user.username,
@@ -187,7 +187,7 @@ export const followUser = async (userId, profileId) => { //adds profile to user 
   );
   if (!addToFollowers) throw "Error: Update failed! Could not follow user 2";
 
-  return addToFollowing;
+  return addToFollowers;
 
 }
 
@@ -214,6 +214,6 @@ export const unfollowUser = async (userId, profileId) => { //removes profile for
   );
   if (!removeFromFollowers) throw "Error: Update failed! Could not unfollow user 2";
 
-  return removeFromFollowing;
+  return removeFromFollowers;
 
 }

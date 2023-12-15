@@ -1,6 +1,5 @@
 
 {{!-- TODO : 
-functionality for follow/unfollow button ; 
 display posts liked ; 
 display comments 
 make sure everything works from when viewing another profile
@@ -16,11 +15,6 @@ styling--}}
             <a href="/users/{{username}}/manage" class="manage">Manage Profile Account</a>
             <a href="/users/{{username}}/delete" class="delete">Delete Post</a>
         {{else}}
-            {{!-- {{#if isFollowing}}
-                <button type="submit" class="unfollow" id="unfollowButton">Unfollow</button> 
-            {{else}}
-                <button type="submit" class="follow" id="followButton">Follow</button> 
-            {{/if}} --}}
             <div id="buttonContainer">
                 <button type="submit" class="{{followClass}}" id="followingButton">{{followingText}}</button>
             </div>
@@ -42,13 +36,11 @@ styling--}}
     <section class="posts">
         <h2>Posts</h2>
         {{#if posts}}
-            <ul>
-                {{#each posts}}
-                <li>
-                    {{this.body}}
-                </li>
-                {{/each}}
-            </ul>
+            {{#each posts}}
+            <p>
+                {{this.body}}
+            </p>
+            {{/each}}
         {{else}}
         <p>No posts yet</p>
         {{/if}}
