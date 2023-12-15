@@ -1,6 +1,6 @@
 import { users } from '../config/mongoCollections.js';
 import { ObjectId, ReturnDocument } from 'mongodb';
-import bycrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import * as validate from './validation.js';
 
 // import validation functions
@@ -36,7 +36,7 @@ export async function createUser(username, password, email) {
   await checkUsernameAndEmail(username, email);
 
   //encrypt password
-  const hash = await bycrypt.hash(password, 16);
+  const hash = await bcrypt.hash(password, 16);
 
   const pfp = 'https://source.unsplash.com/1600x900/?' + username;
 
@@ -122,7 +122,7 @@ export async function updateUserById(id, username, password, lastfmUsername) {
   const userCollection = await users();
   const user = await getUserById(id);
   const lastfmData = lastfmUsername ? await lastfm.getInfoByUser(lastfmUsername) : null;
-  let hash = (password === '') ? null : await bycrypt.hash(password, 10); //if password is empty string, dont update password
+  let hash = (password === '') ? null : await bcrypt.hash(password, 10); //if password is empty string, dont update password
 
   const updatedUser = {
     username: username || user.username,
@@ -157,7 +157,7 @@ export const loginUser = async (email, password) => {
   const userCollection = await users();
   const user = await userCollection.findOne({ email: email });
   if (!user) throw "Incorrect Email or Password";
-  const compare = await bycrypt.compare(password, user.password);
+  const compare = await bcrypt.compare(password, user.password);
   if (!compare) throw "Incorrect Email or Password";
   user._id = user._id.toString();
   return user;
@@ -216,4 +216,22 @@ export const unfollowUser = async (userId, profileId) => { //removes profile for
 
   return removeFromFollowers;
 
+}
+
+export const addNotification = async (profileId, notification) => {
+  // handleId(userId);
+  const userCollection = await users();
+  const user = await getUserById(profileId);
+  let newNotification = {
+    _id : new ObjectId(),
+    notification : notification,
+    dateCreated : new Date()
+  }
+  const insertNotification = await userCollection.findOneAndUpdate(
+    { _id: new ObjectId(profileId) },
+    { $push: { notifications: newNotification } },
+    { returnDocument: 'after' }
+  );
+  if (!insertNotification) throw "Error: Update failed! Could not add notification";
+  return insertNotification;
 }

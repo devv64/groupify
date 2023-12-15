@@ -6,7 +6,7 @@ import { getUserByUsername, updateUserById, followUser, unfollowUser, getUserByI
 import { getPostsByUser, removePostById } from '../data/posts.js';
 // import { getPostsByUser } from '../data/posts.js';
 import { validEditedUsername, validEditedPassword } from '../data/validation.js';
-import bycrypt from 'bcrypt';
+import bcrypt from 'bcrypt';
 
 // import validation functions
 
@@ -186,7 +186,7 @@ router.route('/:username/manage')
         throw "Enter old and new password to change password";
 
       if(oldPassword !== null){
-        const checkOldPassword = await bycrypt.compare(oldPassword, user.password);
+        const checkOldPassword = await bcrypt.compare(oldPassword, user.password);
         if (!checkOldPassword) throw "Incorrect Old Password";
       }
 
@@ -257,6 +257,21 @@ router.route('/:username/postdeleted')
       return res.status(400).render('delete', {error: "Error deleting post"});
     }
   })
+
+  router.route('/:username/notifications')
+    .get(async (req, res) => {
+      try{
+        const user = await getUserByUsername(req.params.username);
+        res.render('notifications', 
+        {
+          username : user.username,
+          notifications: user.notifications
+        })
+      }
+      catch(e){
+        return res.status(400).render('notifications', {error: "Error loading notifications"});
+      }
+    })
 
 
 export default router;

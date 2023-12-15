@@ -71,8 +71,17 @@ router
   .get(async (req, res) => {
     try {
       const posts = await postsData.getSomePosts();
-      // console.log(posts);
-      res.render('feed', { posts })   
+      const user = await userData.getUserByUsername(req.session.user.username);
+      // console.log(user.username)
+      // console.log(posts)
+
+      res.render('feed', 
+      { 
+        posts : posts, 
+        username : user.username
+      }
+      )   
+
     } catch (e) {
       return res.status(400).render('feed', { error: e });
     }
@@ -109,5 +118,6 @@ router
       return res.status(400).render('feed', { error: e })
     }
   })
+
 
 export default router;

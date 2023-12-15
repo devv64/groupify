@@ -12,13 +12,13 @@ followingButton.click(function () {
     .then(function (responseMessage) { 
             if(responseMessage.didJustFollow){
                 $('#followers').html(responseMessage.followers + ' Followers')
-                $('#followingButton').html('unfollow')
+                $('#followingButton').html('Unfollow')
                 $('#followingButton').removeClass('follow')
                 $('#followingButton').addClass('unfollow')
             }
             else{
                 $('#followers').html(responseMessage.followers + ' Followers')
-                $('#followingButton').html('follow')
+                $('#followingButton').html('Follow')
                 $('#followingButton').removeClass('unfollow')
                 $('#followingButton').addClass('follow')
             }
