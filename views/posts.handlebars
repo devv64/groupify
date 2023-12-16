@@ -1,13 +1,20 @@
 <div>
     <h1>Post</h1>
 
+    <div class="error" id="errid">
+    {{!-- <div class="error" id="errid" hidden> --}}
+        {{error}}
+    </div>
+
     <div>
       <a href="/users/{{post.username}}">{{post.username}}</a>
       {{post.body}}
-      {{#each post.comments}}
-        {{this.body}}
-      {{/each}}
-      {{post.likes.length}} 
+      <form action="/posts/{{post._id}}" method="POST" class="create-comment" id="create-comment">
+        <label for="comment-body"> Make Comment: </label>
+        <input type="text" id="comment-body" name="comment-body" placeholder="Reply with a Comment">
+        <button type="submit">Create Comment</button>
+      </form>
+        
       
       {{!-- All of this is not working I am just writing for now --}}
       {{#if liked}}
@@ -27,19 +34,23 @@
         </form>
       {{/if}}
 
-      <form action="/comments/{{post._id}}" method="POST">
-        <input type="text" name="body" placeholder="Comment">
-        <button type="submit">Comment</button>
-      </form>
 
-      {{#each post.comments}}
-        {{this.body}}
-        {{#if (eq this.username username)}}
-          <form action="/comments/{{this._id}}/delete" method="POST">
-            <button type="submit">Delete</button>
-          </form>
-        {{/if}}
-      {{/each}}
+
+      <div id="show-comments">
+            {{#each postComments}}
+                <div id="comment-box">
+                    <a href="/users/{{this.username}}">{{this.username}}</a>
+                    <p>{{body}}</p>
+                    {{#if (eq this.username ../username)}}
+                        <form method="POST" action="/posts/{{post._id}}/deletecomment">
+                            {{!-- Sends comment Id to deletecomment route --}}
+                            <input type="hidden" name="commentToDelete" id="commentToDelete" value="{{this._id}}">
+                            <button type="submit">Delete</button>
+                        </form>
+                    {{/if}}
+                </div>
+            {{/each}}
+        </div> 
       {{!-- All of this is not working I am just writing for now --}}
 
       {{#if post.track}}
