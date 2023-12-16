@@ -8,6 +8,13 @@ export const validString = (str) => {
     if (str.length === 0) throw "String must be a non-empty string";
     return str
 }
+export const validFmString = (str) => {
+  if (!str) return null;
+  if (typeof str !== 'string') throw "String must be a string";
+  str = str.trim();
+  if (str.length === 0) throw "String must be a non-empty string";
+  return str
+}
 
 export const validEmail = (email) => {
     if (!email) throw "Email must be provided";

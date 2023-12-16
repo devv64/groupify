@@ -148,6 +148,7 @@ ul{
     background-color: rgba(6, 70, 112, 0.85);
     -webkit-backdrop-filter: saturate(180%) blur(20px);
     backdrop-filter: saturate(180%) blur(20px);
+    opacity: 0.5;
 }
 .site-header a {
     padding: 12px 25px;
@@ -196,6 +197,7 @@ footer {
 .success {
     color: green;
     font-weight: bold;
+    font-size: 100px;
   } 
 
 .dark_mode{

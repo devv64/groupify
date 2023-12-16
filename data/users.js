@@ -25,7 +25,6 @@ export async function checkUsernameAndEmail(username, email) {
 
 // create user
 export async function createUser(username, password, email) {
-  // validateUser(username, password, email, pfp, lastfm);
   username = validate.validName(username);
   password = validate.validPassword(password);
   email = validate.validEmail(email);
@@ -60,12 +59,13 @@ export async function createUser(username, password, email) {
   if (!insertInfo.acknowledged || !insertInfo.insertedId) throw "Could not add user";  
   const newId = insertInfo.insertedId.toString();
   const user = await getUserById(newId);
+  if (!user) throw "User not found";
   return user;
 }
 
 // get user by id
 export async function getUserById(id) {
-  // handleId(id);
+  id = validate.validId(id);
   const userCollection = await users();
   const user = await userCollection.findOne({ _id: new ObjectId(id) });
   if (!user) throw "User not found";
@@ -105,9 +105,10 @@ export async function getAllUsers() {
 
 // remove user by id
 export async function removeUserById(id) {
-  // handleId(id);
+  id = validate.validId(id);
   const userCollection = await users();
   const user = await getUserById(id);
+  if (!user) throw `Could not find user with id of ${id}`;
   const deletionInfo = await userCollection.deleteOne({ _id: ObjectId(id) });
   if (!deletionInfo.acknowledged || deletionInfo.deletedCount === 0) throw `Could not delete user with id of ${id}`;
   return user;
@@ -115,12 +116,15 @@ export async function removeUserById(id) {
 
 // update user by id
 export async function updateUserById(id, username, password, lastfmUsername) {
-  // todo
-  // handleId(id);
-  
-  // validateUser(updatedUser);
+
+  id = validate.validId(id);
+  username = validate.validName(username);
+  password = validate.validPassword(password);
+  lastfmUsername = validate.validName(lastfmUsername);
+
   const userCollection = await users();
   const user = await getUserById(id);
+  if (!user) throw `Could not find user with id of ${id}`;
   const lastfmData = lastfmUsername ? await lastfm.getInfoByUser(lastfmUsername) : null;
   let hash = (password === '') ? null : await bcrypt.hash(password, 4); //if password is empty string, dont update password
 
@@ -182,9 +186,13 @@ export const loginUser = async (email, password) => {
 export const followUser = async (userId, profileId) => { //adds profile to user following list and adds user to profile's followers list
   // handleId(followerId); 
   // handleId(followingId);
+  userId = validate.validId(userId);
+  profileId = validate.validId(profileId);
   const userCollection = await users();
   const user = await getUserById(userId);
+  if (!user) throw "User not found";
   const profile = await getUserById(profileId);
+  if (!profile) throw "Profile not found";
   if(user.following.includes(profileId)) throw "Already following user 1";
   if(profile.followers.includes(userId)) throw "Already following user 2";
   
@@ -210,9 +218,13 @@ export const followUser = async (userId, profileId) => { //adds profile to user 
 export const unfollowUser = async (userId, profileId) => { //removes profile form user following list and removes user form profile's followers list
   // handleId(followerId);
   // handleId(followingId);
+  userId = validate.validId(userId);
+  profileId = validate.validId(profileId);
   const userCollection = await users();
   const user = await getUserById(userId);
+  if (!user) throw "User not found";
   const profile = await getUserById(profileId);
+  if (!profile) throw "Profile not found";
   if (!user.following.includes(profileId)) throw "Not following user 1";
   if (!profile.followers.includes(userId)) throw "Not following user 2";
 
@@ -236,6 +248,8 @@ export const unfollowUser = async (userId, profileId) => { //removes profile for
 
 export const addNotification = async (profileId, notification) => {
   // handleId(userId);
+  profileId = validate.validId(profileId);
+  notification = validate.validString(notification);
   const userCollection = await users();
   let newNotification = {
     _id : new ObjectId(),
@@ -251,9 +265,11 @@ export const addNotification = async (profileId, notification) => {
   return insertNotification;
 }
 
-export const removeNotification = async (profileId, notificationId) => {
+export const removeNotification = async (profileId, notificationId) => { //idk if this works
   // handleId(userId);
   // handleId(notificationId);
+  profileId = validate.validId(profileId);
+  notificationId = validate.validId(notificationId);
   const userCollection = await users();
   const removeNotification = await userCollection.findOneAndUpdate(
     { _id: new ObjectId(profileId) },

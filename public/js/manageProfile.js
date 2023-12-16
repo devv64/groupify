@@ -19,6 +19,7 @@ const validEditedPassword = (password) => {
     return password;
   };
 
+// stuff for error
 // for edit profile page  
 let editForm = document.getElementById("editForm");
 if(editForm){

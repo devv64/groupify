@@ -98,9 +98,23 @@ router
   .post(async (req, res) => {
     // ? how do I send userId here (from session), is this valid
     // ! I don't like this code, theres definitely some stuff wrong with rendering posts
-    const { body, lastfmSong, lastfmArtist } = req.body;
+    try{
+      let { body, lastfmSong, lastfmArtist } = req.body;
+      body = xss(body);
+      lastfmSong = xss(lastfmSong);
+      lastfmArtist = xss(lastfmArtist);
+      body = validate.validString(body);
+      lastfmSong = validate.validFmString(lastfmSong);
+      lastfmArtist = validate.validFmString(lastfmArtist);
+    }
+    catch(e){
+      return res.status(400).render('feed', { error: e });
+    }
+
     const userId = req.session.user._id;
+    console.log(userId)
     try {
+      let { body, lastfmSong, lastfmArtist } = req.body;
       const post = await postsData.createPost(body, userId, lastfmSong, lastfmArtist);
       return res.redirect(`/posts/${post._id}`);
     } catch (e) {

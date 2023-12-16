@@ -7,6 +7,8 @@ import { getPostsByUser, removePostById, getPostById } from '../data/posts.js';
 // import { getPostsByUser } from '../data/posts.js';
 import { validEditedUsername, validEditedPassword } from '../data/validation.js';
 import bcrypt from 'bcrypt';
+import xss from 'xss';
+import { users } from '../config/mongoCollections.js';
 
 // import validation functions
 
@@ -36,9 +38,10 @@ router
 router.route('/:username')
   .get(async (req, res) => { //public profile page / personal page
     try{
-      const profile = await getUserByUsername(req.params.username);
+      const username = xss(req.params.username)
+      const profile = await getUserByUsername(username);
       const posts = await getPostsByUser(profile._id);
-      const success = req.query.success;
+      const success = xss(req.query.success);
       let personalAccount = false;
       if(req.session.user && req.session.user.username === profile.username){ //check if user is viewing their own profile
         personalAccount = true
@@ -67,14 +70,15 @@ router.route('/:username')
       })
     }
     catch(e){
-      res.status(404).render('profilePage', {error: "Profile page error"});
+      res.status(404).render('profilePage', {error: e});
     }
 })
   .post(async (req, res) => { //for following and unfollowing functionality
 
     let profile;
     try{
-      profile = await getUserByUsername(req.params.username);
+      const username = xss(req.params.username)
+      profile = await getUserByUsername(username);
     }
     catch(e){
       return res.status(404).render('profilePage', {error: "Profile page error"});
@@ -120,7 +124,8 @@ router.route('/:username')
 
 router.route('/:username/followers').get(async (req, res) => { //followers page
   try{
-    const user = await getUserByUsername(req.params.username);
+    const username = xss(req.params.username)
+    const user = await getUserByUsername(username);
     let followersList = [];
     for(let i = 0; i < user.followers.length; i++){
       let follower = await getUserById(user.followers[i]);
@@ -138,7 +143,8 @@ router.route('/:username/followers').get(async (req, res) => { //followers page
 
 router.route('/:username/following').get(async (req, res) => { //following page
   try{
-    const user = await getUserByUsername(req.params.username);
+    const username = xss(req.params.username)
+    const user = await getUserByUsername(username);
     let followingList = [];
     for(let i = 0; i < user.following.length; i++){
       let followingUser = await getUserById(user.following[i]);
@@ -158,7 +164,8 @@ router.route('/:username/manage') //does not update name in feed
   .get(async (req, res) => { //manage profile page
   try{
     // ? Should this not be req.session.user
-    const user = await getUserByUsername(req.params.username);
+    const username = xss(req.params.username)
+    const user = await getUserByUsername(username);
     const created = new Date(req.session.user.createdAt);
     let totalAccumulatedLikes = 0;
     for(let i = 0; i < user.createdPosts.length; i++){
@@ -178,7 +185,8 @@ router.route('/:username/manage') //does not update name in feed
   }
 })
   .post(async (req, res) => { //edit profile page
-    const user = await getUserByUsername(req.params.username);
+    const username = xss(req.params.username)
+    const user = await getUserByUsername(username);
     try{
       let {
         username,
@@ -188,6 +196,11 @@ router.route('/:username/manage') //does not update name in feed
         lastfmUsername //if empty, get lastfm data from logged in user, else update lastfm data with this
       } = req.body;
 
+      username = xss(username);
+      oldPassword = xss(oldPassword);
+      newPassword = xss(newPassword);
+      confirmPassword = xss(confirmPassword);
+      lastfmUsername = xss(lastfmUsername);
       username = validEditedUsername(username);
       oldPassword = validEditedPassword(oldPassword);
       newPassword = validEditedPassword(newPassword);
@@ -225,7 +238,7 @@ router.route('/:username/manage') //does not update name in feed
       
       const updatedUser = await updateUserById(id, username, newPassword, lastfmUsername); //wont work since lastfm is not connected i think
       req.session.user = updatedUser;
-      var success = encodeURIComponent('Profile updated!');
+      const success = encodeURIComponent('Profile updated!');
       return res.redirect(`/users/${username}?success=${success}`);
     }
     catch(e){
@@ -236,7 +249,8 @@ router.route('/:username/manage') //does not update name in feed
 router.route('/:username/delete')
   .get(async (req, res) => { //delete post page
   try{
-    const user = await getUserByUsername(req.params.username);
+    const username = xss(req.params.username)
+    const user = await getUserByUsername(username);
     const posts = await getPostsByUser(user._id);
     res.render('delete', {
         username: user.username,
@@ -249,10 +263,11 @@ router.route('/:username/delete')
 })
   .post(async (req, res) => {
     try{
-      const user = await getUserByUsername(req.params.username);
-      const postToDelete = req.body.postToDelete;
+      const postToDelete = xss(req.body.postToDelete);
       await removePostById(postToDelete);
-      return res.redirect(`/users/${user.username}/postdeleted`)
+      const success = encodeURIComponent(`Post Deleted!`);
+      const username = xss(req.params.username)
+      return res.redirect(`/users/${username}?success=${success}`);
     }
     catch(e){
       return res.status(400).render('delete', {error: "Error deleting post"});
@@ -262,7 +277,8 @@ router.route('/:username/delete')
 router.route('/:username/postdeleted')
   .get(async (req, res) => {
     try{
-      const user = await getUserByUsername(req.params.username);
+      const username = xss(req.params.username)
+      const user = await getUserByUsername(username);
       res.render('postdeleted', 
       {username : user.username})
     }
@@ -274,7 +290,8 @@ router.route('/:username/postdeleted')
   router.route('/:username/notifications')
     .get(async (req, res) => {
       try{
-        const user = await getUserByUsername(req.params.username);
+        const username = xss(req.params.username)
+        const user = await getUserByUsername(username);
         res.render('notifications', 
         {
           username : user.username,

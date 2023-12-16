@@ -2,9 +2,6 @@
 <div class="container">
     <h1>Manage Account</h1>
 
-    <label for="modeToggle">Toggle Dark Mode:</label>
-    <input type="range" min="0" max="1" step="1" value="0" id="modeToggle">
-
     <form method="POST" id="editForm" action="/users/{{username}}/manage">
         <label for="username" id="usernameLabel">Username</label>
         <input type="text" name="username" id="username" placeholder="New Username">
