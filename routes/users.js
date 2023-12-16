@@ -3,7 +3,7 @@ const router = Router();
 // import data functions
 import * as lastfm from '../api/lastfm.js';
 import { getUserByUsername, updateUserById, followUser, unfollowUser, getUserById } from '../data/users.js';
-import { getPostsByUser, removePostById } from '../data/posts.js';
+import { getPostsByUser, removePostById, getPostById } from '../data/posts.js';
 // import { getPostsByUser } from '../data/posts.js';
 import { validEditedUsername, validEditedPassword } from '../data/validation.js';
 import bcrypt from 'bcrypt';
@@ -67,7 +67,7 @@ router.route('/:username')
       })
     }
     catch(e){
-      res.status(404).render('profilePage', {error: "Profile page error"});
+      res.status(404).render('profilePage', {error: "Profile page error:" + e});
     }
 })
   .post(async (req, res) => { //for following and unfollowing functionality
@@ -77,7 +77,7 @@ router.route('/:username')
       profile = await getUserByUsername(req.params.username);
     }
     catch(e){
-      return res.status(404).render('profilePage', {error: "Profile page error"});
+      return res.status(404).render('profilePage', {error: "Profile page error:" + e});
     }
 
     if(!(req.session.user.following.includes(profile._id))){ //check if user is not following profile

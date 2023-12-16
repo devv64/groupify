@@ -197,3 +197,13 @@ footer {
     color: green;
     font-weight: bold;
   } 
+
+.Like {
+    color: red;
+    font-weight: bold;
+}
+
+.Unlike {
+    color: black;
+    font-weight: bold;
+}

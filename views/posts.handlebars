@@ -7,18 +7,13 @@
       {{#each post.comments}}
         {{this.body}}
       {{/each}}
-      {{post.likes.length}} 
       
+      
+      <p id="likes">{{post.likes}} likes</p>
       {{!-- All of this is not working I am just writing for now --}}
-      {{#if liked}}
-        <form action="/posts/{{post._id}}/unlike" method="POST">
-          <button type="submit">Unlike</button>
-        </form>
-      {{else}}
-        <form action="/posts/{{post._id}}/like" method="POST">
-          <button type="submit">Like</button>
-        </form>
-      {{/if}}
+      <form action="/posts/{{post._id}}/like" method="POST">
+        <button type="submit" class="{{liked}}" id="like">{{liked}}</button>
+      </form>
       
       {{#if (eq post.username username)}}
         <form action="/users/{{post.username}}/delete" method="POST">

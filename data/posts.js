@@ -54,10 +54,11 @@ export async function createPost(body, userId, lastfmSong, lastfmArtist) {
 
   let newUser = await userCollection.findOneAndUpdate(
     { _id: new ObjectId(userId) },
-    { $push: {createdPosts: new ObjectId(newId)} },
+    { $push: {createdPosts: newId} },
     { returnDocument: 'after' }
     )
 
+  if(!newUser) throw "User not found"
     // ! error check newUser
 
   return post;
@@ -120,15 +121,15 @@ export async function removePostById(id) {
 
   let updateUser = await userCollection.findOneAndUpdate( //removes post from createdPosts from that user
     { username: user.username },
-    { $pull: {createdPosts: new ObjectId(id)} },
+    { $pull: {createdPosts: id} },
     { returnDocument: 'after' }
     )
 
-    if(!updateUser) throw "User not found"
+  if(!updateUser) throw "User not found"
 
-    // ! error check
+  // ! error check
 
-    // ? maybe remove from everyone that liekd thsi post
+  // ? maybe remove from everyone that liekd thsi post
 
   const deletionInfo = await postCollection.deleteOne({ _id: new ObjectId(id) });
   if (!deletionInfo.acknowledged || deletionInfo.deletedCount === 0) throw `Could not delete post with id of ${id}`;
@@ -140,9 +141,9 @@ export async function addLikeToPost(postId, userId) {
   // handleId(postId);
   // handleId(userId);
   const postCollection = await posts();
-  const userCollection = await user();
+  const userCollection = await users();
   const updateInfo = await postCollection.updateOne(
-    { _id: ObjectId(postId) },
+    { _id: new ObjectId(postId) },
     { $addToSet: { likes: userId } }
   );
 
@@ -163,7 +164,7 @@ export async function removeLikeFromPost(postId, userId) {
   const postCollection = await posts();
   const userCollection = await users();
   const updateInfo = await postCollection.updateOne(
-    { _id: ObjectId(postId) },
+    { _id: new ObjectId(postId) },
     // not sure if this works, from stackoverflow
     { $pull: { likes: userId } }
   );

@@ -65,6 +65,7 @@ try {
 
 router.get('/profile', async (req, res) => {
   if (req.session.user === undefined) return res.redirect('/login');
+  req.session.user = await userData.getUserById(req.session.user._id);
   return res.status(200).redirect(`/users/${req.session.user.username}`);
 });
 
