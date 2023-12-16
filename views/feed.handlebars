@@ -28,11 +28,9 @@
     <ul>
         {{#each posts}}
             <li><a href="/users/{{this.username}}">{{this.username}}</a></li>
-            <li><a href="posts/{{this._id}}">{{this.body}}</a></li>
+            <li><a href="/posts/{{this._id}}">{{this.body}}</a></li>
             <li>{{this.likes.length}} Likes</li>
-            {{#each comments}}
-                <li>{{this.body}}</li>
-            {{/each}}
+            <li><a href="/posts/{{this._id}}">{{this.comments.length}} Comments</a></li>
         {{/each}}
     </ul>
 

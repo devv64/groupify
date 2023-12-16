@@ -8,7 +8,6 @@ import { getPostsByUser, removePostById } from '../data/posts.js';
 import { validEditedUsername, validEditedPassword } from '../data/validation.js';
 import bcrypt from 'bcrypt';
 
-
 router
   .route('/')
   .get(async (req, res) => {
