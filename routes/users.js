@@ -38,6 +38,7 @@ router.route('/:username')
     try{
       const profile = await getUserByUsername(req.params.username);
       const posts = await getPostsByUser(profile._id);
+      const success = req.query.success;
       let personalAccount = false;
       if(req.session.user && req.session.user.username === profile.username){ //check if user is viewing their own profile
         personalAccount = true
@@ -61,7 +62,8 @@ router.route('/:username')
           likedPosts: likedPosts,
           isPersonalAccount: personalAccount,
           followClass: followClass,
-          followingText: followText
+          followingText: followText,
+          success: success
       })
     }
     catch(e){
@@ -155,6 +157,7 @@ router.route('/:username/following').get(async (req, res) => { //following page
 router.route('/:username/manage')
   .get(async (req, res) => { //manage profile page
   try{
+    // ? Should this not be req.session.user
     const user = await getUserByUsername(req.params.username);
       res.render('manage', {
         username: user.username,
@@ -213,7 +216,8 @@ router.route('/:username/manage')
       
       const updatedUser = await updateUserById(id, username, newPassword, lastfmUsername); //wont work since lastfm is not connected i think
       req.session.user = updatedUser;
-      return res.redirect(`/users/${username}`);
+      var success = encodeURIComponent('Profile updated!');
+      return res.redirect(`/users/${username}?success=${success}`);
     }
     catch(e){
       return res.status(400).render('manage', {error: "Error updating user"});
@@ -227,7 +231,7 @@ router.route('/:username/delete')
     const posts = await getPostsByUser(user._id);
     res.render('delete', {
         username: user.username,
-        posts : posts
+        posts: posts
     })
   }
   catch(e){

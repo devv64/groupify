@@ -107,16 +107,9 @@ router
 
         // const lastfmSong = xss(req.body.lastfmSong);
         // const lastfmArtist = xss(req.body.lastfmArtist);
-
-        // console.log('broski!')
-        // const userId = res.locals.username;
-        // console.log(req.session.user)
-        const username = req.session.user.username;
-        // console.log(username)
-        const user = await userData.getUserByUsername(username);
+        const userId = req.session.user._id;
         
-        // console.log(user)
-        const post = await postsData.createPost(body, user._id, lastfmSong, lastfmArtist);
+        const post = await postsData.createPost(body, userId, lastfmSong, lastfmArtist);
         // console.log("yay")
         return res.redirect(`/posts/${post._id}`);
     } catch (e) {
@@ -129,66 +122,5 @@ router
     }
   })
 
-router
-  .route('/posts/:post_id')
-  // ! Need to fix when it isn't a proper post_id
-  .get(async (req, res) => {
-    try {
-      const post_id = req.params.post_id;
-      const post = await postsData.getPostById(post_id);
-      const postComments = await commentsData.getAllCommentsByPostId(post_id);
-      const currentUser = req.session.user.username;
-    //   console.log("Post Comments: ",postComments);
-      return res.render('posts', { post, postComments, user: currentUser });
-    } catch (e) {
-      return res.status(400).render('feed', { error: e });
-    }
-  })
-  .post(async (req, res) => {
-    // const body = xss(req.body.body);
-    // const lastfmSong = xss(req.body.lastfmSong);
-    // const lastfmArtist = xss(req.body.lastfmArtist);
 
-    try {
-        const post_id = req.params.post_id;
-        // console.log("Post Id: ", post_id);
-        // const username = res.locals.username;
-        const username = req.session.user.username;
-        const commentBody = xss(req.body.comment);
-        let post = await postsData.getPostById(post_id);
-        // console.log("Post: ", post);
-
-        // console.log("Req Body:", req.body);
-        const comment = await commentsData.createComment(post_id, username, commentBody);
-        // console.log("Comment: ", comment);
-        post = await postsData.getPostById(post_id);
-        // console.log("Post 2: ", post);
-        
-        return res.render('partials/comment', {layout:null, ...comment, user: username});
-    } catch (e) {
-        // console.log("This is E", e, "||");
-        if (
-            e &&
-            (e.indexOf("No user with id") >= 0 ||
-                e.indexOf("Comment not found") >= 0 ||
-                e.indexOf("Could not get all events") >= 0)
-        ) {
-            // return res.status(404).render("posts", {post, error: e });
-            return res.status(404).render("feed", {error: e });
-        } else {
-            return res.status(400).render("feed", {error: e });
-        }
-        // return res.status(400).render('feed', { error: e.errMsg });
-    }
-  });
-
-router
-    .route('/posts/:post_id/deletecomment')
-    .post(async (req, res) => {
-       try{
-        
-       }catch(e){
-       
-        } 
-    });
 export default router;

@@ -3,10 +3,11 @@
     <p>Feed content</p>
 
     {{!-- ! need to fix this --}}
-    <div class="error" id="errid">
+    {{!-- ! This is already in main.handlebars --}}
+    {{!-- <div class="error" id="errid"> --}}
     {{!-- <div class="error" id="errid" hidden> --}}
-        {{error}}
-    </div>
+        {{!-- {{error}} --}}
+    {{!-- </div> --}}
 
     <a href="/users/{{username}}/notifications">Notifications</a>
 
@@ -14,6 +15,13 @@
     <form action="/feed" method="POST" class="create-post" id="create-post">
         <label for="body">Post something: </label>
         <input type="text" name="body" id="body" placeholder="Post something">
+
+        <label for="artist">Artist: </label>
+        <input type="text" name="lastfmArtist" id="artist" placeholder="Artist">
+
+        <label for="track">Track: </label>
+        <input type="text" name="lastfmSong" id="track" placeholder="Track">
+
         <button type="submit">Create Post</button>
     </form>
 
@@ -21,7 +29,7 @@
         {{#each posts}}
             <li><a href="/users/{{this.username}}">{{this.username}}</a></li>
             <li><a href="/posts/{{this._id}}">{{this.body}}</a></li>
-            <li>Likes: {{this.likes.length}}</li>
+            <li>{{this.likes.length}} Likes</li>
             <li><a href="/posts/{{this._id}}">{{this.comments.length}} Comments</a></li>
         {{/each}}
     </ul>

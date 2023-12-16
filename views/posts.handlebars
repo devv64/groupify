@@ -14,21 +14,55 @@
         <input type="text" id="comment-body" name="comment-body" placeholder="Reply with a Comment">
         <button type="submit">Create Comment</button>
       </form>
-        <div id="show-comments">
-            {{!-- Grabbed from the GET /posts/:id route --}}
+        
+      
+      {{!-- All of this is not working I am just writing for now --}}
+      {{#if liked}}
+        <form action="/posts/{{post._id}}/unlike" method="POST">
+          <button type="submit">Unlike</button>
+        </form>
+      {{else}}
+        <form action="/posts/{{post._id}}/like" method="POST">
+          <button type="submit">Like</button>
+        </form>
+      {{/if}}
+      
+      {{#if (eq post.username username)}}
+        <form action="/users/{{post.username}}/delete" method="POST">
+          <input type="hidden" name="postToDelete" id="postToDelete" value="{{post._id}}">
+          <button type="submit">Delete</button>
+        </form>
+      {{/if}}
+
+
+
+      <div id="show-comments">
             {{#each postComments}}
                 <div id="comment-box">
-                    <a href="/users/{{username}}">{{username}}</a>
+                    <a href="/users/{{this.username}}">{{this.username}}</a>
                     <p>{{body}}</p>
-                    {{!-- {{#eq this.username user}} --}}
+                    {{#if (eq this.username ../username)}}
                         <form method="POST" action="/posts/{{post._id}}/deletecomment">
                             {{!-- Sends comment Id to deletecomment route --}}
                             <input type="hidden" name="commentToDelete" id="commentToDelete" value="{{this._id}}">
                             <button type="submit">Delete</button>
                         </form>
-                    {{!-- {{/eq}} --}}
+                    {{/if}}
                 </div>
             {{/each}}
+        </div> 
+      {{!-- All of this is not working I am just writing for now --}}
+
+      {{#if post.track}}
+        <div class="track">
+          <a href={{post.track.url}} target="_blank" rel="noopener noreferrer">Check out {{post.track.name}} by {{post.track.artist}}</a>
         </div>
+      {{/if}}
+
+      {{#if post.artist}}
+        <div class="track">
+          <a href={{post.artist.url}} target="_blank" rel="noopener noreferrer">Check out {{post.artist.name}}</a>
+        </div>
+      {{/if}}
     </div>
 </div>

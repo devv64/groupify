@@ -7,7 +7,7 @@ import * as validate from './validation.js';
 
 // import api functions
 // this is needed to attach lastfm song/artist data to post object
-import {searchTrackByName, searchArtistByName} from "../api/lastfm.js"
+import {searchTrackByName, searchArtistByName, findTrackByName, findArtistByName} from "../api/lastfm.js"
 import { getUserById } from './users.js';
 
 
@@ -28,8 +28,8 @@ export async function createPost(body, userId, lastfmSong, lastfmArtist) {
   // Need to decide how to handle picking a song/artist, this might be fine
   // why is it saying await is unnecessary here
   // TODO: probably some error handling needed here
-  const lastfmSong_ = await searchTrackByName(lastfmSong, 1);
-  const lastfmArtist_ = await searchArtistByName(lastfmArtist, 1);
+  const lastfmSong_ = await findTrackByName(lastfmSong);
+  const lastfmArtist_ = await findArtistByName(lastfmArtist);
 
   const user = await getUserById(userId);
   const username = user.username
@@ -176,4 +176,14 @@ export async function removeLikeFromPost(postId, userId) {
 
   if (!updateInfo.acknowledged || updateInfo.modifiedCount === 0) throw "Could not update post";
   return await getPostById(postId);
+}
+
+export async function isLiked(postId, userId) {
+  // handleId(postId);
+  // handleId(userId);
+  const postCollection = await posts();
+  const post = await postCollection.findOne({ _id: new ObjectId(postId) });
+  if (!post) throw "Post not found";
+  post._id = post._id.toString();
+  return post.likes.includes(userId);
 }

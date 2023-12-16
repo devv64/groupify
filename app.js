@@ -24,9 +24,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(rewriteUnsupportedBrowserMethods);
 
-
-app.engine("handlebars", hbs.engine);
-app.set("view engine", "handlebars");
+app.engine('handlebars', exphbs.engine({ 
+  defaultLayout: 'main',
+  helpers: {
+    eq: function (a, b) { return a === b; },
+  }
+ }));
+app.set('view engine', 'handlebars');
 
 //cookie for getting current user
 app.use( 
@@ -117,7 +121,16 @@ app.use('/profile', (req, res, next) => {
   if (!req.session.user) {
     res.redirect('/login');
   } else {
-    next();
+    return res.render('profilePage', { 
+      profilePic: req.session.user.pfp,
+      username: req.session.user.username,
+      posts: req.session.user.createdPosts,
+      followers: req.session.user.followers,
+      following: req.session.user.following,
+      likedPosts: req.session.user.likedPosts,
+      notifications: req.session.user.notifications,
+      isPersonalAccount: true
+    });
   }
 });
 
