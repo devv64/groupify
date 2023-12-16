@@ -50,7 +50,7 @@ app.use('/', (req, res, next) => {
     if (req.session.user) {
       return res.redirect('/feed');
     } else {
-      return res.redirect('/login')
+      return res.redirect('/home')
     }   
   } else {
     next();
@@ -88,6 +88,14 @@ app.use('/profile', (req, res, next) => {
       notifications: req.session.user.notifications,
       isPersonalAccount: true
     });
+  }
+});
+
+app.use('/users', (req, res, next) => {
+  if (!req.session.user) {
+    res.redirect('/login');
+  } else {
+    next();
   }
 });
 
