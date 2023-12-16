@@ -47,52 +47,55 @@ let successid = document.getElementById('successid');
 const loginForm = document.getElementById('login-form');
 const registerForm = document.getElementById('register-form');
 
-if (!registerForm) console.log("register form not found");
-if (!loginForm) console.log("login form not found");
+if (registerForm) {
+  registerForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      successid.textContent = "";
+      errid.hidden = true;
+      errid.textContent = "";
+      const email = document.getElementById('regemailinput').value;
+      const username = document.getElementById('regusernameinput').value;
+      const password = document.getElementById('regpasswordinput').value;
+      const confirmpassword = document.getElementById('regconfirmpasswordinput').value;
+      
+      try {
+          let cleanEmail = validEmail(email);
+          let cleanUsername = validName(username);
+          let cleanPassword = validPassword(password);
+          let cleanConfirmPass = validPassword(confirmpassword);
+          if (cleanPassword !== cleanConfirmPass) throw "Passwords do not match";
+          successid.textContent = "Loading...";
+          registerForm.submit();
+      } catch (error) {
+          errid.hidden = false;
+          errid.textContent = error;
+          errid.innerHTML = error;
+          errid.style.display = "block";
+      }
+  });
+}
 
-registerForm.addEventListener('submit', (event) => {
-    event.preventDefault();
-    errid.hidden = true;
-    errid.textContent = "";
-    const email = document.getElementById('regemailinput').value;
-    const username = document.getElementById('regusernameinput').value;
-    const password = document.getElementById('regpasswordinput').value;
-    const confirmpassword = document.getElementById('regconfirmpasswordinput').value;
-    
-    try {
-        let cleanEmail = validEmail(email);
-        let cleanUsername = validName(username);
-        let cleanPassword = validPassword(password);
-        let cleanConfirmPass = validPassword(confirmpassword);
-        if (cleanPassword !== cleanConfirmPass) throw "Passwords do not match";
-        successid.textContent = "Loading...";
-        registerForm.submit();
-    } catch (error) {
-        errid.hidden = false;
-        errid.textContent = error;
-        errid.innerHTML = error;
-        errid.style.display = "block";
-    }
-});
-    
-
-
-loginForm.addEventListener('submit', (event) => {
-    event.preventDefault();
-    errid.hidden = true;
-    const email = document.getElementById('liemailinput').value;
-    const password = document.getElementById('lipasswordinput').value;
-    
-    try {
-        let cleanEmail = validEmail(email);
-        let cleanPassword = validPassword(password);
-        successid.textContent = "Loading...";
-        loginForm.submit();
-    } catch (error) {
-        errid.hidden = false;
-        errid.textContent = error;
-        errid.innerHTML = error;
-        errid.style.display = "block";
-    }
-});
-    
+else if (loginForm) { 
+  loginForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      successid.textContent = "";
+      errid.hidden = true;
+      const email = document.getElementById('liemailinput').value;
+      const password = document.getElementById('lipasswordinput').value;
+      
+      try {
+          let cleanEmail = validEmail(email);
+          let cleanPassword = validPassword(password);
+          successid.textContent = "Loading...";
+          loginForm.submit();
+      } catch (error) {
+          errid.hidden = false;
+          errid.textContent = error;
+          errid.innerHTML = error;
+          errid.style.display = "block";
+      }
+  });
+}
+else {
+  console.log("No form found");
+}
