@@ -7,6 +7,50 @@
       {{#each post.comments}}
         {{this.body}}
       {{/each}}
-      {{post.likes.length}}
+      {{post.likes.length}} 
+      
+      {{!-- All of this is not working I am just writing for now --}}
+      {{#if liked}}
+        <form action="/posts/{{post._id}}/unlike" method="POST">
+          <button type="submit">Unlike</button>
+        </form>
+      {{else}}
+        <form action="/posts/{{post._id}}/like" method="POST">
+          <button type="submit">Like</button>
+        </form>
+      {{/if}}
+      
+      {{#if (eq post.username username)}}
+        <form action="/delete/{{post._id}}" method="POST">
+          <button type="submit">Delete</button>
+        </form>
+      {{/if}}
+
+      <form action="/comments/{{post._id}}" method="POST">
+        <input type="text" name="body" placeholder="Comment">
+        <button type="submit">Comment</button>
+      </form>
+
+      {{#each post.comments}}
+        {{this.body}}
+        {{#if (eq this.username username)}}
+          <form action="/comments/{{this._id}}/delete" method="POST">
+            <button type="submit">Delete</button>
+          </form>
+        {{/if}}
+      {{/each}}
+      {{!-- All of this is not working I am just writing for now --}}
+
+      {{#if post.track}}
+        <div class="track">
+          <a href={{post.track.url}}>Check out {{post.track.name}} by {{post.track.artist}}</a>
+        </div>
+      {{/if}}
+
+      {{#if post.artist}}
+        <div class="track">
+          <a href={{post.artist.url}}>Check out {{post.artist.name}}</a>
+        </div>
+      {{/if}}
     </div>
 </div>

@@ -111,8 +111,8 @@ router
     try {
       const post_id = req.params.post_id
       const post = await postsData.getPostById(post_id)
-      // console.log(post.username)
-      return res.render('posts', { post })
+      const username = req.session.user.username
+      return res.render('posts', { post, username })
     } catch (e) {
       return res.status(400).render('feed', { error: e })
     }

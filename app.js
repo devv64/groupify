@@ -24,7 +24,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(rewriteUnsupportedBrowserMethods);
 
-app.engine('handlebars', exphbs.engine({ defaultLayout: 'main' }));
+app.engine('handlebars', exphbs.engine({ 
+  defaultLayout: 'main',
+  helpers: {
+    eq: function (a, b) { return a === b; },
+  }
+ }));
 app.set('view engine', 'handlebars');
 
 //cookie for getting current user
