@@ -21,7 +21,8 @@
       {{/if}}
       
       {{#if (eq post.username username)}}
-        <form action="/delete/{{post._id}}" method="POST">
+        <form action="/users/{{post.username}}/delete" method="POST">
+          <input type="hidden" name="postToDelete" id="postToDelete" value="{{post._id}}">
           <button type="submit">Delete</button>
         </form>
       {{/if}}

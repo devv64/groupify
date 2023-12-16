@@ -231,7 +231,7 @@ router.route('/:username/delete')
     const posts = await getPostsByUser(user._id);
     res.render('delete', {
         username: user.username,
-        posts : posts
+        posts: posts
     })
   }
   catch(e){
