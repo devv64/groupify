@@ -45,7 +45,7 @@ app.use('/', (req, res, next) => {
     if (req.session.user) {
       return res.redirect('/feed');
     } else {
-      return res.redirect('/login')
+      return res.redirect('/home')
     }   
   } else {
     next();
@@ -130,6 +130,26 @@ app.use("/logout", (req, res, next) => {
     } else {
         next();
     }
+});
+
+app.use("/logout", (req, res, next) => {
+    if (req.method === "GET") {
+        if (req.session.user) {
+            next();
+        } else {
+            return res.redirect("/login");
+        }
+    } else {
+        next();
+    }
+});
+
+app.use('/users', (req, res, next) => {
+  if (!req.session.user) {
+    res.redirect('/login');
+  } else {
+    next();
+  }
 });
 
 configRoutes(app);
