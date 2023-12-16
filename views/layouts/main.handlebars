@@ -7,8 +7,40 @@
     <link rel="stylesheet" href="/public/css/site.css">
 </head>
 
-<body>
 
+
+<body>
+    <header class = 'site-header'>
+        <ul class="navbar">
+            {{#unless login}}
+            <li class="nav-item leftnav">
+                <a class="nav-link" href="/feed">Feed</a>
+            </li>
+            <li class="nav-item leftnav">
+                <a class="nav-link" href="/search">Search</a>
+            </li>
+            <li class="nav-item rightnav">
+                <a class="nav-link" href="/profile/">Profile</a>
+            </li>
+            <li class="nav-item rightnav">
+                <a class="nav-link" href="/logout">Logout</a>
+            </li>
+            <li class="nav-item rightnav">
+                <a class="nav-link" href="/notifications">Notification</a>
+            </li>
+            {{else}}
+            <li class="nav-item leftnav">
+                <a class="nav-link" href="/home">Home</a>
+            </li>
+            <li class="nav-item rightnav">
+                <a class="nav-link" href="/register">Register</a>
+            </li>
+            <li class="nav-item rightnav">
+                <a class="nav-link" href="/login">Login</a>
+            </li>
+            {{/unless}}
+        </ul>
+    </header>
     <main>
 
         {{!-- should we do it like this --}}
@@ -26,16 +58,17 @@
         {{!--  --}}
 
         {{!-- do we want this also how do I get profile to link properly --}}
-        <a href="/feed">Feed</a>
-        <a href="/users/{{ username }}">Profile</a>
+        {{!-- <a href="/feed">Feed</a> --}}
+        {{!-- <a href="/users/{{ username }}">Profile</a> --}}
         
         {{{body}}}
     </main>
 
     <footer>Harmoniq CS546 </footer>
+
+    <script src="/public/main.js"></script>
     <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
 		crossorigin="anonymous"></script>
-    <script src="/public/js/main.js"></script>
     <script src="/public/js/follow_functionality.js"></script>
     {{!-- <script src="https://code.jquery.com/jquery-2.2.4.min.js"
         integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script> --}}

@@ -1,3 +1,23 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Montserrat', sans-serif;
+}
+
+body{
+    background-color: #c9d6ff;
+    background: linear-gradient(to right, #e2e2e2, #c9dcff);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    height: 100vh;
+}
+
+#editProfile {
+    display: none;
+}
 
 div{
     text-align: center;
@@ -116,7 +136,54 @@ ul{
     list-style: none;
 }
 
-.posts{
+/* .posts{
 
+} */
+
+.site-header {
+    position: fixed;
+    top: 0;
+    height: auto;
+    width: 100%;
+    background-color: rgba(6, 70, 112, 0.85);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    backdrop-filter: saturate(180%) blur(20px);
+}
+.site-header a {
+    padding: 12px 25px;
+    color: rgb(15, 83, 122);
+    font-family: "Inter", sans-serif;
+    font-size: 20px;
+    font-weight: 400;
+    transition: color 0.15s ease-in-out;
+    text-decoration: none;
 }
 
+.site-header a:hover {
+    color: black;
+    text-decoration: underline;
+    text-decoration-color: #46b1c9;
+}
+
+.nav-item{
+    display: flex;
+    justify-content: space-between;
+}
+
+.leftnav{
+    align-items: left;
+    float: left;
+    padding: 10px;
+}
+
+.rightnav{
+    float: right;
+    padding: 10px;
+    align-items: right;
+}
+
+footer {
+    position: fixed;
+    bottom: 0;
+    padding-bottom: 0.5rem;
+}
