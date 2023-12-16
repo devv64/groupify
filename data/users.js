@@ -1,4 +1,4 @@
-import { users } from '../config/mongoCollections.js';
+import { users, posts } from '../config/mongoCollections.js';
 import { ObjectId, ReturnDocument } from 'mongodb';
 import bcrypt from 'bcrypt';
 import * as validate from './validation.js';
@@ -137,6 +137,22 @@ export async function updateUserById(id, username, password, lastfmUsername) {
     createdPosts: user.createdPosts,
     createdAt: user.createdAt,
     updatedAt: new Date()
+  };
+
+  // need to update all the posts that the user has created
+  // need to update all the posts that the user has liked
+  // ? need to update all the posts that the user has commented on -- depending on how comments work
+  // ? need to update followers / following maybe
+
+  const postCollection = await posts();
+  for (let i = 0; i < user.createdPosts.length; i++) {
+    const post = await postCollection.findOneAndUpdate(
+      { _id: user.createdPosts[i]}, 
+      { $set: { userId: id,
+        username: updatedUser.username}},
+      { returnDocument: 'after' }
+    );
+    if (!post) throw `Error: Update failed! Could not update post with id of ${user.createdPosts[i]}`;
   };
 
   // there might be a better way to do this
