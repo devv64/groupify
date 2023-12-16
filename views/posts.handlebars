@@ -20,6 +20,10 @@
                 <div id="comment-box">
                     <a href="/users/{{username}}">{{username}}</a>
                     <p>{{body}}</p>
+                    <form method="post">
+                        <input type="hidden" name="commentToDelete" id="commentToDelete" value="{{this._id}}">
+                        <button type="submit">{{this.body}}</button>
+                    </form>
                 </div>
             {{/each}}
         </div>

@@ -108,7 +108,7 @@ router
         
         console.log(user)
         const post = await postsData.createPost(body, user._id, lastfmSong, lastfmArtist);
-        console.log("yay")
+        // console.log("yay")
         return res.redirect(`/posts/${post._id}`);
     } catch (e) {
       try {
@@ -173,5 +173,5 @@ router
   });
 
 router
-    .route('/posts/')
+    .route('/posts/:post_id/deleteCo')
 export default router;
