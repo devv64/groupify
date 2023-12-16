@@ -1,6 +1,6 @@
 import { users } from '../config/mongoCollections.js';
 import { ObjectId, ReturnDocument } from 'mongodb';
-import bcrypt from 'bcryptjs';
+import bcrypt from 'bcrypt';
 import * as validate from './validation.js';
 
 // import validation functions
@@ -221,7 +221,6 @@ export const unfollowUser = async (userId, profileId) => { //removes profile for
 export const addNotification = async (profileId, notification) => {
   // handleId(userId);
   const userCollection = await users();
-  const user = await getUserById(profileId);
   let newNotification = {
     _id : new ObjectId(),
     notification : notification,
@@ -234,4 +233,17 @@ export const addNotification = async (profileId, notification) => {
   );
   if (!insertNotification) throw "Error: Update failed! Could not add notification";
   return insertNotification;
+}
+
+export const removeNotification = async (profileId, notificationId) => {
+  // handleId(userId);
+  // handleId(notificationId);
+  const userCollection = await users();
+  const removeNotification = await userCollection.findOneAndUpdate(
+    { _id: new ObjectId(profileId) },
+    { $pull: { notifications: { _id: new ObjectId(notificationId) } } },
+    { returnDocument: 'after' }
+  );
+  if (!removeNotification) throw "Error: Update failed! Could not remove notification";
+  return removeNotification;
 }

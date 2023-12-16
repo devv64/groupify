@@ -173,7 +173,7 @@ router.route('/:username/manage')
         oldPassword,
         newPassword,
         confirmPassword,
-        lastfmUsername //not reading this
+        lastfmUsername //if empty, get lastfm data from logged in user, else update lastfm data with this
       } = req.body;
 
       username = validEditedUsername(username);

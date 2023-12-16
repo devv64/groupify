@@ -7,34 +7,13 @@ make sure everything works from when viewing another profile
 input validation
 styling--}}
 
-
-<div>
-    <h1 id="name">{{username}}</h1>
-    <img src="{{profilePic}}" alt="">
-    <div class="manage">
-        {{#if isPersonalAccount}}
-            <a href="/users/{{username}}/manage" class="manage">Manage Profile Account</a>
-            <a href="/users/{{username}}/delete" class="delete">Delete Post</a>
-        {{else}}
-            <div id="buttonContainer">
-                <button type="submit" class="{{followClass}}" id="followingButton">{{followingText}}</button>
-            </div>
-        {{/if}}
+<div class="profileContainer">
+    <div class="user">
+        <img src="{{profilePic}}" alt="">
+        <h1 id="name">{{username}}</h1>
     </div>
 
-    <section class="followers" >
-        <a href="/users/{{username}}/followers" id="followers">
-            {{followers.length}} Followers
-        </a>
-    </section>
-
-    <section class="following">
-        <a href="/users/{{username}}/following">
-            {{following.length}} Following
-        </a>
-    </section>
-
-    <section class="posts">
+    <div class="posts">
         <h2>Posts</h2>
         {{#if posts}}
             {{#each posts}}
@@ -45,9 +24,10 @@ styling--}}
         {{else}}
         <p>No posts yet</p>
         {{/if}}
-    </section>
+    </div>
 
-    <section class="likedPosts">
+
+    <div class="likedPosts">
         <h2>Posts {{username}} liked</h2>
         {{#if likedPosts}}
             <ul>
@@ -60,5 +40,34 @@ styling--}}
         {{else}}
             <p>No liked posts yet</p>
         {{/if}}
-    </section>
+    </div>
+
+    <div class="buttons">
+        <div>
+            <a href="/feed">Feed</a>
+            {{#if isPersonalAccount}}
+                <div class="manageProfile"><a href="/users/{{username}}/manage">Manage Profile Account</a></div>
+                <div class="deletePost"><a href="/users/{{username}}/delete" class="delete">Delete Post</a></div>
+                <div class="notifications"><a href="/users/{{username}}/notifications">Notifications</a></div>
+            {{else}}
+                <div id="buttonContainer" class="followingButton">
+                    <button type="submit" class="{{followClass}}" id="followingButton">{{followingText}}</button>
+                </div>
+            {{/if}}
+        </div>
+
+        <div>
+            <a href="/users/{{username}}/followers" id="followers">
+                {{followers.length}} Followers
+            </a>
+        </div>
+
+        <div>
+            <a href="/users/{{username}}/following">
+                {{following.length}} Following
+            </a>
+        </div>
+
+    </div>
+
 </div>

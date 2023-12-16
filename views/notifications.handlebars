@@ -1,4 +1,13 @@
+<a href="/feed">Feed</a>
 <h1>{{username}}'s' Notifications</h1>
-
+<section>
+    {{#if notifications}}
+        {{#each notifications}}
+            <p>{{this}}</p>
+        {{/each}}
+    {{else}}
+        <p>No notifications yet</p>
+    {{/if}}
+</section>
 
 <a href="/users/{{username}}" class="backToProfile">Go back to profile page</a>
