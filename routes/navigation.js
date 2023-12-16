@@ -9,6 +9,7 @@ const router = Router();
 
 // TODO: clean up the way this is being done
 import * as postsData from '../data/posts.js';
+import * as commentsData from '../data/comments.js';
 
 router.get('/home', async (req, res) => {
   res.status(200).render('home', { login: true });
@@ -126,5 +127,6 @@ router
       }
     }
   })
+
 
 export default router;

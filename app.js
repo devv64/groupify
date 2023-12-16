@@ -57,21 +57,64 @@ app.use('/', (req, res, next) => {
   }
 })
 
-// ? Should user be able to access profile page without being logged in
-app.use('/feed', (req, res, next) => {
-  if (!req.session.user) {
-    res.redirect('/login');
-  } else {
-    next();
-  }
+app.use("/login", (req, res, next) => {
+    if(req.method === "GET") {
+        if(req.session.user) {
+            return res.redirect("/feed");
+        }else {
+            next();
+        }
+    } else {
+        next();
+    }
 });
 
-app.use('/posts', (req, res, next) => {
-  if (!req.session.user) {
-    res.redirect('/login');
-  } else {
-    next();
-  }
+app.use("/register", (req, res, next) => {
+    if(req.method === "GET") {
+        if(req.session.user) {
+            return res.redirect("/feed");
+        }else {
+            next();
+        }
+    } else {
+        next();
+    }
+});
+
+app.use("/users", (req, res, next) => {
+    if (req.method === "GET") {
+        if(!req.session.user) {
+            return res.redirect("/login");
+        } else {
+            next();
+        }
+    } else {
+        next();
+    }
+});
+
+app.use("/feed", (req, res, next) => {
+    if (req.method === "GET") {
+        if(!req.session.user) {
+            return res.redirect("/login");
+        } else {
+            next();
+        }
+    } else {
+        next();
+    }
+});
+
+app.use("/posts", (req, res, next) => {
+    if (req.method === "GET") {
+        if(!req.session.user) {
+            return res.redirect("/login");
+        } else {
+            next();
+        }
+    } else {
+        next();
+    }
 });
 
 app.use('/profile', (req, res, next) => {
@@ -91,13 +134,18 @@ app.use('/profile', (req, res, next) => {
   }
 });
 
-app.use('/users', (req, res, next) => {
-  if (!req.session.user) {
-    res.redirect('/login');
-  } else {
-    next();
-  }
+app.use("/logout", (req, res, next) => {
+    if (req.method === "GET") {
+        if (req.session.user) {
+            next();
+        } else {
+            return res.redirect("/login");
+        }
+    } else {
+        next();
+    }
 });
+
 
 configRoutes(app);
 
