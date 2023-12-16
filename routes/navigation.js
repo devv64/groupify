@@ -110,12 +110,12 @@ router
 
         // console.log('broski!')
         // const userId = res.locals.username;
-        console.log(req.session.user)
+        // console.log(req.session.user)
         const username = req.session.user.username;
         // console.log(username)
         const user = await userData.getUserByUsername(username);
         
-        console.log(user)
+        // console.log(user)
         const post = await postsData.createPost(body, user._id, lastfmSong, lastfmArtist);
         // console.log("yay")
         return res.redirect(`/posts/${post._id}`);
@@ -137,8 +137,9 @@ router
       const post_id = req.params.post_id;
       const post = await postsData.getPostById(post_id);
       const postComments = await commentsData.getAllCommentsByPostId(post_id);
-      console.log("Post Comments: ",postComments);
-      return res.render('posts', { post, postComments });
+      const currentUser = req.session.user.username;
+    //   console.log("Post Comments: ",postComments);
+      return res.render('posts', { post, postComments, user: currentUser });
     } catch (e) {
       return res.status(400).render('feed', { error: e });
     }
@@ -163,7 +164,7 @@ router
         post = await postsData.getPostById(post_id);
         // console.log("Post 2: ", post);
         
-        return res.render('partials/comment', {layout:null, ...comment});
+        return res.render('partials/comment', {layout:null, ...comment, user: username});
     } catch (e) {
         // console.log("This is E", e, "||");
         if (
@@ -182,5 +183,12 @@ router
   });
 
 router
-    .route('/posts/:post_id/deleteCo')
+    .route('/posts/:post_id/deletecomment')
+    .post(async (req, res) => {
+       try{
+        
+       }catch(e){
+       
+        } 
+    });
 export default router;

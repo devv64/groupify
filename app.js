@@ -24,8 +24,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(rewriteUnsupportedBrowserMethods);
 
-app.engine('handlebars', exphbs.engine({ defaultLayout: 'main' }));
-app.set('view engine', 'handlebars');
+
+app.engine("handlebars", hbs.engine);
+app.set("view engine", "handlebars");
 
 //cookie for getting current user
 app.use( 
@@ -132,25 +133,6 @@ app.use("/logout", (req, res, next) => {
     }
 });
 
-app.use("/logout", (req, res, next) => {
-    if (req.method === "GET") {
-        if (req.session.user) {
-            next();
-        } else {
-            return res.redirect("/login");
-        }
-    } else {
-        next();
-    }
-});
-
-app.use('/users', (req, res, next) => {
-  if (!req.session.user) {
-    res.redirect('/login');
-  } else {
-    next();
-  }
-});
 
 configRoutes(app);
 
