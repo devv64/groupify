@@ -1,0 +1,38 @@
+<div class = "error" id="errid">{{error}}</div>
+
+<h1>Search</h1>
+<p>Search for users, Posts by song, Posts by artist</p>
+<form action = "/search" method = "post">
+    <label for="searchquery"></label>
+    <input class = "searchbox" type = "text" name = "searchquery" id="searchquery" placeholder = "Search for a user, song, artist">
+    <input class = "searchbtn" type = "submit" value = "Search">
+</form>
+
+<h2>Users: </h2>
+<div class = "userResult">
+    {{#each users}}
+        <div class = "searchResult">
+            <a href = "/users/{{this.username}}">{{this.username}}</a>
+        </div>
+    {{/each}}
+</div>
+
+<h2>Posts with song: </h2>
+<div class = "songResult">
+    {{#each users}}
+        <div class = "searchResult">
+            <a href = "/posts/{{this._id}}">{{this._id}}</a>
+        </div>
+    {{/each}}
+</div>
+
+
+<h2>Posts with artist: </h2>
+<div class = "artistResult">
+    {{#each users}}
+        <div class = "searchResult">
+            <a href = "/posts/{{this._id}}">{{this._id}}</a>
+        </div>
+    {{/each}}
+</div>
+

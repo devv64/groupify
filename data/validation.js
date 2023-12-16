@@ -102,3 +102,11 @@ export const validId = (id) => {
 
     return id;
 }
+
+export const validsearch = (str) => {
+  if (!str) throw "String must be provided";
+  if (typeof str !== 'string') throw "String must be a string";
+  str = str.trim();
+  if (str.length === 0) throw "String must be a non-empty string";
+  return str;
+}

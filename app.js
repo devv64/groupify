@@ -8,6 +8,8 @@ import session from 'express-session';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname =   dirname(__filename);
 
+// import * as debug from './debug.js';
+
 const staticDir = express.static(__dirname + '/public');
 
 const rewriteUnsupportedBrowserMethods = (req, res, next) => {
@@ -105,3 +107,5 @@ app.listen(3000, () => {
   console.log("We've now got a server!");
   console.log('Your routes will be running on http://localhost:3000');
 });
+
+// debug.test();
