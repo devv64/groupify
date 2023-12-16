@@ -36,7 +36,7 @@ export async function createUser(username, password, email) {
   await checkUsernameAndEmail(username, email);
 
   //encrypt password
-  const hash = await bcrypt.hash(password, 16);
+  const hash = await bcrypt.hash(password, 4); //remember to change to back to 16 or 12 for all bcrypts
 
   const pfp = 'https://source.unsplash.com/1600x900/?' + username;
 
@@ -122,7 +122,7 @@ export async function updateUserById(id, username, password, lastfmUsername) {
   const userCollection = await users();
   const user = await getUserById(id);
   const lastfmData = lastfmUsername ? await lastfm.getInfoByUser(lastfmUsername) : null;
-  let hash = (password === '') ? null : await bcrypt.hash(password, 10); //if password is empty string, dont update password
+  let hash = (password === '') ? null : await bcrypt.hash(password, 4); //if password is empty string, dont update password
 
   const updatedUser = {
     username: username || user.username,

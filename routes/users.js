@@ -3,7 +3,7 @@ const router = Router();
 // import data functions
 import * as lastfm from '../api/lastfm.js';
 import { getUserByUsername, updateUserById, followUser, unfollowUser, getUserById } from '../data/users.js';
-import { getPostsByUser, removePostById } from '../data/posts.js';
+import { getPostsByUser, removePostById, getPostById } from '../data/posts.js';
 // import { getPostsByUser } from '../data/posts.js';
 import { validEditedUsername, validEditedPassword } from '../data/validation.js';
 import bcrypt from 'bcrypt';
@@ -152,17 +152,26 @@ router.route('/:username/following').get(async (req, res) => { //following page
   }
 });
 
-router.route('/:username/manage')
+router.route('/:username/manage') //does not update name in feed
   .get(async (req, res) => { //manage profile page
   try{
     const user = await getUserByUsername(req.params.username);
+    const created = new Date(req.session.user.createdAt);
+    let totalAccumulatedLikes = 0;
+    for(let i = 0; i < user.createdPosts.length; i++){
+      let post = await getPostById(user.createdPosts[i]);
+      totalAccumulatedLikes += post.likes.length;
+    }
       res.render('manage', {
         username: user.username,
-        password: user.password
+        password: user.password,
+        createdProfile : created.toLocaleDateString(),
+        numberOfPosts : user.createdPosts.length,
+        totalLikes : totalAccumulatedLikes,
     })
   }
   catch(e){
-    return res.status(400).render('manage', {error: "Manage page error"});
+    return res.status(400).render('manage', {error: e});
   }
 })
   .post(async (req, res) => { //edit profile page
