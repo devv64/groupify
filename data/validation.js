@@ -1,4 +1,14 @@
 //You can add and export any helper functions you want here. If you aren't using any, then you can just leave this file as is.
+import {ObjectId} from 'mongodb';
+
+export const validString = (str) => {
+    if (!str) throw "String must be provided";
+    if (typeof str !== 'string') throw "String must be a string";
+    str = str.trim();
+    if (str.length === 0) throw "String must be a non-empty string";
+    return str
+}
+
 export const validEmail = (email) => {
     if (!email) throw "Email must be provided";
     if (typeof email !== 'string') throw "Email must be a string";
@@ -50,6 +60,36 @@ export const validName = (name) => {
     if (!/^[a-zA-Z0-9]+$/.test(name)) throw "name must be a valid string";
     return name;
 }
+
+export const validUsername = (username) => {
+    if (!username) throw "username must be provided";
+    if (typeof username !== 'string') throw "username must be a string";
+    if (username.trim().length === 0) throw "username must be a non-empty string";
+    if (username.length < 5 || username.length > 15) throw "username must be between 5 and 15 characters";
+    if (!/^[a-zA-Z0-9]+$/.test(username)) throw "username must be a valid string";
+    return username;
+}
+
+export const validEditedUsername = (username) => {
+  if (!username) return null;
+  if (typeof username !== 'string') throw "username must be a string";
+  if (username.trim().length === 0) throw "username must be a non-empty string";
+  if (username.length < 5 || username.length > 15) throw "username must be between 5 and 15 characters";
+  if (!/^[a-zA-Z0-9]+$/.test(username)) throw "username must be a valid string";
+  return username;
+}
+
+export const validEditedPassword = (password) => {
+  if (!password) return null;
+  if (typeof password !== 'string') throw "Password must be a string";
+  if (password.trim().length === 0) throw "Password must be a non-empty string";
+  password = password.trim();
+  if (password.length < 8) throw "Password must be between 8 and 20 characters";
+  if (password.includes(" ")) throw "Password cannot contain spaces";
+  if (!/[^a-zA-Z0-9]/.test(password) || !/[A-Z]/.test(password) || !/[0-9]/.test(password)) 
+      throw "Password must contain at least one uppercase character, one number and one special character";
+  return password;
+};
 
 export const validId = (id) => {
     //Validates id strings

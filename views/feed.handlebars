@@ -2,13 +2,31 @@
     <h1>Feed</h1>
     <p>Feed content</p>
 
+    {{!-- ! need to fix this --}}
+    <div class="error" id="errid">
+    {{!-- <div class="error" id="errid" hidden> --}}
+        {{error}}
+    </div>
+
+    <a href="/users/{{username}}/notifications">Notifications</a>
+
+    {{!-- ! MAKE SURE U CAN'T POST WITH ONLY SPECIAL CHARACTERS --}}
+    <form action="/feed" method="POST" class="create-post" id="create-post">
+        <label for="body">Post something: </label>
+        <input type="text" name="body" id="body" placeholder="Post something">
+        <button type="submit">Create Post</button>
+    </form>
+
     <ul>
         {{#each posts}}
-            <li>{{this.userId}}</li>
-            <li>{{this.body}}</li>
+            <li><a href="/users/{{this.username}}">{{this.username}}</a></li>
+            <li><a href="posts/{{this._id}}">{{this.body}}</a></li>
+            <li>Likes: {{this.likes.length}}</li>
             {{#each comments}}
                 <li>{{this.body}}</li>
             {{/each}}
         {{/each}}
     </ul>
+
 </div>
+<script src="../public/js/feed.js"></script>

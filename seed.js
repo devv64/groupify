@@ -1,18 +1,17 @@
 
-import usersData from './data/users.js';
-import postsData from './data/posts.js';
-
+import { createUser } from './data/users.js';
+import { createPost } from './data/posts.js';
 
 try {
 // Create dummy users
-const user1 = await usersData.create('John Doe', 'johndoe@example.com');
-const user2 = await usersData.create('Jane Smith', 'janesmith@example.com');
-const user3 = await usersData.create('Mike Johnson', 'mikejohnson@example.com');
+const user1 = await createUser('JohnDoe', "Password1!", 'johndoe@example.com');
+const user2 = await createUser('JaneSmith', "Password1!", 'janesmith@example.com');
+const user3 = await createUser('MikeJohnson', "Password1!", 'mikejohnson@example.com');
 
 // Create dummy posts
-const post1 = await postsData.create('First Post', 'idk random first post', user1._id);
-const post2 = await postsData.create('Second Post', 'second post whatever', user2._id);
-const post3 = await postsData.create('Third Post', 'random third post', user3._id);
+const post1 = await createPost('First Post', user1._id);
+const post2 = await createPost('Second Post', user2._id);
+const post3 = await createPost('Third Post', user3._id);
 
 console.log('Dummy users and posts created successfully!');
 } catch (error) {

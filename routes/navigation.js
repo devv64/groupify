@@ -54,6 +54,8 @@ try {
   cleanPassword = validate.validPassword(cleanPassword);
   const user = await userData.loginUser(cleanEmail, cleanPassword);
   if (!user) throw "User not found";
+  // ? how do I keep track of user in session
+  // ? do I need to store user in session
   req.session.user = user;
   return res.redirect(`/users/${user.username}`);
 } catch (e) {
@@ -71,17 +73,39 @@ router.get('/logout', async (req, res) => {
 router
   .route('/feed')
   .get(async (req, res) => {
-    const posts = await postsData.getSomePosts();
-    res.render('feed', { posts })
-  })
-  .post(async (req, res) => {
-    const { body, userId, lastfmSong, lastfmArtist } = req.body;
     try {
-      const post = await postsData.createPost(body, userId, lastfmSong, lastfmArtist);
-      console.log(post);
-      return res.redirect(`/posts/${post._id}`);
+      const posts = await postsData.getSomePosts();
+      const user = await userData.getUserByUsername(req.session.user.username);
+      // console.log(user.username)
+      // console.log(posts)
+
+      res.render('feed', 
+      { 
+        posts : posts, 
+        username : user.username
+      }
+      )   
+
     } catch (e) {
       return res.status(400).render('feed', { error: e });
+    }
+  })
+  .post(async (req, res) => {
+    // ? how do I send userId here (from session), is this valid
+    // ! I don't like this code, theres definitely some stuff wrong with rendering posts
+    const { body, lastfmSong, lastfmArtist } = req.body;
+    const userId = req.session.user._id;
+    try {
+      const post = await postsData.createPost(body, userId, lastfmSong, lastfmArtist);
+      // console.log('FISH:', post)
+      return res.redirect(`/posts/${post._id}`);
+    } catch (e) {
+      try {
+        const posts = await postsData.getSomePosts();
+        return res.render('feed', { posts: posts, error: e });
+      } catch (e) {
+        return res.render('feed', { error: e } )
+      }
     }
   })
 
@@ -92,10 +116,12 @@ router
     try {
       const post_id = req.params.post_id
       const post = await postsData.getPostById(post_id)
+      // console.log(post.username)
       return res.render('posts', { post })
     } catch (e) {
       return res.status(400).render('feed', { error: e })
     }
   })
+
 
 export default router;
