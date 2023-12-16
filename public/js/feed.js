@@ -4,7 +4,7 @@ const success = document.getElementById('success');
 const createPostForm = document.getElementById('create-post');
 
 if (!createPostForm) console.log("create post form not found");
-console.log(createPostForm);
+
 createPostForm.addEventListener('submit', (event) => {
     event.preventDefault();
     // const body = document.getElementById('post-body')?.value;

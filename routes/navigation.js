@@ -113,19 +113,4 @@ router
     }
   })
 
-router
-  .route('/posts/:post_id')
-  // ! Need to fix when it isn't a proper post_id
-  .get(async (req, res) => {
-    try {
-      const post_id = req.params.post_id
-      const post = await postsData.getPostById(post_id)
-      const username = req.session.user.username
-      return res.render('posts', { post, username })
-    } catch (e) {
-      return res.status(400).render('feed', { error: e })
-    }
-  })
-
-
 export default router;

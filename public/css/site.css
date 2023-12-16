@@ -187,3 +187,13 @@ footer {
     bottom: 0;
     padding-bottom: 0.5rem;
 }
+
+.error {
+    color: red;
+    font-weight: bold;
+  }
+
+.success {
+    color: green;
+    font-weight: bold;
+  } 

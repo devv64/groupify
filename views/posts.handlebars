@@ -44,13 +44,13 @@
 
       {{#if post.track}}
         <div class="track">
-          <a href={{post.track.url}}>Check out {{post.track.name}} by {{post.track.artist}}</a>
+          <a href={{post.track.url}} target="_blank" rel="noopener noreferrer">Check out {{post.track.name}} by {{post.track.artist}}</a>
         </div>
       {{/if}}
 
       {{#if post.artist}}
         <div class="track">
-          <a href={{post.artist.url}}>Check out {{post.artist.name}}</a>
+          <a href={{post.artist.url}} target="_blank" rel="noopener noreferrer">Check out {{post.artist.name}}</a>
         </div>
       {{/if}}
     </div>
