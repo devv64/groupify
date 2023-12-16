@@ -11,12 +11,12 @@ const router = Router();
 import * as postsData from '../data/posts.js';
 
 router.get('/home', async (req, res) => {
-  res.status(200).render('home');
+  res.status(200).render('home', { login: true });
 });
 
 router.get('/register', async (req, res) => {
   // if (res.session.user !== undefined) res.redirect('/profile');
-  return res.status(200).render('register');
+  return res.status(200).render('register', { login: true });
 });
 router.post('/register', async (req, res) => {
 try {
@@ -36,15 +36,15 @@ try {
 
   const newUser = await userData.createUser(cleanUsername, cleanPassword, cleanEmail);
   if (!newUser) throw "User not found";
-  return res.render('login', { success: "Please use your new account to login!" });
+  return res.render('login', { success: "Please use your new account to login!", login: true  });
 } catch (e) {
-  return res.status(400).render('register', { error: e });
+  return res.status(400).render('register', { error: e ,  login: true});
 }
 });
 
 router.get('/login', async (req, res) => {
   // if (res.session.user !== undefined) res.redirect('/profile');
-  return res.status(200).render('login');
+  return res.status(200).render('login',  {login: true});
 });
 router.post('/login', async (req, res) => {
 try {
@@ -59,8 +59,13 @@ try {
   req.session.user = user;
   return res.redirect(`/users/${user.username}`);
 } catch (e) {
-  return res.status(400).render('login', { error: e });
+  return res.status(400).render('login', { error: e ,  login: true});
 }
+});
+
+router.get('/profile', async (req, res) => {
+  if (req.session.user === undefined) return res.redirect('/login');
+  return res.status(200).redirect(`/users/${req.session.user.username}`);
 });
 
 //destroy session when logging out
