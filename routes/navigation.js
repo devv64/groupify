@@ -102,7 +102,6 @@ router
     const userId = req.session.user._id;
     try {
       const post = await postsData.createPost(body, userId, lastfmSong, lastfmArtist);
-      // console.log('FISH:', post)
       return res.redirect(`/posts/${post._id}`);
     } catch (e) {
       try {
@@ -113,20 +112,5 @@ router
       }
     }
   })
-
-router
-  .route('/posts/:post_id')
-  // ! Need to fix when it isn't a proper post_id
-  .get(async (req, res) => {
-    try {
-      const post_id = req.params.post_id
-      const post = await postsData.getPostById(post_id)
-      // console.log(post.username)
-      return res.render('posts', { post })
-    } catch (e) {
-      return res.status(400).render('feed', { error: e })
-    }
-  })
-
 
 export default router;
