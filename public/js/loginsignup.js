@@ -41,8 +41,8 @@ const validName = (name) => {
     return name;
 };
 
-let errid = document.getElementById('errid');   
-let successid = document.getElementById('successid');
+let errid = document.getElementById('error');   
+let successid = document.getElementById('success');
 
 const loginForm = document.getElementById('login-form');
 const registerForm = document.getElementById('register-form');

@@ -9,6 +9,7 @@ const router = Router();
 
 // TODO: clean up the way this is being done
 import * as postsData from '../data/posts.js';
+import * as commentsData from '../data/comments.js';
 
 router.get('/home', async (req, res) => {
   res.status(200).render('home', { login: true });
@@ -98,12 +99,20 @@ router
   })
   .post(async (req, res) => {
     // ? how do I send userId here (from session), is this valid
-    // ! I don't like this code, theres definitely some stuff wrong with rendering posts
-    const { body, lastfmSong, lastfmArtist } = req.body;
-    const userId = req.session.user._id;
+    // const { body, lastfmSong, lastfmArtist } = req.body;
     try {
-      const post = await postsData.createPost(body, userId, lastfmSong, lastfmArtist);
-      return res.redirect(`/posts/${post._id}`);
+        // console.log('hello gang')
+        const body = xss(req.body.body);
+        const lastfmSong = req.body.lastfmSong;
+        const lastfmArtist = req.body.lastfmArtist;
+
+        // const lastfmSong = xss(req.body.lastfmSong);
+        // const lastfmArtist = xss(req.body.lastfmArtist);
+        const userId = req.session.user._id;
+        
+        const post = await postsData.createPost(body, userId, lastfmSong, lastfmArtist);
+        // console.log("yay")
+        return res.redirect(`/posts/${post._id}`);
     } catch (e) {
       try {
         const posts = await postsData.getSomePosts();
@@ -113,5 +122,6 @@ router
       }
     }
   })
+
 
 export default router;

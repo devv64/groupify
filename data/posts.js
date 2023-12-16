@@ -1,6 +1,7 @@
 import { posts, users } from '../config/mongoCollections.js';
 import { ObjectId } from 'mongodb';
 import * as validate from './validation.js';
+import * as lastfm from '../api/lastfm.js';
 
 // import validation functions
 // validatePost, handleId, etc.
@@ -32,7 +33,7 @@ export async function createPost(body, userId, lastfmSong, lastfmArtist) {
   const lastfmArtist_ = await findArtistByName(lastfmArtist);
 
   const user = await getUserById(userId);
-  const username = user.username
+  const username = user.username;
 
   // ? Should we have tags on posts.. need to check the doc if this was required or extra
   const newPost = {
