@@ -1,17 +1,23 @@
-<div class = "error" id="errid">{{error}}</div>
+{{!-- <div class = "error" id="errid">{{error}}</div> --}}
 
-<h1>Search</h1>
+<link rel="stylesheet" href="/public/css/search.css">
+
+<h1>Search: {{query}}</h1>
 <p>Search for users, Posts by song, Posts by artist</p>
-<form action = "/search" method = "post">
+<form id= 'searchquery' action = "/search" method = "POST">
     <label for="searchquery"></label>
-    <input class = "searchbox" type = "text" name = "searchquery" id="searchquery" placeholder = "Search for a user, song, artist">
+    <input class = "searchbox" type = "text" name = "searchinput" id="searchinput" placeholder = "Search here">
     <input class = "searchbtn" type = "submit" value = "Search">
 </form>
 
 <h2>Users: </h2>
 <div class = "userResult">
-    {{#each users}}
+    {{#unless similarUsers}}    
+        <p>No users found</p>
+    {{/unless}}
+    {{#each similarUsers}}
         <div class = "searchResult">
+            <img src="{{this.pfp}}" alt="pfp">
             <a href = "/users/{{this.username}}">{{this.username}}</a>
         </div>
     {{/each}}
@@ -19,9 +25,14 @@
 
 <h2>Posts with song: </h2>
 <div class = "songResult">
-    {{#each users}}
+    {{#unless songposts}}    
+        <p>No songs found</p>
+    {{/unless}}
+    {{#each songposts}}
         <div class = "searchResult">
-            <a href = "/posts/{{this._id}}">{{this._id}}</a>
+            <h4>{{this.track}}</h4>
+            <a href = "/posts/{{this._id}}">{{this.username}}</a>
+            <p>{{this.body}}</p>
         </div>
     {{/each}}
 </div>
@@ -29,10 +40,16 @@
 
 <h2>Posts with artist: </h2>
 <div class = "artistResult">
-    {{#each users}}
+    {{#unless artistposts}}    
+        <p>No artist found</p>
+    {{/unless}}
+    {{#each artistposts}}
         <div class = "searchResult">
-            <a href = "/posts/{{this._id}}">{{this._id}}</a>
+            <h4>{{this.artist}}</h4>
+            <a href = "/posts/{{this._id}}">{{this.username}}</a>
+            <p>{{this.body}}</p>
         </div>
     {{/each}}
 </div>
 
+<script src="/public/js/search.js"></script>

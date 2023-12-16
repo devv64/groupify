@@ -5,15 +5,22 @@ import * as search from '../data/search.js';
 import * as validate from '../data/validation.js';
 
 router.get('/', async (req, res) => {
-  res.status(200).render('search');
+  res.status(200).render('search', { query: "", similarUsers: [" "], songposts: [" "], artistposts: [" "] });
 });
 
 router.post('/', async (req, res) => {
-    const query = xss(req.body.searchquery);
-    if (typeof query !== 'string') {
-        return res.status(400).render('search', { error: 'Invalid search query' });
+    const query = xss(req.body.searchinput);
+    try {
+      validate.validsearch(query);
+    } catch (error) {
+      return res.status(400).render('search', { error: error });
     }
 
+    const similarUsers = await search.searchUsername(query);
+    const songposts = await search.searchSongPosts(query);
+    const artistposts = await search.searchArtistPosts(query);
+
+    res.status(200).render('search', { query: query, similarUsers: similarUsers, songposts: songposts, artistposts: artistposts });
     
 });
 

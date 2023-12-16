@@ -8,19 +8,6 @@ import { getPostsByUser, removePostById } from '../data/posts.js';
 import { validEditedUsername, validEditedPassword } from '../data/validation.js';
 import bcrypt from 'bcrypt';
 
-// import validation functions
-
-router.get('/login', async (req, res) => {
-  res.render('signuplogin');
-});
-
-//destroy session when logging out
-// router.get('/logout', async (req, res) => {
-//   req.session.destroy();
-//   res.send("Logged out");
-//   res.redirect('/');
-// });
-
 
 router
   .route('/')

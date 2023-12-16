@@ -101,6 +101,38 @@ app.use('/users', (req, res, next) => {
   }
 });
 
+app.use('/home', (req, res, next) => {
+  if (!req.session.user) {
+    next();
+  } else {
+    res.redirect('/feed');
+  }
+});
+
+app.use('/login', (req, res, next) => {
+  if (!req.session.user) {
+    next();
+  } else {
+    res.redirect('/feed');
+  }
+});
+
+app.use('/register', (req, res, next) => {
+  if (!req.session.user) {
+    next();
+  } else {
+    res.redirect('/feed');
+  }
+});
+
+app.use('/search', (req, res, next) => {
+  if (!req.session.user) {
+    res.redirect('/login');
+  } else {
+    next();
+  }
+});
+
 configRoutes(app);
 
 app.listen(3000, () => {
