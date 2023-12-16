@@ -5,11 +5,11 @@ import { validId } from "./validation.js";
 
 
 //Returns post with new comment ID added to comments array
-export const createComment = async (postId, userId, commentBody) => {
+export const createComment = async (postId, username, commentBody) => {
     
     postId = validId(postId);
     //userId is username
-    userId = userId;
+    // userId = userId;
     console.log("Comment Body: '", commentBody,"'");
     if(!commentBody || !(typeof commentBody === "string") || commentBody.trim().length === 0) throw  "Comment cannot be empty or all spaces";
     // if(!dateCreated || !(typeof dateCreated === "string")) throw  "Comment creation date must be provided}
@@ -27,7 +27,7 @@ export const createComment = async (postId, userId, commentBody) => {
 
     let newComment = {
         _id : new ObjectId(),
-        userId : userId,
+        username : username,
         postId : postId,
         body : commentBody,
         // Date Format: Fri Dec 08 2023 12:07:55 GMT-0500 (Eastern Standard Time)
@@ -106,4 +106,6 @@ export const removeComment = async (commentId) =>{
 
     return updatedPost;
 };
+
+
 

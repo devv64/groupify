@@ -34,7 +34,6 @@ app.use(
     secret: 'some secret string!',
     saveUninitialized: false,
     resave: false
-    // ,cookie: { maxAge: 3600000 }    //Cookie expires after 1 hour
   })
 );
 
@@ -131,14 +130,6 @@ app.use("/logout", (req, res, next) => {
     } else {
         next();
     }
-});
-
-// Middleware to pass user data to views
-// ! This may not be how we want to do it, sorry its 3am
-app.use((req, res, next) => {
-  res.locals.username = req.session.user ? req.session.user.username : null;
-  console.log('res.locals.username', res.locals.username);
-  next();
 });
 
 configRoutes(app);

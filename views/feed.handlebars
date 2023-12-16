@@ -8,18 +8,23 @@
         {{error}}
     </div>
 
+    <a href="/users/{{username}}/notifications">Notifications</a>
+
+    {{!-- ! MAKE SURE U CAN'T POST WITH ONLY SPECIAL CHARACTERS --}}
     <form action="/feed" method="POST" class="create-post" id="create-post">
         <label for="body">Post something: </label>
-        <input type="text" id="body" name="body" placeholder="Post something">
+        <input type="text" name="body" id="body" placeholder="Post something">
         <button type="submit">Create Post</button>
     </form>
 
     <ul>
         {{#each posts}}
-            <li><a href="/users/{{this.userId}}">{{this.userId}}</a></li>
+            <li><a href="/users/{{this.username}}">{{this.username}}</a></li>
             <li><a href="/posts/{{this._id}}">{{this.body}}</a></li>
-            <li>{{this.likes}}</li>
+            <li>Likes: {{this.likes.length}}</li>
             <li><a href="/posts/{{this._id}}">{{this.comments.length}} Comments</a></li>
         {{/each}}
     </ul>
+
 </div>
+<script src="../public/js/feed.js"></script>

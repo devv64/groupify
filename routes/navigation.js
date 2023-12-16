@@ -72,8 +72,17 @@ router
   .get(async (req, res) => {
     try {
       const posts = await postsData.getSomePosts();
-    //   console.log(posts);
-      res.render('feed', { posts })      
+      const user = await userData.getUserByUsername(req.session.user.username);
+      // console.log(user.username)
+      // console.log(posts)
+
+      res.render('feed', 
+      { 
+        posts : posts, 
+        username : user.username
+      }
+      )   
+
     } catch (e) {
       return res.status(400).render('feed', { error: e });
     }
@@ -82,6 +91,7 @@ router
     // ? how do I send userId here (from session), is this valid
     // const { body, lastfmSong, lastfmArtist } = req.body;
     try {
+        // console.log('hello gang')
         const body = xss(req.body.body);
         const lastfmSong = req.body.lastfmSong;
         const lastfmArtist = req.body.lastfmArtist;
@@ -89,11 +99,24 @@ router
         // const lastfmSong = xss(req.body.lastfmSong);
         // const lastfmArtist = xss(req.body.lastfmArtist);
 
-        const userId = res.locals.username;
-        const post = await postsData.createPost(body, userId, lastfmSong, lastfmArtist);
+        // console.log('broski!')
+        // const userId = res.locals.username;
+        console.log(req.session.user)
+        const username = req.session.user.username;
+        // console.log(username)
+        const user = await userData.getUserByUsername(username);
+        
+        console.log(user)
+        const post = await postsData.createPost(body, user._id, lastfmSong, lastfmArtist);
+        console.log("yay")
         return res.redirect(`/posts/${post._id}`);
     } catch (e) {
-        return res.status(400).render('feed', { error: e });
+      try {
+        const posts = await postsData.getSomePosts();
+        return res.render('feed', { posts: posts, error: e });
+      } catch (e) {
+        return res.render('feed', { error: e } )
+      }
     }
   })
 
@@ -119,13 +142,14 @@ router
     try {
         const post_id = req.params.post_id;
         // console.log("Post Id: ", post_id);
-        const userId = res.locals.username;
+        // const username = res.locals.username;
+        const username = req.session.user.username;
         const commentBody = xss(req.body.comment);
         let post = await postsData.getPostById(post_id);
         // console.log("Post: ", post);
 
         // console.log("Req Body:", req.body);
-        const comment = await commentsData.createComment(post_id, userId, commentBody);
+        const comment = await commentsData.createComment(post_id, username, commentBody);
         // console.log("Comment: ", comment);
         post = await postsData.getPostById(post_id);
         // console.log("Post 2: ", post);

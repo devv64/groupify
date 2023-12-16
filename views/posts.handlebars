@@ -7,7 +7,7 @@
     </div>
 
     <div>
-      <a href="/users/{{post.userId}}">{{post.userId}}</a>
+      <a href="/users/{{post.username}}">{{post.username}}</a>
       {{post.body}}
       <form action="/posts/{{post._id}}" method="POST" class="create-comment" id="create-comment">
         <label for="comment-body"> Make Comment: </label>
@@ -18,7 +18,7 @@
             {{!-- Grabbed from the GET /posts/:id route --}}
             {{#each postComments}}
                 <div id="comment-box">
-                    <a href="/users/{{userId}}">{{userId}}</a>
+                    <a href="/users/{{username}}">{{username}}</a>
                     <p>{{body}}</p>
                 </div>
             {{/each}}

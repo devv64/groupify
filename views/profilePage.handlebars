@@ -1,56 +1,59 @@
 
-<main>
-    <h1>{{username}}</h1>
+{{!-- TODO : 
+notifications for likes, posts, and comments
+display posts liked ; 
+display comments 
+make sure everything works from when viewing another profile
+input validation
+styling--}}
+
+
+<div>
+    <h1 id="name">{{username}}</h1>
     <img src="{{profilePic}}" alt="">
-    {{!-- follow unfollow button --}}
-    {{!-- manage profile page button if personal account --}}
-
-    {{#if isPersonalAccount}}
-        <a href="/users/{{username}}/manage">Manage Profile Account</a>
-    {{else}}
-        {{#if isFollowing}}
-            <button>Unfollow</button> {{!-- add functionality to remove user from profile followers  --}}
+    <div class="manage">
+        {{#if isPersonalAccount}}
+            <a href="/users/{{username}}/manage" class="manage">Manage Profile Account</a>
+            <a href="/users/{{username}}/delete" class="delete">Delete Post</a>
         {{else}}
-            <button>Follow</button> {{!-- add functionality to add user to profile followers  --}}
+            <div id="buttonContainer">
+                <button type="submit" class="{{followClass}}" id="followingButton">{{followingText}}</button>
+            </div>
         {{/if}}
-    {{/if}}
+    </div>
 
-    <section>
-        <a href="/users/{{username}}/followers">
+    <section class="followers" >
+        <a href="/users/{{username}}/followers" id="followers">
             {{followers.length}} Followers
         </a>
     </section>
 
-    <section>
+    <section class="following">
         <a href="/users/{{username}}/following">
             {{following.length}} Following
         </a>
     </section>
 
-    {{!-- following and followers should be in line or right under each other --}}
-
-    <section>
+    <section class="posts">
         <h2>Posts</h2>
         {{#if posts}}
-            <ul>
-                {{#each posts}}
-                <li>
-                    {{this.body}} {{!-- not sure about this --}}\
-                </li>
-                {{/each}}
-            </ul>
+            {{#each posts}}
+            <p>
+                {{this.body}}
+            </p>
+            {{/each}}
         {{else}}
         <p>No posts yet</p>
         {{/if}}
     </section>
-    
-    <section>
+
+    <section class="likedPosts">
         <h2>Posts {{username}} liked</h2>
         {{#if likedPosts}}
             <ul>
                 {{#each likedPosts}}
                 <li>
-                    {{this.likes}} {{!-- not sure about this --}}
+                    {{this.body}} 
                 </li>
                 {{/each}}
             </ul>
@@ -58,4 +61,4 @@
             <p>No liked posts yet</p>
         {{/if}}
     </section>
-</main>
+</div>
