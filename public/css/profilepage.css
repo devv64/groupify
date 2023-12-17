@@ -128,7 +128,7 @@ ul{
 .success {
     color: green;
     font-weight: bold;
-    font-size: 100px;
+    /* font-size: 100px; */
   } 
 
 footer {

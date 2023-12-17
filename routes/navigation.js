@@ -246,12 +246,11 @@ router.route('/deleteposts')
       await postsData.removePostById(postToDelete, req.session.user._id);
       const success = encodeURIComponent(`Post Deleted!`);
       // const username = xss(req.params.username)
-      const username = req.session.user.username;
-      if (pos)
+      
       return res.redirect(`/users/${req.session.user.username}?success=${success}`);
     }
     catch(e){
-      return res.status(400).render('delete', {error: "Error deleting post"});
+      return res.status(400).render('delete', {error: e});
     }
 })
 

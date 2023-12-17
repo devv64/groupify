@@ -86,9 +86,11 @@ footer {
 .error {
     color: red;
     font-weight: bold;
+    z-index: 1000;
   }
 
 .success {
+    z-index: 1000;
     color: green;
     font-weight: bold;
   } 
