@@ -33,9 +33,10 @@ router
         const username = req.session.user.username;
         const commentBody = xss(req.body.comment);
         let post = await postsData.getPostById(post_id);
-
         const comment = await commentsData.createComment(post_id, username, commentBody);
         post = await postsData.getPostById(post_id);
+
+        await userData.addNotification(post.userId, `${username} commented on your post: "${post.body}" at ${post.createdAt.toLocaleString()}`)
         
         return res.render('partials/comment', {layout:null, ...comment, user: username});
     } catch (e) {
@@ -57,10 +58,10 @@ router
   router
   .route('/:post_id/like')
   .post(async (req, res) => {
+
     try {
       const post_id = xss(req.params.post_id);
       const userId = xss(req.session.user._id);
-
       const isLiked = await postsData.isLiked(post_id, userId);
 
       if (isLiked) {
@@ -71,6 +72,8 @@ router
         })
       } else {
         const updatedPost = await postsData.addLikeToPost(post_id, userId);
+        console.log("HERE POSTS ELSE");
+        
         return res.status(200).json({
           likes: updatedPost.likes.length,
           liked: true

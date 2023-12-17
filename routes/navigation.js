@@ -98,20 +98,30 @@ router
   })
   .post(async (req, res) => {
     // ? how do I send userId here (from session), is this valid
-    // const { body, lastfmSong, lastfmArtist } = req.body;
-    try {
-        // console.log('hello gang')
-        const body = xss(req.body.body);
-        const lastfmSong = req.body.lastfmSong;
-        const lastfmArtist = req.body.lastfmArtist;
+    // ! I don't like this code, theres definitely some stuff wrong with rendering posts
+    try{
+      let { body, lastfmSong, lastfmArtist } = req.body;
+      body = xss(body);
+      lastfmSong = xss(lastfmSong);
+      lastfmArtist = xss(lastfmArtist);
+      body = validate.validString(body);
+      lastfmSong = validate.validFmString(lastfmSong);
+      lastfmArtist = validate.validFmString(lastfmArtist);
+    }
+    catch(e){
+      return res.status(400).render('feed', { error: e });
+    }
 
-        // const lastfmSong = xss(req.body.lastfmSong);
-        // const lastfmArtist = xss(req.body.lastfmArtist);
-        const userId = req.session.user._id;
-        
-        const post = await postsData.createPost(body, userId, lastfmSong, lastfmArtist);
-        // console.log("yay")
-        return res.redirect(`/posts/${post._id}`);
+    const userId = req.session.user._id;
+    try {
+      let { body, lastfmSong, lastfmArtist } = req.body;
+      const post = await postsData.createPost(body, userId, lastfmSong, lastfmArtist);
+      const user = await userData.getUserById(userId);
+      const followers = user.followers;
+      for (let i = 0; i < followers.length; i++) {
+        await userData.addNotification(followers[i], `${user.username} created a post: "${post.body}" at ${post.createdAt.toLocaleString()}`)
+      }
+      return res.redirect(`/posts/${post._id}`);
     } catch (e) {
       try {
         const posts = await postsData.getSomePosts();
