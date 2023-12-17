@@ -15,7 +15,7 @@ router
   // ! Need to fix when it isn't a proper post_id
   .get(async (req, res) => {
     try {
-      const post_id = req.params.post_id
+      const post_id = xss(req.params.post_id)
       const post = await postsData.getPostById(post_id)
       const postComments = await commentsData.getAllCommentsByPostId(post_id);
       const username = req.session.user.username
@@ -35,9 +35,10 @@ router
         const username = req.session.user.username;
         const commentBody = xss(req.body.comment);
         let post = await postsData.getPostById(post_id);
-
         const comment = await commentsData.createComment(post_id, username, commentBody);
         post = await postsData.getPostById(post_id);
+
+        await userData.addNotification(post.userId, `${username} commented on your post: "${post.body}" at ${post.createdAt.toLocaleString()}`)
         
         return res.render('partials/comment', {layout:null, ...comment, user: username});
     } catch (e) {
@@ -59,8 +60,9 @@ router
   router
   .route('/:post_id/like')
   .post(async (req, res) => {
+
     try {
-      const post_id = req.params.post_id;
+      const post_id = xss(req.params.post_id);
       const userId = req.session.user._id;
 
       const isLiked = await postsData.isLiked(post_id, userId);
