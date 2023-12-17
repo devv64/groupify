@@ -14,7 +14,7 @@ try {
     const user1 = await createUser('JohnDoe', "Password1!", 'johndoe@example.com');
     const user2 = await createUser('JaneSmith', "Password1!", 'janesmith@example.com');
     const user3 = await createUser('MikeJohnson', "Password1!", 'mikejohnson@example.com');
-    const user4 = await createUser('David', "Pass!234", 'd@ste.edu')
+    const user4 = await createUser('David', "Pass!234", 'd@ste.edu');
     console.log('Dummy users created successfully!');
 
     // Create dummy posts
