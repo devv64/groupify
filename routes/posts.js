@@ -85,26 +85,12 @@ router
     .route('/:post_id/deletecomment')
     .post(async (req, res) => {
         try {
-            // const username = req.session.user.username;
-            // const commentBody = xss(req.body.comment);
-            // let post = await postsData.getPostById(post_id);
-            
-            // const comment = await commentsData.createComment(post_id, username, commentBody);
-            // post = await postsData.getPostById(post_id);
-            
-            // return res.render('partials/comment', {layout:null, ...comment, user: username});
             const postId = xss(req.params.post_id);
             const commentToDelete = xss(req.body.commentToDelete);
-            console.log("Comment tO DEOELTE: ",commentToDelete);
-            console.log("Poist Id: ", postId)
-
-
             const comment = await commentsData.removeComment(commentToDelete);
-
             const success = encodeURIComponent("Comment Deleted!");
+            
             return res.redirect(`/posts/${postId}?success=${success}`);
-            // return res.render('posts', {success: success});
-
         } catch (e) {
             return res.status(404).render("posts", {error: e });
         }

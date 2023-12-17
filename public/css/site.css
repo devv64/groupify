@@ -141,7 +141,7 @@ ul{
 } */
 
 .site-header {
-    position: fixed;
+    position: absolute;
     top: 0;
     height: auto;
     width: 100%;

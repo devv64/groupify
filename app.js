@@ -8,6 +8,8 @@ import session from 'express-session';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname =   dirname(__filename);
 
+// import * as debug from './debug.js';
+
 const staticDir = express.static(__dirname + '/public');
 
 const rewriteUnsupportedBrowserMethods = (req, res, next) => {
@@ -58,25 +60,19 @@ app.use('/', (req, res, next) => {
 })
 
 app.use("/login", (req, res, next) => {
-    if(req.method === "GET") {
-        if(req.session.user) {
-            return res.redirect("/feed");
-        }else {
-            next();
-        }
-    } else {
+    if(req.session.user) {
+        return res.redirect("/feed");
+    }
+    else {
         next();
     }
 });
 
 app.use("/register", (req, res, next) => {
-    if(req.method === "GET") {
-        if(req.session.user) {
-            return res.redirect("/feed");
-        }else {
-            next();
-        }
-    } else {
+    if(req.session.user) {
+        return res.redirect("/feed");
+    }
+    else {
         next();
     }
 });
@@ -146,6 +142,21 @@ app.use("/logout", (req, res, next) => {
     }
 });
 
+app.use('/home', (req, res, next) => {
+  if (!req.session.user) {
+    next();
+  } else {
+    res.redirect('/feed');
+  }
+});
+
+app.use('/search', (req, res, next) => {
+  if (!req.session.user) {
+    res.redirect('/login');
+  } else {
+    next();
+  }
+});
 
 configRoutes(app);
 
@@ -153,3 +164,5 @@ app.listen(3000, () => {
   console.log("We've now got a server!");
   console.log('Your routes will be running on http://localhost:3000');
 });
+
+// debug.test();
