@@ -42,7 +42,6 @@ router
         
         return res.render('partials/comment', {layout:null, ...comment, user: username});
     } catch (e) {
-        // console.log("This is E", e, "||");
         if (
             e &&
             (e.indexOf("No user with id") >= 0 ||
@@ -63,18 +62,21 @@ router
 
     try {
       const post_id = xss(req.params.post_id);
-      const userId = req.session.user._id;
+      const userId = xss(req.session.user._id);
 
       const isLiked = await postsData.isLiked(post_id, userId);
-
       if (isLiked) {
         const updatedPost = await postsData.removeLikeFromPost(post_id, userId);
+        let updatedUser = await userData.getUserById(userId);
+        req.session.user = updatedUser;
         return res.status(200).json({
           likes: updatedPost.likes.length,
           liked: "Unlike"
         })
       } else {
         const updatedPost = await postsData.addLikeToPost(post_id, userId);
+        let updatedUser = await userData.getUserById(userId);
+        req.session.user = updatedUser;
         return res.status(200).json({
           likes: updatedPost.likes.length,
           liked: "Like"

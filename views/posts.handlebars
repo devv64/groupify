@@ -2,10 +2,6 @@
 <div>
     <h1>Post</h1>
 
-    <div class="error" id="errid">
-    {{!-- <div class="error" id="errid" hidden> --}}
-        {{error}}
-    </div>
 
     <div>
       <a href="/users/{{post.username}}">{{post.username}}</a>
@@ -16,10 +12,10 @@
         <button type="submit">Create Comment</button>
       </form>
         
-      <p id="likes">{{post.likes}} likes</p>
-      <form action="/posts/{{post._id}}/like" method="POST">
-        <button type="submit" class="{{liked}}" id="like">{{liked}}</button>
-      </form>
+      <p id="likes">{{post.likes.length}} likes</p>
+      {{!-- <form action="/posts/{{post._id}}/like" method="POST"> --}}
+        <button type="submit" class="{{liked}}" id="likeButton">{{liked}}</button>
+      {{!-- </form> --}}
       
       {{#if (eq post.username username)}}
         <form action="/deleteposts" method="POST">
