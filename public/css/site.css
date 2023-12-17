@@ -4,37 +4,40 @@
     box-sizing: border-box;
     font-family: 'Montserrat', sans-serif;
 }
-
 body{
-    background-color: #c9d6ff;
+    /* background-color: #c9d6ff; */
     background: linear-gradient(to right, #e2e2e2, #c9dcff);
     display: flex;
     align-items: center;
     justify-content: center;
     flex-direction: column;
-    height: 100vh;
+    /* height: 100vh;  */
 }
 
 #editProfile {
     display: none;
 }
 
-
-/* .posts{
-
-} */
-
 .site-header {
-    position: absolute;
+    position: relative;
     top: 0;
+    left: 0;
     height: auto;
     width: 100%;
+    overflow: hidden;
     background-color: rgba(6, 70, 112, 0.85);
     -webkit-backdrop-filter: saturate(180%) blur(20px);
     backdrop-filter: saturate(180%) blur(20px);
+<<<<<<< HEAD
     /* opacity: 0.5; */
+=======
+>>>>>>> origin
 }
+
 .site-header a {
+    display: inline-block;
+    padding: 8px 16px;
+    background-color: lightgray; 
     padding: 12px 25px;
     color: rgb(15, 83, 122);
     font-family: "Inter", sans-serif;
@@ -42,7 +45,17 @@ body{
     font-weight: 400;
     transition: color 0.15s ease-in-out;
     text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+    color: black;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
+
+div{
+    text-align: center;
+}
+
 
 .site-header a:hover {
     color: black;
@@ -71,6 +84,7 @@ footer {
     position: fixed;
     bottom: 0;
     padding-bottom: 0.5rem;
+    opacity: 0.25;
 }
 
 .error {
@@ -81,6 +95,4 @@ footer {
 .success {
     color: green;
     font-weight: bold;
-    font-size: 100px;
   } 
-

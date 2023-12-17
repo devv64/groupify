@@ -1,7 +1,8 @@
-import { users, posts } from '../config/mongoCollections.js';
+import { users, posts, comments } from '../config/mongoCollections.js';
 import { ObjectId, ReturnDocument } from 'mongodb';
 import bcrypt from 'bcrypt';
 import * as validate from './validation.js';
+import axios from 'axios';
 
 // import validation functions
 // validateUser, handleId, etc.
@@ -10,16 +11,21 @@ import * as validate from './validation.js';
 // this is needed to attach lastfm user to user object
 import * as lastfm from '../api/lastfm.js';
 
-
-export async function checkUsernameAndEmail(username, email) {
+export async function checkUsername(username) {
   username = validate.validName(username);
+
+  const userCollection = await users();
+  const existingUsername = await userCollection.findOne({ username: username });
+  if (existingUsername) throw "Username already exists";
+  return true;
+}
+
+export async function checkEmail(email) {
   email = validate.validEmail(email);
 
   const userCollection = await users();
   const existingEmail = await userCollection.findOne({ email: email });
   if (existingEmail) throw "Email already exists";
-  const existingUsername = await userCollection.findOne({ username: username });
-  if (existingUsername) throw "Username already exists";
   return true;
 }
 
@@ -32,12 +38,23 @@ export async function createUser(username, password, email) {
   const userCollection = await users();
 
   // check if username or email already exists
-  await checkUsernameAndEmail(username, email);
+  await checkUsername(username);
+  await checkEmail(email);
 
   //encrypt password
   const hash = await bcrypt.hash(password, 4); //remember to change to back to 16 or 12 for all bcrypts
 
-  const pfp = 'https://source.unsplash.com/1600x900/?' + username;
+  let pfp = 'https://source.unsplash.com/1600x900/?' + username;
+
+  await axios.head(pfp)
+    .then(response => {
+      if (response.request.res.responseUrl === 'https://images.unsplash.com/source-404?fit=crop&fm=jpg&h=800&q=60&w=1200') {
+        pfp = 'https://source.unsplash.com/1600x900/?'
+      }
+    })
+    .catch(error => {
+      console.error('Error fetching:', error);
+    });
 
   const newUser = {
     username: username,
@@ -128,11 +145,27 @@ export async function updateUserById(id, username, password, lastfmUsername) {
   const lastfmData = lastfmUsername ? await lastfm.getInfoByUser(lastfmUsername) : null;
   let hash = (password == null) ? null : await bcrypt.hash(password, 4);
 
+  if (username != user.username) {
+    await checkUsername(username);
+  }
+
+  let pfp = 'https://source.unsplash.com/1600x900/?' + username;
+
+  await axios.head(pfp)
+    .then(response => {
+      if (response.request.res.responseUrl === 'https://images.unsplash.com/source-404?fit=crop&fm=jpg&h=800&q=60&w=1200') {
+        pfp = 'https://source.unsplash.com/1600x900/?'
+      }
+    })
+    .catch(error => {
+      console.error('Error fetching:', error);
+    });
+
   const updatedUser = {
     username: username || user.username,
     password: hash || user.password,
     email: user.email,
-    pfp: 'https://source.unsplash.com/1600x900/?' + username || user.pfp,
+    pfp: pfp || user.pfp,
     lastfm: lastfmData || user.lastfm,
     followers: user.followers,
     following: user.following,
@@ -142,7 +175,7 @@ export async function updateUserById(id, username, password, lastfmUsername) {
     createdAt: user.createdAt,
     updatedAt: new Date()
   };
-
+  const oldUsername = user.username;
   // there might be a better way to do this
   const updateInfo = await userCollection.findOneAndReplace(
     { _id: new ObjectId(id) }, 
@@ -165,6 +198,16 @@ export async function updateUserById(id, username, password, lastfmUsername) {
     );
     if (!post) throw `Error: Update failed! Could not update post with id of ${user.createdPosts[i]}`;
   };
+
+  const commentCollection = await comments();
+  console.log("Current username: ",user.username);
+  console.log("Old commetn User: ",oldUsername);
+    const comment = await commentCollection.updateMany(
+      { username: oldUsername}, 
+      { $set: { username: updatedUser.username}},
+    //   { returnDocument: 'after' }
+    );
+    if (!comment) throw `Error: Update failed! Could not update comment`;
 
   return updateInfo;
 }

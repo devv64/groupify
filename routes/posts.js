@@ -19,8 +19,10 @@ router
       const post = await postsData.getPostById(post_id)
       const postComments = await commentsData.getAllCommentsByPostId(post_id);
       const username = req.session.user.username
-      const success = xss(req.query.success);
-      return res.render("posts", { post, postComments, username, success });
+      const likes = post.likes.length
+      const isLiked = await postsData.isLiked(post_id, req.session.user._id)
+      const liked = isLiked ? "Unlike" : "Like"
+      return res.render('posts', { post, postComments, username, likes, liked })
     } catch (e) {
       return res.status(400).render('feed', { error: e });
     }
@@ -30,7 +32,7 @@ router
     // const lastfmArtist = xss(req.body.lastfmArtist);
     try {
         const post_id = xss(req.params.post_id);
-        const username = req.session.user.username;
+        const username = xss(req.session.user.username);
         const commentBody = xss(req.body.comment);
         let post = await postsData.getPostById(post_id);
         const comment = await commentsData.createComment(post_id, username, commentBody);
@@ -40,7 +42,6 @@ router
         
         return res.render('partials/comment', {layout:null, ...comment, user: username});
     } catch (e) {
-        // console.log("This is E", e, "||");
         if (
             e && typeof(e) === "string" &&
             (e.indexOf("No user with id") >= 0 ||
@@ -62,21 +63,23 @@ router
     try {
       const post_id = xss(req.params.post_id);
       const userId = xss(req.session.user._id);
-      const isLiked = await postsData.isLiked(post_id, userId);
 
+      const isLiked = await postsData.isLiked(post_id, userId);
       if (isLiked) {
         const updatedPost = await postsData.removeLikeFromPost(post_id, userId);
+        let updatedUser = await userData.getUserById(userId);
+        req.session.user = updatedUser;
         return res.status(200).json({
           likes: updatedPost.likes.length,
-          liked: false
+          liked: "Unlike"
         })
       } else {
         const updatedPost = await postsData.addLikeToPost(post_id, userId);
-        console.log("HERE POSTS ELSE");
-        
+        let updatedUser = await userData.getUserById(userId);
+        req.session.user = updatedUser;
         return res.status(200).json({
           likes: updatedPost.likes.length,
-          liked: true
+          liked: "Like"
         })
       }
     } catch (e) {
@@ -90,6 +93,12 @@ router
         try {
             const postId = xss(req.params.post_id);
             const commentToDelete = xss(req.body.commentToDelete);
+            const commentFromId = await commentsData.getCommentById(commentToDelete);
+
+            if(req.session.user.username !== commentFromId.username){
+                return res.status(400).render("posts", { error: "Cannot Delete other users comments" });
+            }
+
             const comment = await commentsData.removeComment(commentToDelete);
             const success = encodeURIComponent("Comment Deleted!");
             

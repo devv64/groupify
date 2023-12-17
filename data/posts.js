@@ -42,13 +42,12 @@ export async function createPost(body, userId, lastfmSong, lastfmArtist) {
 
   const username = user.username
 
-  // ? Should we have tags on posts.. need to check the doc if this was required or extra
   const newPost = {
     // need to also give username, pfp, etc. to post
     userId,
     username,
     body,
-    comments: [], // ? comment objects or ids to comment objects
+    comments: [],
     track: lastfmSong_ || null,
     artist: lastfmArtist_ || null,
     likes: [], 
@@ -66,9 +65,8 @@ export async function createPost(body, userId, lastfmSong, lastfmArtist) {
     { $push: {createdPosts: newId} },
     { returnDocument: 'after' }
     )
-  
-  if(!newUser) throw "User not found"
 
+  if(!newUser) throw "User not found"
     // ! error check newUser
 
   return post;
@@ -84,9 +82,6 @@ export async function getPostById(id) {
   return post;
 }
 
-// get all posts
-// ? do we even want this
-
 // get all posts by user
 export async function getPostsByUser(id) {
   id = validate.validId(id);
@@ -98,11 +93,10 @@ export async function getPostsByUser(id) {
 }
 
 // get all posts by artist
-// ? take in name or id
 export async function getPostsByArtist(name) {
   name = validate.validString(name);
   const postCollection = await posts();
-  const lastfmArtist_ = await lastfm.searchArtistByName(name, 1);
+  const lastfmArtist_ = await lastfm.findArtistByName(name);
   if (!lastfmArtist_) throw "Artist not found";
   // only trying to find lastfmArtist_ object because idk what we're actually gonna be storing
   const artistPosts = await postCollection.find({ artist: lastfmArtist_ }).toArray();
@@ -122,14 +116,18 @@ export async function getSomePosts(n=25) {
 }
 
 // remove post by id
-export async function removePostById(id) {
+export async function removePostById(id, userId) {
   id = validate.validId(id);
+  userId = validate.validId(userId);
+
   const postCollection = await posts();
   const userCollection = await users();
-  const user = await userCollection.findOne({ createdPosts : {$in: [id]}}) //finds user that created post by checking createdPosts for the id
+  const user = await userCollection.findOne({ _id: new ObjectId(userId) });
   if (!user) throw "User not found";
   const post = await getPostById(id);
   if (!post) throw "Post not found";
+
+  if (user._id.toString() !== post.userId) throw "User does not own post"; 
 
   let updateUser = await userCollection.findOneAndUpdate( //removes post from createdPosts from that user
     { username: user.username },
@@ -138,6 +136,9 @@ export async function removePostById(id) {
     )
 
     if(!updateUser) throw "User not found"
+
+    // ! error check
+
     // ? maybe remove from everyone that liekd thsi post
 
   const deletionInfo = await postCollection.deleteOne({ _id: new ObjectId(id) });
@@ -164,6 +165,8 @@ export async function addLikeToPost(postId, userId) {
     { returnDocument: 'after' }
     )
 
+  if (!user) throw "User not found"
+
   if (!updateInfo.acknowledged || updateInfo.modifiedCount === 0) throw "Could not update post";
   const post = await getPostById(postId);
   if (!post) throw "Post not found";
@@ -181,12 +184,11 @@ export async function removeLikeFromPost(postId, userId) {
     // not sure if this works, from stackoverflow
     { $pull: { likes: userId } }
   );
-
   if (!updateInfo.acknowledged || updateInfo.modifiedCount === 0) throw "Could not update post";
-
   let user = await userCollection.findOneAndUpdate(
     { _id: new ObjectId(userId) },
-    { $pull: {likedPosts: newId} },
+    // { $pull: {likedPosts: newId} },
+    { $pull: {likedPosts: new ObjectId(postId)} },
     { returnDocument: 'after' }
     )
 

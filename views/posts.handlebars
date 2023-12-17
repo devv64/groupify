@@ -1,14 +1,7 @@
-<a href="/feed">Feed</a>
-<a href="/users/{{ username }}">Profile</a>
+<link rel="stylesheet" href="../public/css/post.css">
 <div>
     <h1>Post</h1>
 
-    {{!-- Already in main.handlebars --}}
-    {{!-- <div class="error" id="errid">
-        <div class="error" id="errid" hidden>
-            {{error}}
-        </div> 
-    --}}
 
     <div>
       <a href="/users/{{post.username}}">{{post.username}}</a>
@@ -19,20 +12,13 @@
         <button type="submit">Create Comment</button>
       </form>
         
-      
-      {{!-- All of this is not working I am just writing for now --}}
-      {{#if liked}}
-        <form action="/posts/{{post._id}}/unlike" method="POST">
-          <button type="submit">Unlike</button>
-        </form>
-      {{else}}
-        <form action="/posts/{{post._id}}/like" method="POST">
-          <button type="submit">Like</button>
-        </form>
-      {{/if}}
+      <p id="likes">{{post.likes.length}} likes</p>
+      {{!-- <form action="/posts/{{post._id}}/like" method="POST"> --}}
+        <button type="submit" class="{{liked}}" id="likeButton">{{liked}}</button>
+      {{!-- </form> --}}
       
       {{#if (eq post.username username)}}
-        <form action="/users/{{post.username}}/delete" method="POST">
+        <form action="/deleteposts" method="POST">
           <input type="hidden" name="postToDelete" id="postToDelete" value="{{post._id}}">
           <button type="submit">Delete</button>
         </form>
