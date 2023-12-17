@@ -22,15 +22,15 @@
 
         
 
-        console.log("New Comment:", newComment, ";");
+        // console.log("New Comment:", newComment, ";");
         if(newComment){
             let requestConfig = {
                 method: 'POST',
-                // url: '/posts/' + postId,
                 url: '/posts/' + postId,
                 contentType: 'application/json',
                 data: JSON.stringify({
-                    comment: newComment
+                    comment: newComment,
+                    postId: postId
                 })
             }
 

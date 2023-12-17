@@ -1,10 +1,12 @@
 <div>
     <h1>Post</h1>
 
-    <div class="error" id="errid">
-    {{!-- <div class="error" id="errid" hidden> --}}
-        {{error}}
-    </div>
+    {{!-- Already in main.handlebars --}}
+    {{!-- <div class="error" id="errid">
+        <div class="error" id="errid" hidden>
+            {{error}}
+        </div> 
+    --}}
 
     <div>
       <a href="/users/{{post.username}}">{{post.username}}</a>
@@ -41,8 +43,9 @@
                 <div id="comment-box">
                     <a href="/users/{{this.username}}">{{this.username}}</a>
                     <p>{{body}}</p>
+                    {{!-- if the commenter Username == session username --}}
                     {{#if (eq this.username ../username)}}
-                        <form method="POST" action="/posts/{{post._id}}/deletecomment">
+                        <form method="POST" action="/posts/{{../post._id}}/deletecomment">
                             {{!-- Sends comment Id to deletecomment route --}}
                             <input type="hidden" name="commentToDelete" id="commentToDelete" value="{{this._id}}">
                             <button type="submit">Delete</button>

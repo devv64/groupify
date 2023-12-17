@@ -11,7 +11,7 @@ import bcrypt from 'bcrypt';
 // import validation functions
 
 router.get('/login', async (req, res) => {
-  res.render('loginsignup');
+  res.render('login');
 });
 
 //destroy session when logging out

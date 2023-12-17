@@ -8,9 +8,7 @@ import { validId } from "./validation.js";
 export const createComment = async (postId, username, commentBody) => {
     
     postId = validId(postId);
-    //userId is username
-    // userId = userId;
-    console.log("Comment Body: '", commentBody,"'");
+
     if(!commentBody || !(typeof commentBody === "string") || commentBody.trim().length === 0) throw  "Comment cannot be empty or all spaces";
     // if(!dateCreated || !(typeof dateCreated === "string")) throw  "Comment creation date must be provided}
     
@@ -38,15 +36,13 @@ export const createComment = async (postId, username, commentBody) => {
    
     const newCommentId = insertComment.insertedId.toString();
     const comment = await getCommentById(newCommentId);
-    // return comment;
-    // console.log(`--------------${postId}----------------`);
+
     const updatedPost = await postCollection.updateOne(
         { _id: new ObjectId(postId) },
         { $addToSet: { comments: newCommentId } }
     );
     if (!updatedPost.acknowledged || updatedPost.modifiedCount === 0) throw  "Could not add comment to post";
 
-    // return await getPostById(postId);
     return comment;
 };
 
@@ -92,6 +88,7 @@ export const removeComment = async (commentId) =>{
     const postCollection = await posts();
 
     const comment = await getCommentById(commentId);
+    // console.log("Data comment: ", comment);
 
     //Delete comment from the Comments Collection
     const deletionInfo = await commentsCollection.findOneAndDelete({ _id: new ObjectId(commentId) });
@@ -99,7 +96,7 @@ export const removeComment = async (commentId) =>{
 
     //Removes comment from it's post collection
     const updatedPost = await postCollection.updateOne(
-        { _id: ObjectId(comment.postId) },
+        { _id: new ObjectId(comment.postId) },
         { $pull: { comments: commentId } }
     );
     if (!updatedPost.acknowledged || updatedPost.modifiedCount === 0) throw  "Could not remove comment from post";
