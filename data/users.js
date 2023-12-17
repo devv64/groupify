@@ -48,7 +48,7 @@ export async function createUser(username, password, email) {
 
   await axios.head(pfp)
     .then(response => {
-      if (response.request.res.responseUrl !== pfp) {
+      if (response.request.res.responseUrl === 'https://images.unsplash.com/source-404?fit=crop&fm=jpg&h=800&q=60&w=1200') {
         pfp = 'https://source.unsplash.com/1600x900/?'
       }
     })
@@ -149,11 +149,23 @@ export async function updateUserById(id, username, password, lastfmUsername) {
     await checkUsername(username);
   }
 
+  let pfp = 'https://source.unsplash.com/1600x900/?' + username;
+
+  await axios.head(pfp)
+    .then(response => {
+      if (response.request.res.responseUrl === 'https://images.unsplash.com/source-404?fit=crop&fm=jpg&h=800&q=60&w=1200') {
+        pfp = 'https://source.unsplash.com/1600x900/?'
+      }
+    })
+    .catch(error => {
+      console.error('Error fetching:', error);
+    });
+
   const updatedUser = {
     username: username || user.username,
     password: hash || user.password,
     email: user.email,
-    pfp: 'https://source.unsplash.com/1600x900/?' + username || user.pfp,
+    pfp: pfp || user.pfp,
     lastfm: lastfmData || user.lastfm,
     followers: user.followers,
     following: user.following,

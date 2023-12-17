@@ -19,6 +19,11 @@ const validEditedPassword = (password) => {
     return password;
   };
 
+let errid = document.getElementById('error');   
+let successid = document.getElementById('success');
+errid.hidden = true;
+  
+
 // stuff for error
 // for edit profile page  
 let editForm = document.getElementById("editForm");
@@ -26,7 +31,7 @@ let error = document.getElementById("error");
 if(editForm){
     editForm.addEventListener("submit", (event) => {
         event.preventDefault();
-        error.classList.add("hidden");
+        successid.textContent = "";
         try{
             let username = document.getElementById("username").value;
             let oldPassword = document.getElementById("oldPassword").value;
@@ -45,16 +50,15 @@ if(editForm){
                 ((newPassword === null || confirmPassword === null) && oldPassword !== null) || 
                 ((newPassword !== null || confirmPassword !== null) && oldPassword === null)) 
                 throw "Enter old and new password to change password";
-
-            if(newPassword !== null && confirmPassword !== null && newPassword !== confirmPassword) 
-                throw "New passwords do not match";
-            
+            successid.textContent = "Loading...";
             editForm.submit();
         }
         catch(e){
-            event.preventDefault();
-            error.classList.remove("hidden");
-            error.textContent = e;
+            errid.hidden = false;
+            errid.textContent = error;
+            errid.innerHTML = error;
+            errid.style.display = "block";
+            console.log("Client side error:", e);
         }
     })
 }

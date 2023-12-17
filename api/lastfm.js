@@ -24,7 +24,6 @@ export const searchArtistByName = async (name, results) => {
   console.log(`searchArtistByName: ${name} -`, url)
 
   const { data } = await axios.get(url);
-  // ? what do we want to return here, this is probably for search bar
   return data.results.artistmatches.artist;
 }
 
@@ -35,9 +34,7 @@ export const findArtistByName = async (name) => {
   console.log(`findArtistByName: ${name} -`, url)
 
   const { data } = await axios.get(url);
-  // ? what do we want to return here, this is probably for search bar
   return data.results?.artistmatches.artist[0];
-  return data.results.artistmatches ? data.results.artistmatches.artist[0] : null;
 }
 
 // Track Functions
@@ -49,27 +46,24 @@ export const findArtistByName = async (name) => {
   * @return {String[]}      Tracks relevant to input name.
   */
 export const searchTrackByName = async (name, results) => {
- // name = validateString(name) // ! maybe
+  // name = validateString(name) // ! maybe
   const queryUrl = '/2.0/?method=track.search&track=' + name + '&limit=' + results;
   const url = urlGen(queryUrl);
   console.log(`searchTrackByName: ${name} -`, url);
 
   const { data } = await axios.get(url);
-  // ? what do we want to return here, this is probably for search bar
   return data.results.trackmatches.track
 }
 
 export const findTrackByName = async (name) => {
   // name = validateString(name) // ! maybe
-   const queryUrl = '/2.0/?method=track.search&track=' + name;
-   const url = urlGen(queryUrl);
-   console.log(`findTrackByName: ${name} -`, url);
+  const queryUrl = '/2.0/?method=track.search&track=' + name;
+  const url = urlGen(queryUrl);
+  console.log(`findTrackByName: ${name} -`, url);
  
-   const { data } = await axios.get(url);
-   // ? what do we want to return here, this is probably for search bar
-    return data.results?.trackmatches.track[0];
-   return data.results.trackmatches ? data.results.trackmatches.track[0] : null;
- }
+  const { data } = await axios.get(url);
+  return data.results?.trackmatches.track[0];
+}
 
 // User Functions
 
@@ -84,8 +78,6 @@ export const getInfoByUser = async (name) => {
   console.log(`getInfoByUser: ${name} -`, url);
 
   const { data } = await axios.get(url);
-  console.log(data.user)
-  // ? what do we want to return here, maybe useful for profile page data
   return data.user;
 }
 
