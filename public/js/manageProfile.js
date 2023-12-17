@@ -19,10 +19,7 @@ const validEditedPassword = (password) => {
     return password;
   };
 
-let errid = document.getElementById('error');   
 let successid = document.getElementById('success');
-errid.hidden = true;
-  
 
 // stuff for error
 // for edit profile page  
@@ -32,6 +29,7 @@ if(editForm){
     editForm.addEventListener("submit", (event) => {
         event.preventDefault();
         successid.textContent = "";
+        error.classList.add("hidden")
         try{
             let username = document.getElementById("username").value;
             let oldPassword = document.getElementById("oldPassword").value;
@@ -54,11 +52,9 @@ if(editForm){
             editForm.submit();
         }
         catch(e){
-            errid.hidden = false;
-            errid.textContent = error;
-            errid.innerHTML = error;
-            errid.style.display = "block";
-            console.log("Client side error:", e);
+            event.preventDefault();
+            error.classList.remove("hidden");
+            error.textContent = e;
         }
     })
 }
