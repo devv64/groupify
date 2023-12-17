@@ -66,9 +66,8 @@ export async function createPost(body, userId, lastfmSong, lastfmArtist) {
     { $push: {createdPosts: newId} },
     { returnDocument: 'after' }
     )
-  
-  if(!newUser) throw "User not found"
 
+  if(!newUser) throw "User not found"
     // ! error check newUser
 
   return post;
@@ -138,6 +137,9 @@ export async function removePostById(id) {
     )
 
     if(!updateUser) throw "User not found"
+
+    // ! error check
+
     // ? maybe remove from everyone that liekd thsi post
 
   const deletionInfo = await postCollection.deleteOne({ _id: new ObjectId(id) });
@@ -150,9 +152,9 @@ export async function addLikeToPost(postId, userId) {
   postId = validate.validId(postId);
   userId = validate.validId(userId);
   const postCollection = await posts();
-  const userCollection = await user();
+  const userCollection = await users();
   const updateInfo = await postCollection.updateOne(
-    { _id: ObjectId(postId) },
+    { _id: new ObjectId(postId) },
     { $addToSet: { likes: userId } }
   );
 
@@ -163,6 +165,8 @@ export async function addLikeToPost(postId, userId) {
     { $push: {likedPosts: postId} },
     { returnDocument: 'after' }
     )
+
+  if (!user) throw "User not found"
 
   if (!updateInfo.acknowledged || updateInfo.modifiedCount === 0) throw "Could not update post";
   const post = await getPostById(postId);
@@ -177,7 +181,7 @@ export async function removeLikeFromPost(postId, userId) {
   const postCollection = await posts();
   const userCollection = await users();
   const updateInfo = await postCollection.updateOne(
-    { _id: ObjectId(postId) },
+    { _id: new ObjectId(postId) },
     // not sure if this works, from stackoverflow
     { $pull: { likes: userId } }
   );
@@ -186,7 +190,8 @@ export async function removeLikeFromPost(postId, userId) {
 
   let user = await userCollection.findOneAndUpdate(
     { _id: new ObjectId(userId) },
-    { $pull: {likedPosts: newId} },
+    // { $pull: {likedPosts: newId} },
+    { $pull: {likedPosts: new ObjectId(newId)} },
     { returnDocument: 'after' }
     )
 

@@ -19,7 +19,10 @@ router
       const post = await postsData.getPostById(post_id)
       const postComments = await commentsData.getAllCommentsByPostId(post_id);
       const username = req.session.user.username
-      return res.render("posts", { post, postComments, username });
+      const likes = post.likes.length
+      const isLiked = await postsData.isLiked(post_id, req.session.user._id)
+      const liked = isLiked ? "Unlike" : "Like"
+      return res.render('posts', { post, postComments, username, likes, liked })
     } catch (e) {
       return res.status(400).render('feed', { error: e });
     }
@@ -28,8 +31,8 @@ router
     // const lastfmSong = xss(req.body.lastfmSong);
     // const lastfmArtist = xss(req.body.lastfmArtist);
     try {
-        const post_id = req.params.post_id;
-        const username = req.session.user.username;
+        const post_id = xss(req.params.post_id);
+        const username = xss(req.session.user.username);
         const commentBody = xss(req.body.comment);
         let post = await postsData.getPostById(post_id);
         const comment = await commentsData.createComment(post_id, username, commentBody);
@@ -68,13 +71,13 @@ router
         const updatedPost = await postsData.removeLikeFromPost(post_id, userId);
         return res.status(200).json({
           likes: updatedPost.likes.length,
-          liked: false
+          liked: "Unlike"
         })
       } else {
         const updatedPost = await postsData.addLikeToPost(post_id, userId);
         return res.status(200).json({
           likes: updatedPost.likes.length,
-          liked: true
+          liked: "Like"
         })
       }
     } catch (e) {

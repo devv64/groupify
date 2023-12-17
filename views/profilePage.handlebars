@@ -9,10 +9,18 @@ styling--}}
 
 <link rel="stylesheet" href="../public/css/profilepage.css">
 
-<div class="profileContainer">
-    <div class="user">
-        <img src="{{profilePic}}" alt="">
-        <h1 id="name">{{username}}</h1>
+<div>
+    <h1 id="name">{{username}}</h1>
+    <img src="{{profilePic}}" alt="Profile Picture">
+    <div class="manage">
+        {{#if isPersonalAccount}}
+            <a href="/users/{{username}}/manage" class="manage">Manage Profile Account</a>
+            <a href="/users/{{username}}/delete" class="delete">Delete Post</a>
+        {{else}}
+            <div id="buttonContainer">
+                <button type="submit" class="{{followClass}}" id="followingButton">{{followingText}}</button>
+            </div>
+        {{/if}}
     </div>
 
     <div class="posts">

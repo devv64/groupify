@@ -2,7 +2,7 @@ import { Router } from 'express';
 const router = Router();
 // import data functions
 import * as lastfm from '../api/lastfm.js';
-import { getUserByUsername, updateUserById, followUser, unfollowUser, getUserById, removeNotification } from '../data/users.js';
+import { getUserByUsername, updateUserById, followUser, unfollowUser, getUserById } from '../data/users.js';
 import { getPostsByUser, removePostById, getPostById } from '../data/posts.js';
 // import { getPostsByUser } from '../data/posts.js';
 import { validEditedUsername, validEditedPassword } from '../data/validation.js';
@@ -71,18 +71,18 @@ router.route('/:username')
       })
     }
     catch(e){
-      res.status(404).render('profilePage', {error: e});
+      res.status(404).render('profilePage', {error: "Profile page error:" + e});
     }
 })
   .post(async (req, res) => { //for following and unfollowing functionality
 
     let profile;
     try{
-      const username = xss(req.params.username)
+      const username = xss(req.params.username);
       profile = await getUserByUsername(username);
     }
     catch(e){
-      return res.status(404).render('profilePage', {error: "Profile page error"});
+      return res.status(404).render('profilePage', {error: "Profile page error:" + e});
     }
 
     if(!(req.session.user.following.includes(profile._id))){ //check if user is not following profile
@@ -240,7 +240,7 @@ router.route('/:username/manage') //does not update name in feed
       const updatedUser = await updateUserById(id, username, newPassword, lastfmUsername); //wont work since lastfm is not connected i think
       req.session.user = updatedUser;
       const success = encodeURIComponent('Profile updated!');
-      return res.redirect(`/users/${username}?success=${success}`);
+      return res.redirect(`/users/${req.session.user.username}?success=${success}`);
     }
     catch(e){
       return res.status(400).render('manage', {error: e});
