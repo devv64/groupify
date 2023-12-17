@@ -15,9 +15,7 @@
         {{else}}
         <p id="likes">0 likes</p>
         {{/if}}
-      <form action="/posts/{{post._id}}/like" method="POST">
-        <button type="submit" class="{{liked}}" id="like">{{liked}}</button>
-      </form>
+      <button type="submit" class="{{liked}}" id="likeButton">{{liked}}</button>
       
       {{#if (eq post.username username)}}
         <form action="/deleteposts" method="POST">

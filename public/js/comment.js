@@ -22,7 +22,7 @@
 
         
 
-        console.log("New Comment:", newComment, ";");
+        
         if(newComment){
             let requestConfig = {
                 method: 'POST',
