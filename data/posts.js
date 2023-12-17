@@ -121,14 +121,18 @@ export async function getSomePosts(n=25) {
 }
 
 // remove post by id
-export async function removePostById(id) {
+export async function removePostById(id, userId) {
   id = validate.validId(id);
+  userId = validate.validId(userId);
+
   const postCollection = await posts();
   const userCollection = await users();
-  const user = await userCollection.findOne({ createdPosts : {$in: [id]}}) //finds user that created post by checking createdPosts for the id
+  const user = await userCollection.findOne({ _id: new ObjectId(userId) });
   if (!user) throw "User not found";
   const post = await getPostById(id);
   if (!post) throw "Post not found";
+
+  if (user._id.toString() !== post.userId) throw "User does not own post"; 
 
   let updateUser = await userCollection.findOneAndUpdate( //removes post from createdPosts from that user
     { username: user.username },
