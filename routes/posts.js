@@ -61,8 +61,8 @@ router
   .post(async (req, res) => {
 
     try {
-      const post_id = req.params.post_id;
-      const userId = req.session.user._id;
+      const post_id = xss(req.params.post_id);
+      const userId = xss(req.session.user._id);
 
       const isLiked = await postsData.isLiked(post_id, userId);
       if (isLiked) {
