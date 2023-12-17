@@ -4,6 +4,7 @@ const router = Router();
 import * as lastfm from '../api/lastfm.js';
 import { getUserByUsername, updateUserById, followUser, unfollowUser, getUserById } from '../data/users.js';
 import { getPostsByUser, removePostById, getPostById } from '../data/posts.js';
+import { getCommentByUsername } from '../data/comments.js';
 // import { getPostsByUser } from '../data/posts.js';
 import { validEditedUsername, validEditedPassword } from '../data/validation.js';
 import bcrypt from 'bcrypt';
@@ -33,10 +34,19 @@ router.route('/:username')
       let followClass = !profile.followers.includes(req.session.user._id) ? "follow"  : "unfollow";
       let followText = !profile.followers.includes(req.session.user._id) ? "Follow" : "Unfollow";
 
+      // if req.session.user.username equals comment.username
+
+      let commentsByUser = []
+      let comments = await getCommentByUsername(req.session.user.username);
+      for(let i = 0; i < comments.length; i++){
+        commentsByUser.push(comments[i]);
+      }
+
       return res.render('profilePage', {
           profilePic: profile.pfp,
           username: profile.username,
           posts: posts,
+          comments: comments,
           followers: profile.followers,
           following: profile.following,
           likedPosts: likedPosts,
