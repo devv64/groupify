@@ -161,7 +161,7 @@ export async function addLikeToPost(postId, userId) {
 
   let user = await userCollection.findOneAndUpdate(
     { _id: new ObjectId(userId) },
-    { $push: {likedPosts: postId} },
+    { $addToSet: {likedPosts: postId} },
     { returnDocument: 'after' }
     )
 
