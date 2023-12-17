@@ -2,6 +2,7 @@ import { users, posts } from '../config/mongoCollections.js';
 import { ObjectId, ReturnDocument } from 'mongodb';
 import bcrypt from 'bcrypt';
 import * as validate from './validation.js';
+import axios from 'axios';
 
 // import validation functions
 // validateUser, handleId, etc.
@@ -10,22 +11,26 @@ import * as validate from './validation.js';
 // this is needed to attach lastfm user to user object
 import * as lastfm from '../api/lastfm.js';
 
-
-export async function checkUsernameAndEmail(username, email) {
+export async function checkUsername(username) {
   username = validate.validName(username);
-  email = validate.validEmail(email);
 
   const userCollection = await users();
-  const existingEmail = await userCollection.findOne({ email: email });
-  if (existingEmail) throw "Email already exists";
   const existingUsername = await userCollection.findOne({ username: username });
   if (existingUsername) throw "Username already exists";
   return true;
 }
 
+export async function checkEmail(email) {
+  email = validate.validEmail(email);
+
+  const userCollection = await users();
+  const existingEmail = await userCollection.findOne({ email: email });
+  if (existingEmail) throw "Email already exists";
+  return true;
+}
+
 // create user
 export async function createUser(username, password, email) {
-  // validateUser(username, password, email, pfp, lastfm);
   username = validate.validName(username);
   password = validate.validPassword(password);
   email = validate.validEmail(email);
@@ -33,12 +38,23 @@ export async function createUser(username, password, email) {
   const userCollection = await users();
 
   // check if username or email already exists
-  await checkUsernameAndEmail(username, email);
+  await checkUsername(username);
+  await checkEmail(email);
 
   //encrypt password
-  const hash = await bcrypt.hash(password, 16);
+  const hash = await bcrypt.hash(password, 4); //remember to change to back to 16 or 12 for all bcrypts
 
-  const pfp = 'https://source.unsplash.com/1600x900/?' + username;
+  let pfp = 'https://source.unsplash.com/1600x900/?' + username;
+
+  await axios.head(pfp)
+    .then(response => {
+      if (response.request.res.responseUrl === 'https://images.unsplash.com/source-404?fit=crop&fm=jpg&h=800&q=60&w=1200') {
+        pfp = 'https://source.unsplash.com/1600x900/?'
+      }
+    })
+    .catch(error => {
+      console.error('Error fetching:', error);
+    });
 
   const newUser = {
     username: username,
@@ -60,12 +76,13 @@ export async function createUser(username, password, email) {
   if (!insertInfo.acknowledged || !insertInfo.insertedId) throw "Could not add user";  
   const newId = insertInfo.insertedId.toString();
   const user = await getUserById(newId);
+  if (!user) throw "User not found";
   return user;
 }
 
 // get user by id
 export async function getUserById(id) {
-  // handleId(id);
+  id = validate.validId(id);
   const userCollection = await users();
   const user = await userCollection.findOne({ _id: new ObjectId(id) });
   if (!user) throw "User not found";
@@ -105,9 +122,10 @@ export async function getAllUsers() {
 
 // remove user by id
 export async function removeUserById(id) {
-  // handleId(id);
+  id = validate.validId(id);
   const userCollection = await users();
   const user = await getUserById(id);
+  if (!user) throw `Could not find user with id of ${id}`;
   const deletionInfo = await userCollection.deleteOne({ _id: ObjectId(id) });
   if (!deletionInfo.acknowledged || deletionInfo.deletedCount === 0) throw `Could not delete user with id of ${id}`;
   return user;
@@ -115,20 +133,39 @@ export async function removeUserById(id) {
 
 // update user by id
 export async function updateUserById(id, username, password, lastfmUsername) {
-  // todo
-  // handleId(id);
-  
-  // validateUser(updatedUser);
+
+  id = validate.validId(id);
+  username = validate.validEditedUsername(username);
+  password = validate.validEditedPassword(password);
+  lastfmUsername = validate.validFmString(lastfmUsername);
+
   const userCollection = await users();
   const user = await getUserById(id);
+  if (!user) throw `Could not find user with id of ${id}`;
   const lastfmData = lastfmUsername ? await lastfm.getInfoByUser(lastfmUsername) : null;
-  let hash = (password === '') ? null : await bcrypt.hash(password, 10); //if password is empty string, dont update password
+  let hash = (password == null) ? null : await bcrypt.hash(password, 4);
+
+  if (username != user.username) {
+    await checkUsername(username);
+  }
+
+  let pfp = 'https://source.unsplash.com/1600x900/?' + username;
+
+  await axios.head(pfp)
+    .then(response => {
+      if (response.request.res.responseUrl === 'https://images.unsplash.com/source-404?fit=crop&fm=jpg&h=800&q=60&w=1200') {
+        pfp = 'https://source.unsplash.com/1600x900/?'
+      }
+    })
+    .catch(error => {
+      console.error('Error fetching:', error);
+    });
 
   const updatedUser = {
     username: username || user.username,
     password: hash || user.password,
     email: user.email,
-    pfp: 'https://source.unsplash.com/1600x900/?' + username || user.pfp,
+    pfp: pfp || user.pfp,
     lastfm: lastfmData || user.lastfm,
     followers: user.followers,
     following: user.following,
@@ -139,6 +176,14 @@ export async function updateUserById(id, username, password, lastfmUsername) {
     updatedAt: new Date()
   };
 
+  // there might be a better way to do this
+  const updateInfo = await userCollection.findOneAndReplace(
+    { _id: new ObjectId(id) }, 
+    updatedUser,
+    { returnDocument: 'after' }
+    );
+  if (!updateInfo) throw `Error: Update failed! Could not update user with id of ${id}`;
+
   // need to update all the posts that the user has created
   // need to update all the posts that the user has liked
   // ? need to update all the posts that the user has commented on -- depending on how comments work
@@ -147,21 +192,13 @@ export async function updateUserById(id, username, password, lastfmUsername) {
   const postCollection = await posts();
   for (let i = 0; i < user.createdPosts.length; i++) {
     const post = await postCollection.findOneAndUpdate(
-      { _id: user.createdPosts[i]}, 
-      { $set: { userId: id,
-        username: updatedUser.username}},
+      { _id: new ObjectId(user.createdPosts[i])}, 
+      { $set: { username: updatedUser.username}},
       { returnDocument: 'after' }
     );
     if (!post) throw `Error: Update failed! Could not update post with id of ${user.createdPosts[i]}`;
   };
 
-  // there might be a better way to do this
-  const updateInfo = await userCollection.findOneAndReplace(
-    { _id: new ObjectId(id) }, 
-    updatedUser,
-    { returnDocument: 'after' }
-    );
-  if (!updateInfo) throw `Error: Update failed! Could not update user with id of ${id}`;
   return updateInfo;
 }
 
@@ -182,9 +219,13 @@ export const loginUser = async (email, password) => {
 export const followUser = async (userId, profileId) => { //adds profile to user following list and adds user to profile's followers list
   // handleId(followerId); 
   // handleId(followingId);
+  userId = validate.validId(userId);
+  profileId = validate.validId(profileId);
   const userCollection = await users();
   const user = await getUserById(userId);
+  if (!user) throw "User not found";
   const profile = await getUserById(profileId);
+  if (!profile) throw "Profile not found";
   if(user.following.includes(profileId)) throw "Already following user 1";
   if(profile.followers.includes(userId)) throw "Already following user 2";
   
@@ -210,9 +251,13 @@ export const followUser = async (userId, profileId) => { //adds profile to user 
 export const unfollowUser = async (userId, profileId) => { //removes profile form user following list and removes user form profile's followers list
   // handleId(followerId);
   // handleId(followingId);
+  userId = validate.validId(userId);
+  profileId = validate.validId(profileId);
   const userCollection = await users();
   const user = await getUserById(userId);
+  if (!user) throw "User not found";
   const profile = await getUserById(profileId);
+  if (!profile) throw "Profile not found";
   if (!user.following.includes(profileId)) throw "Not following user 1";
   if (!profile.followers.includes(userId)) throw "Not following user 2";
 
@@ -236,13 +281,16 @@ export const unfollowUser = async (userId, profileId) => { //removes profile for
 
 export const addNotification = async (profileId, notification) => {
   // handleId(userId);
+  profileId = validate.validId(profileId);
+  notification = validate.validString(notification);
   const userCollection = await users();
-  const user = await getUserById(profileId);
+
   let newNotification = {
-    _id : new ObjectId(),
-    notification : notification,
-    dateCreated : new Date()
+    _id: new ObjectId().toString(),
+    notification: notification,
+    dateCreated: new Date()
   }
+  
   const insertNotification = await userCollection.findOneAndUpdate(
     { _id: new ObjectId(profileId) },
     { $push: { notifications: newNotification } },
@@ -250,4 +298,19 @@ export const addNotification = async (profileId, notification) => {
   );
   if (!insertNotification) throw "Error: Update failed! Could not add notification";
   return insertNotification;
+}
+
+export const removeNotification = async (userId, notificationId) => { //idk if this works
+  // handleId(userId);
+  // handleId(notificationId);
+  userId = validate.validId(userId);
+  notificationId = validate.validId(notificationId);
+  const userCollection = await users();
+  const removeNotification = await userCollection.findOneAndUpdate(
+    { _id: new ObjectId(userId) },
+    { $pull: { notifications: {_id : notificationId}} },
+    { returnDocument: 'after' }
+  );
+  if (!removeNotification) throw "Error: Update failed! Could not remove notification";
+  return removeNotification;
 }

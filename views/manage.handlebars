@@ -1,7 +1,9 @@
+<link rel="stylesheet" href="../public/css/profilepage.css">
 
 <div class="container">
     <h1>Manage Account</h1>
-    <form method="POST" id="editForm" action="/users/{{username}}/manage">
+
+    <form method="POST" id="editForm" action="/manage">
         <label for="username" id="usernameLabel">Username</label>
         <input type="text" name="username" id="username" placeholder="New Username">
 
@@ -19,13 +21,8 @@
 
         <button class="manageSubmit" type="submit">Submit</button>
     </form>
+    <p>Created Profile on {{createdProfile}}</p>
+    <p>Number of Posts: {{numberOfPosts}}</p>
+    <p>Total Likes Received: {{totalLikes}}</p>
     <a href="/users/{{username}}" class="backToProfile">Back to Profile Page</a>
-    <a href="/logout" class="logout">Logout</a>
-
-    {{#if error}}
-        <div class="error">
-            <p>{{error}}</p>
-        </div>
-    {{/if}}
-
 </div>

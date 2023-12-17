@@ -5,7 +5,6 @@
 <h1>Search: {{query}}</h1>
 <p>Search for users, Posts by song, Posts by artist</p>
 <form id= 'searchquery' action = "/search" method = "POST">
-    <label for="searchquery"></label>
     <input class = "searchbox" type = "text" name = "searchinput" id="searchinput" placeholder = "Search here">
     <input class = "searchbtn" type = "submit" value = "Search">
 </form>
@@ -16,10 +15,14 @@
         <p>No users found</p>
     {{/unless}}
     {{#each similarUsers}}
+    <a href = "/users/{{this.username}}">
         <div class = "searchResult">
+            {{#if this.pfp}}
             <img src="{{this.pfp}}" alt="pfp">
-            <a href = "/users/{{this.username}}">{{this.username}}</a>
+            {{/if}}
+            <h4>{{this.username}}</h4>
         </div>
+    </a>
     {{/each}}
 </div>
 
@@ -29,18 +32,18 @@
         <p>No songs found</p>
     {{/unless}}
     {{#each songposts}}
-        <div class = "searchResult">
-            {{!-- Last Fm's album art is broken not us --}}
-            {{#each this.track.image.[1]}}
-                {{#if @first}}
-                    <img src = '{{this}}' alt="song art">
-                {{/if}}
-            {{/each}}
-
-            <h4>{{this.track.name}}</h4>
-            <a href = "/posts/{{this._id}}">{{this.username}}</a>
-            <p>{{this.body}}</p>
-        </div>
+        <a href = "/posts/{{this._id}}">
+            <div class = "searchResult">
+                {{!-- Last Fm's album art is broken not us --}}
+                {{#each this.track.image.[1]}}
+                    {{#if @first}}
+                        <img src = '{{this}}' alt="song art">
+                    {{/if}}
+                {{/each}}
+                <h4>{{this.track.name}} {{this.username}}</h4>
+                <p>{{this.body}}</p>
+            </div>
+        </a>
     {{/each}}
 </div>
 
@@ -51,17 +54,18 @@
         <p>No artist found</p>
     {{/unless}}
     {{#each artistposts}}
-        <div class = "searchResult">
-            {{!-- Last Fm's img is broken not us --}}
-            {{#each this.artist.image.[1]}}
-                {{#if @first}}
-                    <img src = '{{this}}' alt="song art">
-                {{/if}}
-            {{/each}}
-            <h4>{{this.artist.name}}</h4>
-            <a href = "/posts/{{this._id}}">{{this.username}}</a>
-            <p>{{this.body}}</p>
-        </div>
+        <a href = "/posts/{{this._id}}">
+            <div class = "searchResult">
+                {{!-- Last Fm's img is broken not us --}}
+                {{#each this.artist.image.[1]}}
+                    {{#if @first}}
+                        <img src = '{{this}}' alt="song art">
+                    {{/if}}
+                {{/each}}
+                <h4>{{this.artist.name}} {{this.username}}</h4>
+                <p>{{this.body}}</p>
+            </div>
+        </a>
     {{/each}}
 </div>
 

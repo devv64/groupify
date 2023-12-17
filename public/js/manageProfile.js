@@ -19,11 +19,18 @@ const validEditedPassword = (password) => {
     return password;
   };
 
+let errid = document.getElementById('error');   
+let successid = document.getElementById('success');
+errid.hidden = true;
+  
+
+// stuff for error
 // for edit profile page  
 let editForm = document.getElementById("editForm");
 if(editForm){
     editForm.addEventListener("submit", (event) => {
         event.preventDefault();
+        successid.textContent = "";
         try{
             let username = document.getElementById("username").value;
             let oldPassword = document.getElementById("oldPassword").value;
@@ -39,9 +46,14 @@ if(editForm){
                 (newPassword === null && oldPassword !== null) || 
                 (newPassword !== null && oldPassword === null)) 
                 throw "Enter old and new password to change password";
+            successid.textContent = "Loading...";
             editForm.submit();
         }
         catch(e){
+            errid.hidden = false;
+            errid.textContent = error;
+            errid.innerHTML = error;
+            errid.style.display = "block";
             console.log("Client side error:", e);
         }
     })

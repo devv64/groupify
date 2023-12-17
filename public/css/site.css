@@ -4,152 +4,36 @@
     box-sizing: border-box;
     font-family: 'Montserrat', sans-serif;
 }
-
 body{
-    background-color: #c9d6ff;
+    /* background-color: #c9d6ff; */
     background: linear-gradient(to right, #e2e2e2, #c9dcff);
     display: flex;
     align-items: center;
     justify-content: center;
     flex-direction: column;
-    height: 100vh;
+    /* height: 100vh;  */
 }
 
 #editProfile {
     display: none;
 }
 
-div{
-    text-align: center;
-}
-
-img{
-    max-width: 30%;
-    height: auto;
-}
-
-.container {
-    max-width: 40%;
-    margin: 50px auto;
-    padding: 20px;
-    background-color: lightblue;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    text-align: center;
-}
-
-input {
-    display: block;
-    margin: 5px auto;
-    padding: 8px;
-    border-radius: 5px;
-}
-
-.follow {
-    font-size: 16px;
-    padding: 12px 24px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    background-color: #3498db;
-    color: #fff;
-    transition: background-color 0.3s ease, font-size 0.3s ease;
-    margin-top: 10px;
-    margin-bottom: 10px;
-  }
-
-.unfollow{
-    font-size: 16px;
-    padding: 12px 24px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    background-color: grey;
-    color: #fff;
-    transition: background-color 0.3s ease, font-size 0.3s ease;
-    margin-top: 10px;
-    margin-bottom: 10px;
-}
-
-
-.follow:hover {
-    background-color: #2980b9;
-    font-size: 20px; 
-}
-
-a{
-    display: inline-block;
-    padding: 8px 16px;
-    background-color: lightgray; 
-    color: #fff;
-    border-radius: 5px;
-    transition: background-color 0.3s ease;
-    color: black;
-    font-size: 15px;
-    margin-top: 10px;
-    margin-bottom: 10px;
-}
-
-a:hover {
-    background-color: darkgray;
-}
-
-.followers, .following{
-    display: inline-block;
-}
-
-.backToProfile, .logout{
-    border: 1px solid black;
-}
-
-.logout{
-    display: block;
-    width: 10%;
-    margin: 0 auto;
-}
-
-.manage {
-    display: block;
-    width: 30%;
-    margin: 5px auto;
-}
-
-.manageSubmit{
-    display: inline-block;
-    margin: 5px auto;
-    padding: 5px 10px;
-    font-size: 16px;
-    font-weight: bold;
-    text-align: center;
-    cursor: pointer;
-    background-color: #3498db; /* Button color */
-    color: #fff; /* Text color */
-    border: 2px solid #2980b9; /* Border color */
-    border-radius: 5px; /* Rounded corners */
-
-    &:hover {
-        background-color: #2980b9; /* Button color on hover */
-      }
-}
-
-ul{
-    list-style: none;
-}
-
-/* .posts{
-
-} */
-
 .site-header {
-    position: absolute;
+    position: relative;
     top: 0;
+    left: 0;
     height: auto;
     width: 100%;
+    overflow: hidden;
     background-color: rgba(6, 70, 112, 0.85);
     -webkit-backdrop-filter: saturate(180%) blur(20px);
     backdrop-filter: saturate(180%) blur(20px);
 }
+
 .site-header a {
+    display: inline-block;
+    padding: 8px 16px;
+    background-color: lightgray; 
     padding: 12px 25px;
     color: rgb(15, 83, 122);
     font-family: "Inter", sans-serif;
@@ -157,7 +41,17 @@ ul{
     font-weight: 400;
     transition: color 0.15s ease-in-out;
     text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+    color: black;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
+
+div{
+    text-align: center;
+}
+
 
 .site-header a:hover {
     color: black;
@@ -186,6 +80,7 @@ footer {
     position: fixed;
     bottom: 0;
     padding-bottom: 0.5rem;
+    opacity: 0.25;
 }
 
 .error {
@@ -197,13 +92,3 @@ footer {
     color: green;
     font-weight: bold;
   } 
-
-.Like {
-    color: red;
-    font-weight: bold;
-}
-
-.Unlike {
-    color: black;
-    font-weight: bold;
-}

@@ -7,6 +7,21 @@ import { getPostsByUser, removePostById, getPostById } from '../data/posts.js';
 // import { getPostsByUser } from '../data/posts.js';
 import { validEditedUsername, validEditedPassword } from '../data/validation.js';
 import bcrypt from 'bcrypt';
+import xss from 'xss';
+import { users } from '../config/mongoCollections.js';
+
+// import validation functions
+
+router.get('/login', async (req, res) => {
+  res.render('loginsignup');
+});
+
+//destroy session when logging out
+// router.get('/logout', async (req, res) => {
+//   req.session.destroy();
+//   res.send("Logged out");
+//   res.redirect('/');
+// });
 
 router
   .route('/')
@@ -18,13 +33,16 @@ router
     return res.status(200).json({test: 'success', data});
   });
 
+ 
+
 
 router.route('/:username')
   .get(async (req, res) => { //public profile page / personal page
     try{
-      const profile = await getUserByUsername(req.params.username);
+      const username = xss(req.params.username)
+      const profile = await getUserByUsername(username);
       const posts = await getPostsByUser(profile._id);
-      const success = req.query.success;
+      const success = xss(req.query.success);
       let personalAccount = false;
       if(req.session.user && req.session.user.username === profile.username){ //check if user is viewing their own profile
         personalAccount = true
@@ -60,7 +78,8 @@ router.route('/:username')
 
     let profile;
     try{
-      profile = await getUserByUsername(req.params.username);
+      const username = xss(req.params.username);
+      profile = await getUserByUsername(username);
     }
     catch(e){
       return res.status(404).render('profilePage', {error: "Profile page error:" + e});
@@ -106,7 +125,8 @@ router.route('/:username')
 
 router.route('/:username/followers').get(async (req, res) => { //followers page
   try{
-    const user = await getUserByUsername(req.params.username);
+    const username = xss(req.params.username)
+    const user = await getUserByUsername(username);
     let followersList = [];
     for(let i = 0; i < user.followers.length; i++){
       let follower = await getUserById(user.followers[i]);
@@ -124,7 +144,8 @@ router.route('/:username/followers').get(async (req, res) => { //followers page
 
 router.route('/:username/following').get(async (req, res) => { //following page
   try{
-    const user = await getUserByUsername(req.params.username);
+    const username = xss(req.params.username)
+    const user = await getUserByUsername(username);
     let followingList = [];
     for(let i = 0; i < user.following.length; i++){
       let followingUser = await getUserById(user.following[i]);
@@ -140,128 +161,7 @@ router.route('/:username/following').get(async (req, res) => { //following page
   }
 });
 
-router.route('/:username/manage')
-  .get(async (req, res) => { //manage profile page
-  try{
-    // ? Should this not be req.session.user
-    const user = await getUserByUsername(req.params.username);
-      res.render('manage', {
-        username: user.username,
-        password: user.password
-    })
-  }
-  catch(e){
-    return res.status(400).render('manage', {error: "Manage page error"});
-  }
-})
-  .post(async (req, res) => { //edit profile page
-    const user = await getUserByUsername(req.params.username);
-    try{
-      let {
-        username,
-        oldPassword,
-        newPassword,
-        confirmPassword,
-        lastfmUsername //not reading this
-      } = req.body;
 
-      username = validEditedUsername(username);
-      oldPassword = validEditedPassword(oldPassword);
-      newPassword = validEditedPassword(newPassword);
-      confirmPassword = validEditedPassword(confirmPassword);
-      if(
-        (newPassword === null && oldPassword !== null) || 
-        (newPassword !== null && oldPassword === null)) 
-        throw "Enter old and new password to change password";
-
-      if(oldPassword !== null){
-        const checkOldPassword = await bcrypt.compare(oldPassword, user.password);
-        if (!checkOldPassword) throw "Incorrect Old Password";
-      }
-
-      if (newPassword !== confirmPassword) throw "New Password and Confirm Password do not match";
-
-      lastfmUsername = validEditedUsername(lastfmUsername);      
-    }
-    catch(e){
-      return res.status(400).render('manage', {error: e}); //redirect to manage page and display error message instead of error page
-    }
-
-    try{
-      let {
-        username,
-        oldPassword,
-        newPassword,
-        confirmPassword,
-        lastfmUsername
-      } = req.body;
-
-      const id = user._id;
-      if(username ==='') username = user.username;
-      if(lastfmUsername ==='') lastfmUsername = user.lastfmUsername;
-      
-      const updatedUser = await updateUserById(id, username, newPassword, lastfmUsername); //wont work since lastfm is not connected i think
-      req.session.user = updatedUser;
-      var success = encodeURIComponent('Profile updated!');
-      return res.redirect(`/users/${username}?success=${success}`);
-    }
-    catch(e){
-      return res.status(400).render('manage', {error: "Error updating user"});
-    }
-});
-
-router.route('/:username/delete')
-  .get(async (req, res) => { //delete post page
-  try{
-    const user = await getUserByUsername(req.params.username);
-    const posts = await getPostsByUser(user._id);
-    res.render('delete', {
-        username: user.username,
-        posts: posts
-    })
-  }
-  catch(e){
-    return res.status(404).render('delete', {error: e});
-  }
-})
-  .post(async (req, res) => {
-    try{
-      const user = await getUserByUsername(req.params.username);
-      const postToDelete = req.body.postToDelete;
-      await removePostById(postToDelete);
-      return res.redirect(`/users/${user.username}/postdeleted`)
-    }
-    catch(e){
-      return res.status(400).render('delete', {error: "Error deleting post"});
-    }
-})
-
-router.route('/:username/postdeleted')
-  .get(async (req, res) => {
-    try{
-      const user = await getUserByUsername(req.params.username);
-      res.render('postdeleted', 
-      {username : user.username})
-    }
-    catch(e){
-      return res.status(400).render('delete', {error: "Error deleting post"});
-    }
-  })
-
-  router.route('/:username/notifications')
-    .get(async (req, res) => {
-      try{
-        const user = await getUserByUsername(req.params.username);
-        res.render('notifications', 
-        {
-          username : user.username,
-          notifications: user.notifications
-        })
-      }
-      catch(e){
-        return res.status(400).render('notifications', {error: "Error loading notifications"});
-      }
-    })
 
 
 export default router;

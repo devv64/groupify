@@ -15,14 +15,13 @@ router
   // ! Need to fix when it isn't a proper post_id
   .get(async (req, res) => {
     try {
-      const post_id = req.params.post_id
+      const post_id = xss(req.params.post_id)
       const post = await postsData.getPostById(post_id)
       const postComments = await commentsData.getAllCommentsByPostId(post_id);
       const username = req.session.user.username
       const likes = post.likes.length
       const isLiked = await postsData.isLiked(post_id, req.session.user._id)
       const liked = isLiked ? "Unlike" : "Like"
-      console.log(liked);
       return res.render('posts', { post, postComments, username, likes, liked })
     } catch (e) {
       return res.status(400).render('feed', { error: e });
@@ -32,17 +31,17 @@ router
     // const lastfmSong = xss(req.body.lastfmSong);
     // const lastfmArtist = xss(req.body.lastfmArtist);
     try {
-        const post_id = req.params.post_id;
-        const username = req.session.user.username;
+        const post_id = xss(req.params.post_id);
+        const username = xss(req.session.user.username);
         const commentBody = xss(req.body.comment);
         let post = await postsData.getPostById(post_id);
-
         const comment = await commentsData.createComment(post_id, username, commentBody);
         post = await postsData.getPostById(post_id);
+
+        await userData.addNotification(post.userId, `${username} commented on your post: "${post.body}" at ${post.createdAt.toLocaleString()}`)
         
         return res.render('partials/comment', {layout:null, ...comment, user: username});
     } catch (e) {
-        // console.log("This is E", e, "||");
         if (
             e &&
             (e.indexOf("No user with id") >= 0 ||
@@ -60,6 +59,7 @@ router
   router
   .route('/:post_id/like')
   .post(async (req, res) => {
+
     try {
       const post_id = req.params.post_id;
       const userId = req.session.user._id;
