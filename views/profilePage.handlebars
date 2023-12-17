@@ -50,7 +50,8 @@ styling--}}
         <p>Artist Count: {{profile.lastfm.artist_count}}</p>
         <p>Track Count: {{profile.lastfm.track_count}}</p>
         <p>Album Count: {{profile.lastfm.album_count}}</p>
-        <p>Profile URL: <a href="{{profile.lastfm.url}}" target="_blank" rel="noopener noreferrer">{{profile.lastfm.url}}</a></p>
+        <p>Profile URL: </p>
+        <a href="{{profile.lastfm.url}}" target="_blank" rel="noopener noreferrer"><img src="https://lastfm-recently-played.vercel.app/api?user={{profile.lastfm.name}}" height="auto" width="auto"/></a>
     </div>
     {{/if}}
 
