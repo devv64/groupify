@@ -3,6 +3,7 @@ import { createUser } from './data/users.js';
 import { createPost } from './data/posts.js';
 
 
+
 try {
     // Create dummy users
     const user1 = await createUser('JohnDoe', "Password1!", 'johndoe@example.com');
