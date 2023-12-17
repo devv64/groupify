@@ -43,7 +43,8 @@ router.route('/:username')
           isPersonalAccount: personalAccount,
           followClass: followClass,
           followingText: followText,
-          success: success
+          success: success,
+          profile: profile
       })
     }
     catch(e){
