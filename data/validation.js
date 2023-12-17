@@ -72,6 +72,7 @@ export const validUsername = (username) => {
     if (!username) throw "username must be provided";
     if (typeof username !== 'string') throw "username must be a string";
     if (username.trim().length === 0) throw "username must be a non-empty string";
+    username = username.trim().toLowerCase();
     if (username.length < 5 || username.length > 15) throw "username must be between 5 and 15 characters";
     if (!/^[a-zA-Z0-9]+$/.test(username)) throw "username must be a valid string";
     return username;
@@ -81,6 +82,7 @@ export const validEditedUsername = (username) => {
   if (!username) return null;
   if (typeof username !== 'string') throw "username must be a string";
   if (username.trim().length === 0) throw "username must be a non-empty string";
+  username = username.trim().toLowerCase();
   if (username.length < 5 || username.length > 15) throw "username must be between 5 and 15 characters";
   if (!/^[a-zA-Z0-9]+$/.test(username)) throw "username must be a valid string";
   return username;

@@ -19,18 +19,17 @@ const validEditedPassword = (password) => {
     return password;
   };
 
-let errid = document.getElementById('error');   
 let successid = document.getElementById('success');
-errid.hidden = true;
-  
 
 // stuff for error
 // for edit profile page  
 let editForm = document.getElementById("editForm");
+let error = document.getElementById("error");
 if(editForm){
     editForm.addEventListener("submit", (event) => {
         event.preventDefault();
         successid.textContent = "";
+        error.classList.add("hidden")
         try{
             let username = document.getElementById("username").value;
             let oldPassword = document.getElementById("oldPassword").value;
@@ -42,19 +41,20 @@ if(editForm){
             newPassword = validEditedPassword(newPassword);
             confirmPassword = validEditedPassword(confirmPassword);
             lastfmUsername = validEditedUsername(lastfmUsername);
+            
+            if(username === null && lastfmUsername === null && oldPassword === null && newPassword === null && confirmPassword === null)
+                throw "No changes made";
             if(
-                (newPassword === null && oldPassword !== null) || 
-                (newPassword !== null && oldPassword === null)) 
+                ((newPassword === null || confirmPassword === null) && oldPassword !== null) || 
+                ((newPassword !== null || confirmPassword !== null) && oldPassword === null)) 
                 throw "Enter old and new password to change password";
             successid.textContent = "Loading...";
             editForm.submit();
         }
         catch(e){
-            errid.hidden = false;
-            errid.textContent = error;
-            errid.innerHTML = error;
-            errid.style.display = "block";
-            console.log("Client side error:", e);
+            event.preventDefault();
+            error.classList.remove("hidden");
+            error.textContent = e;
         }
     })
 }

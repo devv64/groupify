@@ -1,5 +1,6 @@
 
 {{!-- TODO : 
+change urls to /manage, /delete
 notifications for likes
 display posts liked ; 
 display comments 
@@ -54,6 +55,18 @@ styling--}}
         <a href="{{profile.lastfm.url}}" target="_blank" rel="noopener noreferrer"><img src="https://lastfm-recently-played.vercel.app/api?user={{profile.lastfm.name}}" height="auto" width="auto"/></a>
     </div>
     {{/if}}
+
+
+    <div class="comments">
+        <h2>{{username}} Comments</h2>
+        {{#if comments}}
+            {{#each comments}}
+                <p>{{this.body}} </p>
+            {{/each}}
+        {{else}}
+            <p>No comments yet</p>
+        {{/if}}
+    </div>
 
     <div class="buttons">
         <div>
