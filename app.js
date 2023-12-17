@@ -9,6 +9,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname =   dirname(__filename);
 import * as userData from './data/users.js';
 
+import * as userData from './data/users.js';
+
 // import * as debug from './debug.js';
 
 const staticDir = express.static(__dirname + '/public');
