@@ -179,7 +179,11 @@ export async function removeLikeFromPost(postId, userId) {
     )
 
   if (!updateInfo.acknowledged || updateInfo.modifiedCount === 0) throw "Could not update post";
-  return await getPostById(postId);
+  
+  let post = await getPostById(postId);
+  if(!post) throw "Post not found";
+
+  return post;
 }
 
 export async function isLiked(postId, userId) {

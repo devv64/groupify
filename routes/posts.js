@@ -22,6 +22,7 @@ router
       const likes = post.likes.length
       const isLiked = await postsData.isLiked(post_id, req.session.user._id)
       const liked = isLiked ? "Unlike" : "Like"
+      console.log(liked);
       return res.render('posts', { post, postComments, username, likes, liked })
     } catch (e) {
       return res.status(400).render('feed', { error: e });
@@ -64,15 +65,18 @@ router
       const userId = req.session.user._id;
 
       const isLiked = await postsData.isLiked(post_id, userId);
-
       if (isLiked) {
         const updatedPost = await postsData.removeLikeFromPost(post_id, userId);
+        let updatedUser = await userData.getUserById(userId);
+        req.session.user = updatedUser;
         return res.status(200).json({
           likes: updatedPost.likes.length,
           liked: "Unlike"
         })
       } else {
         const updatedPost = await postsData.addLikeToPost(post_id, userId);
+        let updatedUser = await userData.getUserById(userId);
+        req.session.user = updatedUser;
         return res.status(200).json({
           likes: updatedPost.likes.length,
           liked: "Like"
