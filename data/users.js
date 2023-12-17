@@ -1,4 +1,4 @@
-import { users, posts } from '../config/mongoCollections.js';
+import { users, posts, comments } from '../config/mongoCollections.js';
 import { ObjectId, ReturnDocument } from 'mongodb';
 import bcrypt from 'bcrypt';
 import * as validate from './validation.js';
@@ -175,7 +175,7 @@ export async function updateUserById(id, username, password, lastfmUsername) {
     createdAt: user.createdAt,
     updatedAt: new Date()
   };
-
+  const oldUsername = user.username;
   // there might be a better way to do this
   const updateInfo = await userCollection.findOneAndReplace(
     { _id: new ObjectId(id) }, 
@@ -198,6 +198,14 @@ export async function updateUserById(id, username, password, lastfmUsername) {
     );
     if (!post) throw `Error: Update failed! Could not update post with id of ${user.createdPosts[i]}`;
   };
+
+  const commentCollection = await comments();
+    const comment = await commentCollection.updateMany(
+      { username: oldUsername}, 
+      { $set: { username: updatedUser.username}},
+    //   { returnDocument: 'after' }
+    );
+    if (!comment) throw `Error: Update failed! Could not update comment`;
 
   return updateInfo;
 }
