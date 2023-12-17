@@ -20,7 +20,7 @@ export async function searchSongPosts(songName) {
     songName = validate.validsearch(songName);
 
     const postCollection = await posts();
-    const songposts = await postCollection.find({ track: new RegExp(songName, 'i') }).toArray();
+    const songposts = await postCollection.find({ 'track.name' : new RegExp(songName, 'i') }).toArray();
     return songposts;
 }
 
@@ -29,6 +29,6 @@ export async function searchArtistPosts(artistName) {
     artistName = validate.validsearch(artistName);
     
     const postCollection = await posts();
-    const artistposts = await postCollection.find({ artist: new RegExp(artistName, 'i') }).toArray();
+    const artistposts = await postCollection.find({ 'artist.name' : new RegExp(artistName, 'i') }).toArray();
     return artistposts;
 }
