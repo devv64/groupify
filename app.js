@@ -48,117 +48,31 @@ app.use(
 app.use('/', (req, res, next) => {
   console.log(`[${new Date().toUTCString()}]: ${req.method} ${req.originalUrl} (${req.session.user ? 'Authenticated' : 'Non-Authenticated User'})]`)
 
+  if (!req.session.user && req.path !== '/login' && req.path !== '/register' && req.path !== '/home') {
+    return res.redirect('/login');
+  }
+
+  if (req.session.user && (req.path === '/login' || req.path === '/register' || req.path === '/home')) {
+    return res.redirect('/feed');
+  }
+
   if (req.path === '/') {
     if (req.session.user) {
       return res.redirect('/feed');
     } else {
-      return res.redirect('/home')
-    }   
-  } else {
-    next();
+      return res.redirect('/home');
+    }
   }
-})
 
-app.use("/login", (req, res, next) => {
-    if(req.session.user) {
-        return res.redirect("/feed");
-    }
-    else {
-        next();
-    }
-});
-
-app.use("/register", (req, res, next) => {
-    if(req.session.user) {
-        return res.redirect("/feed");
-    }
-    else {
-        next();
-    }
-});
-
-app.use("/users", (req, res, next) => {
-    if (req.method === "GET") {
-        if(!req.session.user) {
-            return res.redirect("/login");
-        } else {
-            next();
-        }
-    } else {
-        next();
-    }
-});
-
-app.use("/feed", (req, res, next) => {
-    if (req.method === "GET") {
-        if(!req.session.user) {
-            return res.redirect("/login");
-        } else {
-            next();
-        }
-    } else {
-        next();
-    }
-});
-
-app.use("/posts", (req, res, next) => {
-    if (req.method === "GET") {
-        if(!req.session.user) {
-            return res.redirect("/login");
-        } else {
-            next();
-        }
-    } else {
-        next();
-    }
-});
-
-app.use('/profile', (req, res, next) => {
-  if (!req.session.user) {
-    res.redirect('/login');
-  } else {
-    next();
-  }
+  next();
 });
 
 app.use('/notifications', (req, res, next) => {
-    if (!req.session.user) {
-      res.redirect('/login');
-    } else {
-      return res.render('notifications', { 
-        username: req.session.user.username,
-        notifications: req.session.user.notifications,
-      });
-    }
+    return res.render('notifications', { 
+      username: req.session.user.username,
+      notifications: req.session.user.notifications,
+    });
   });
-
-app.use("/logout", (req, res, next) => {
-    if (req.method === "GET") {
-        if (req.session.user) {
-            next();
-        } else {
-            return res.redirect("/login");
-        }
-    } else {
-        next();
-    }
-});
-
-app.use('/home', (req, res, next) => {
-  if (!req.session.user) {
-    next();
-  } else {
-    res.redirect('/feed');
-  }
-});
-
-app.use('/search', (req, res, next) => {
-  if (!req.session.user) {
-    res.redirect('/login');
-  } else {
-    next();
-  }
-});
 
 configRoutes(app);
 

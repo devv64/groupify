@@ -7,7 +7,7 @@
     };
   
   likeButton.click(function (event) {
-      event.preventDefault();
+      // event.preventDefault();
       requestConfig.method = 'POST';
       $.ajax(requestConfig)
       .then(function (responseMessage) { 
