@@ -154,6 +154,8 @@ export async function addLikeToPost(postId, userId) {
     { returnDocument: 'after' }
     )
 
+  if (!user) throw "User not found"
+
   if (!updateInfo.acknowledged || updateInfo.modifiedCount === 0) throw "Could not update post";
   return await getPostById(postId);
 }
@@ -172,7 +174,7 @@ export async function removeLikeFromPost(postId, userId) {
 
   let user = await userCollection.findOneAndUpdate(
     { _id: new ObjectId(userId) },
-    { $pull: {likedPosts: new ObjectId(newId)} },
+    { $pull: {likedPosts: new ObjectId(postId)} },
     { returnDocument: 'after' }
     )
 
