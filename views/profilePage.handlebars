@@ -43,6 +43,19 @@ styling--}}
         {{/if}}
     </div>
 
+    {{#if profile.lastfm}}
+    <div class="lastfm">
+        <h2>Last.fm</h2>
+        <p>Username: {{profile.lastfm.name}}</p>
+        <p>Playcount: {{profile.lastfm.playcount}}</p>
+        <p>Artist Count: {{profile.lastfm.artist_count}}</p>
+        <p>Track Count: {{profile.lastfm.track_count}}</p>
+        <p>Album Count: {{profile.lastfm.album_count}}</p>
+        <p>Profile URL: </p>
+        <a href="{{profile.lastfm.url}}" target="_blank" rel="noopener noreferrer"><img src="https://lastfm-recently-played.vercel.app/api?user={{profile.lastfm.name}}" height="auto" width="auto"/></a>
+    </div>
+    {{/if}}
+
 
     <div class="comments">
         <h2>{{username}} Comments</h2>
@@ -82,3 +95,5 @@ styling--}}
     </div>
 
 </div>
+
+<script src="/public/js/manageProfile.js"></script>

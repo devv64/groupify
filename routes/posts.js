@@ -17,12 +17,13 @@ router
     try {
       const post_id = xss(req.params.post_id)
       const post = await postsData.getPostById(post_id)
+      const success = xss(req.query.success)
       const postComments = await commentsData.getAllCommentsByPostId(post_id);
       const username = req.session.user.username
       const likes = post.likes.length
       const isLiked = await postsData.isLiked(post_id, req.session.user._id)
       const liked = isLiked ? "Unlike" : "Like"
-      return res.render('posts', { post, postComments, username, likes, liked })
+      return res.render('posts', { post, postComments, username, likes, liked, success })
     } catch (e) {
       return res.status(400).render('feed', { error: e });
     }
@@ -44,7 +45,6 @@ router
         
         return res.render('partials/comment', {layout:null, ...comment, user: username});
     } catch (e) {
-        // console.log("This is E", e, "||");
         if (
             e &&
             (e.indexOf("No user with id") >= 0 ||
@@ -65,18 +65,21 @@ router
 
     try {
       const post_id = xss(req.params.post_id);
-      const userId = req.session.user._id;
+      const userId = xss(req.session.user._id);
 
       const isLiked = await postsData.isLiked(post_id, userId);
-
       if (isLiked) {
         const updatedPost = await postsData.removeLikeFromPost(post_id, userId);
+        let updatedUser = await userData.getUserById(userId);
+        req.session.user = updatedUser;
         return res.status(200).json({
           likes: updatedPost.likes.length,
           liked: "Unlike"
         })
       } else {
         const updatedPost = await postsData.addLikeToPost(post_id, userId);
+        let updatedUser = await userData.getUserById(userId);
+        req.session.user = updatedUser;
         return res.status(200).json({
           likes: updatedPost.likes.length,
           liked: "Like"
