@@ -19,6 +19,7 @@ if (searchform) {
         const search = document.getElementById('searchinput').value;
         
         try {
+            if (search.length > 1000) throw 'Query too long';
             let cleansearch = validsearch(search);
             successid.textContent = "Loading...";
             searchform.submit();

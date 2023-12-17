@@ -4,37 +4,14 @@ const router = Router();
 import * as lastfm from '../api/lastfm.js';
 import { getUserByUsername, updateUserById, followUser, unfollowUser, getUserById } from '../data/users.js';
 import { getPostsByUser, removePostById, getPostById } from '../data/posts.js';
+import { getCommentByUsername } from '../data/comments.js';
 // import { getPostsByUser } from '../data/posts.js';
 import { validEditedUsername, validEditedPassword } from '../data/validation.js';
 import bcrypt from 'bcrypt';
 import xss from 'xss';
 import { users } from '../config/mongoCollections.js';
 
-// import validation functions
-
-router.get('/login', async (req, res) => {
-  res.render('loginsignup');
-});
-
-//destroy session when logging out
-// router.get('/logout', async (req, res) => {
-//   req.session.destroy();
-//   res.send("Logged out");
-//   res.redirect('/');
-// });
-
-router
-  .route('/')
-  .get(async (req, res) => {
-    //const data = await lastfm.searchArtistByName('cher', 5);
-    //const data = await lastfm.searchTrackByName('cher', 5);
-    // ! Change this
-    const data = await lastfm.getInfoByUser('devv64')
-    return res.status(200).json({test: 'success', data});
-  });
-
- 
-
+// import validation functions 
 
 router.route('/:username')
   .get(async (req, res) => { //public profile page / personal page
@@ -57,10 +34,19 @@ router.route('/:username')
       let followClass = !profile.followers.includes(req.session.user._id) ? "follow"  : "unfollow";
       let followText = !profile.followers.includes(req.session.user._id) ? "Follow" : "Unfollow";
 
+      // if req.session.user.username equals comment.username
+
+      let commentsByUser = []
+      let comments = await getCommentByUsername(req.session.user.username);
+      for(let i = 0; i < comments.length; i++){
+        commentsByUser.push(comments[i]);
+      }
+
       return res.render('profilePage', {
           profilePic: profile.pfp,
           username: profile.username,
           posts: posts,
+          comments: comments,
           followers: profile.followers,
           following: profile.following,
           likedPosts: likedPosts,

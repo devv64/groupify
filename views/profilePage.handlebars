@@ -1,5 +1,6 @@
 
 {{!-- TODO : 
+change urls to /manage, /delete
 notifications for likes
 display posts liked ; 
 display comments 
@@ -55,6 +56,18 @@ styling--}}
     </div>
     {{/if}}
 
+
+    <div class="comments">
+        <h2>{{username}} Comments</h2>
+        {{#if comments}}
+            {{#each comments}}
+                <p>{{this.body}} </p>
+            {{/each}}
+        {{else}}
+            <p>No comments yet</p>
+        {{/if}}
+    </div>
+
     <div class="buttons">
         <div>
             {{#if isPersonalAccount}}
@@ -82,3 +95,5 @@ styling--}}
     </div>
 
 </div>
+
+<script src="/public/js/manageProfile.js"></script>

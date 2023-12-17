@@ -7,7 +7,6 @@ import exphbs from 'express-handlebars';
 import session from 'express-session';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname =   dirname(__filename);
-
 import * as userData from './data/users.js';
 
 // import * as debug from './debug.js';
@@ -79,7 +78,7 @@ app.use('/notifications', (req, res, next) => {
       notifications: req.session.user.notifications,
     });
   });
-
+  
 configRoutes(app);
 
 app.listen(3000, () => {

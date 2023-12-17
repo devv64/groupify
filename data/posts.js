@@ -184,13 +184,11 @@ export async function removeLikeFromPost(postId, userId) {
     // not sure if this works, from stackoverflow
     { $pull: { likes: userId } }
   );
-
   if (!updateInfo.acknowledged || updateInfo.modifiedCount === 0) throw "Could not update post";
-
   let user = await userCollection.findOneAndUpdate(
     { _id: new ObjectId(userId) },
     // { $pull: {likedPosts: newId} },
-    { $pull: {likedPosts: new ObjectId(newId)} },
+    { $pull: {likedPosts: new ObjectId(postId)} },
     { returnDocument: 'after' }
     )
 

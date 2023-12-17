@@ -112,10 +112,13 @@ router
 
     const userId = req.session.user._id;
     try {
-      let body = xss(req.body.body);
-      let lastfmSong = xss(req.body.lastfmSong);
-      let lastfmArtist = xss(req.body.lastfmArtist);
-
+      let { body, lastfmSong, lastfmArtist } = req.body;
+      body = xss(body);
+      lastfmSong = xss(lastfmSong);
+      lastfmArtist = xss(lastfmArtist);
+      body = body.trim();
+      lastfmSong = lastfmSong.trim();
+      lastfmArtist = lastfmArtist.trim();
       const post = await postsData.createPost(body, userId, lastfmSong, lastfmArtist);
       if (!post) throw "Post not found";
       const user = await userData.getUserById(userId);
@@ -256,12 +259,11 @@ router.route('/deleteposts')
       await postsData.removePostById(postToDelete, req.session.user._id);
       const success = encodeURIComponent(`Post Deleted!`);
       // const username = xss(req.params.username)
-      const username = req.session.user.username;
-      if (pos)
+      
       return res.redirect(`/users/${req.session.user.username}?success=${success}`);
     }
     catch(e){
-      return res.status(400).render('delete', {error: "Error deleting post"});
+      return res.status(400).render('delete', {error: e});
     }
 })
 

@@ -35,15 +35,16 @@ router
         const post_id = xss(req.params.post_id);
         const username = xss(req.session.user.username);
         const commentBody = xss(req.body.comment);
+        commentBody = commentBody.trim();
         let post = await postsData.getPostById(post_id);
         const comment = await commentsData.createComment(post_id, username, commentBody);
         post = await postsData.getPostById(post_id);
+        post.body = post.body.trim();
 
-        await userData.addNotification(post.userId, `${username} commented on your post: "${post.body}" at ${post.createdAt.toLocaleString()}`)
+        await userData.addNotification(post.userId, `${username} commented on your post: "${post.body}" at ${new Date().toLocaleString()}`)
         
         return res.render('partials/comment', {layout:null, ...comment, user: username});
     } catch (e) {
-        // console.log("This is E", e, "||");
         if (
             e &&
             (e.indexOf("No user with id") >= 0 ||
@@ -64,18 +65,27 @@ router
 
     try {
       const post_id = xss(req.params.post_id);
-      const userId = req.session.user._id;
+      const userId = xss(req.session.user._id);
 
       const isLiked = await postsData.isLiked(post_id, userId);
-
       if (isLiked) {
         const updatedPost = await postsData.removeLikeFromPost(post_id, userId);
+        let updatedUser = await userData.getUserById(userId);
+        req.session.user = updatedUser;
         return res.status(200).json({
           likes: updatedPost.likes.length,
           liked: "Unlike"
         })
       } else {
         const updatedPost = await postsData.addLikeToPost(post_id, userId);
+        const username = xss(req.session.user.username);
+        let updatedUser = await userData.getUserById(userId);
+        req.session.user = updatedUser;
+
+        const post = await postsData.getPostById(post_id);
+
+        await userData.addNotification(post.userId, `${username} liked your post: "${post.body}" at ${new Date().toLocaleString()}`)
+
         return res.status(200).json({
           likes: updatedPost.likes.length,
           liked: "Like"

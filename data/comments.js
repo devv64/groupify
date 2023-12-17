@@ -1,7 +1,7 @@
 import { ObjectId } from "mongodb";
 import {posts, comments, users} from '../config/mongoCollections.js';
 import {getPostById} from "./posts.js";
-import { validId } from "./validation.js";
+import { validEditedUsername, validId, validUsername } from "./validation.js";
 
 
 //Returns post with new comment ID added to comments array
@@ -107,5 +107,15 @@ export const removeComment = async (commentId) =>{
     return updatedPost;
 };
 
-
-
+export const getCommentByUsername = async (username) => {
+    username = validUsername(username);
+    const commentsCollection = await comments();
+    const commentList = await commentsCollection.find({
+        username: username
+    }).toArray();
+    if (!commentList) throw "Could not get all comments";
+    commentList.forEach(comment => {
+        comment._id = comment._id.toString();
+    });
+    return commentList;
+}
