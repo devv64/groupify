@@ -125,14 +125,14 @@ export async function removePostById(id) {
   id = validate.validId(id);
   const postCollection = await posts();
   const userCollection = await users();
-  const user = await userCollection.findOne({ createdPosts : {$in: [new ObjectId(id)]}}) //finds user that created post by checking createdPosts for the id
+  const user = await userCollection.findOne({ createdPosts : {$in: [id]}}) //finds user that created post by checking createdPosts for the id
   if (!user) throw "User not found";
   const post = await getPostById(id);
   if (!post) throw "Post not found";
 
   let updateUser = await userCollection.findOneAndUpdate( //removes post from createdPosts from that user
     { username: user.username },
-    { $pull: {createdPosts: new ObjectId(id)} },
+    { $pull: {createdPosts: id} },
     { returnDocument: 'after' }
     )
 
@@ -159,7 +159,7 @@ export async function addLikeToPost(postId, userId) {
 
   let user = await userCollection.findOneAndUpdate(
     { _id: new ObjectId(userId) },
-    { $push: {likedPosts: new ObjectId(postId)} },
+    { $push: {likedPosts: postId} },
     { returnDocument: 'after' }
     )
 
@@ -185,7 +185,7 @@ export async function removeLikeFromPost(postId, userId) {
 
   let user = await userCollection.findOneAndUpdate(
     { _id: new ObjectId(userId) },
-    { $pull: {likedPosts: new ObjectId(newId)} },
+    { $pull: {likedPosts: newId} },
     { returnDocument: 'after' }
     )
 

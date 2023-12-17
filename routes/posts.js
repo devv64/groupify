@@ -32,9 +32,10 @@ router
         const username = req.session.user.username;
         const commentBody = xss(req.body.comment);
         let post = await postsData.getPostById(post_id);
-
         const comment = await commentsData.createComment(post_id, username, commentBody);
         post = await postsData.getPostById(post_id);
+
+        await userData.addNotification(post.userId, `${username} commented on your post: "${post.body}" at ${post.createdAt.toLocaleString()}`)
         
         return res.render('partials/comment', {layout:null, ...comment, user: username});
     } catch (e) {

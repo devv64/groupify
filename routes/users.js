@@ -2,7 +2,7 @@ import { Router } from 'express';
 const router = Router();
 // import data functions
 import * as lastfm from '../api/lastfm.js';
-import { getUserByUsername, updateUserById, followUser, unfollowUser, getUserById } from '../data/users.js';
+import { getUserByUsername, updateUserById, followUser, unfollowUser, getUserById, removeNotification } from '../data/users.js';
 import { getPostsByUser, removePostById, getPostById } from '../data/posts.js';
 // import { getPostsByUser } from '../data/posts.js';
 import { validEditedUsername, validEditedPassword } from '../data/validation.js';
@@ -23,7 +23,6 @@ router.get('/login', async (req, res) => {
 //   res.redirect('/');
 // });
 
-
 router
   .route('/')
   .get(async (req, res) => {
@@ -33,6 +32,8 @@ router
     const data = await lastfm.getInfoByUser('devv64')
     return res.status(200).json({test: 'success', data});
   });
+
+ 
 
 
 router.route('/:username')
@@ -242,7 +243,7 @@ router.route('/:username/manage') //does not update name in feed
       return res.redirect(`/users/${username}?success=${success}`);
     }
     catch(e){
-      return res.status(400).render('manage', {error: "Error updating user"});
+      return res.status(400).render('manage', {error: e});
     }
 });
 
@@ -274,24 +275,12 @@ router.route('/:username/delete')
     }
 })
 
-router.route('/:username/postdeleted')
-  .get(async (req, res) => {
-    try{
-      const username = xss(req.params.username)
-      const user = await getUserByUsername(username);
-      res.render('postdeleted', 
-      {username : user.username})
-    }
-    catch(e){
-      return res.status(400).render('delete', {error: "Error deleting post"});
-    }
-  })
-
   router.route('/:username/notifications')
     .get(async (req, res) => {
       try{
         const username = xss(req.params.username)
         const user = await getUserByUsername(username);
+  
         res.render('notifications', 
         {
           username : user.username,
@@ -302,6 +291,20 @@ router.route('/:username/postdeleted')
         return res.status(400).render('notifications', {error: "Error loading notifications"});
       }
     })
+    .post(async (req, res) => {
+      try{
+        const username = xss(req.params.username)
+        const notificationToDelete = xss(req.body.notificationToDelete);
+        await removeNotification(req.session.user._id, notificationToDelete);
+        const success = encodeURIComponent(`Notification Deleted!`);
+        return res.redirect(`/users/${username}?success=${success}`);
+      }
+      catch(e){
+        return res.status(400).render('delete', {error: "Error deleting post"});
+      }
+  })
+
+
 
 
 export default router;

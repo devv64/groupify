@@ -113,10 +113,14 @@ router
     }
 
     const userId = req.session.user._id;
-    console.log(userId)
     try {
       let { body, lastfmSong, lastfmArtist } = req.body;
       const post = await postsData.createPost(body, userId, lastfmSong, lastfmArtist);
+      const user = await userData.getUserById(userId);
+      const followers = user.followers;
+      for (let i = 0; i < followers.length; i++) {
+        await userData.addNotification(followers[i], `${user.username} created a post: "${post.body}" at ${post.createdAt.toLocaleString()}`)
+      }
       return res.redirect(`/posts/${post._id}`);
     } catch (e) {
       try {

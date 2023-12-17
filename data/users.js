@@ -118,15 +118,15 @@ export async function removeUserById(id) {
 export async function updateUserById(id, username, password, lastfmUsername) {
 
   id = validate.validId(id);
-  username = validate.validName(username);
-  password = validate.validPassword(password);
-  lastfmUsername = validate.validName(lastfmUsername);
+  username = validate.validEditedUsername(username);
+  password = validate.validEditedPassword(password);
+  lastfmUsername = validate.validFmString(lastfmUsername);
 
   const userCollection = await users();
   const user = await getUserById(id);
   if (!user) throw `Could not find user with id of ${id}`;
   const lastfmData = lastfmUsername ? await lastfm.getInfoByUser(lastfmUsername) : null;
-  let hash = (password === '') ? null : await bcrypt.hash(password, 4); //if password is empty string, dont update password
+  let hash = (password == null) ? null : await bcrypt.hash(password, 4);
 
   const updatedUser = {
     username: username || user.username,
@@ -143,6 +143,14 @@ export async function updateUserById(id, username, password, lastfmUsername) {
     updatedAt: new Date()
   };
 
+  // there might be a better way to do this
+  const updateInfo = await userCollection.findOneAndReplace(
+    { _id: new ObjectId(id) }, 
+    updatedUser,
+    { returnDocument: 'after' }
+    );
+  if (!updateInfo) throw `Error: Update failed! Could not update user with id of ${id}`;
+
   // need to update all the posts that the user has created
   // need to update all the posts that the user has liked
   // ? need to update all the posts that the user has commented on -- depending on how comments work
@@ -151,21 +159,13 @@ export async function updateUserById(id, username, password, lastfmUsername) {
   const postCollection = await posts();
   for (let i = 0; i < user.createdPosts.length; i++) {
     const post = await postCollection.findOneAndUpdate(
-      { _id: user.createdPosts[i]}, 
-      { $set: { userId: id,
-        username: updatedUser.username}},
+      { _id: new ObjectId(user.createdPosts[i])}, 
+      { $set: { username: updatedUser.username}},
       { returnDocument: 'after' }
     );
     if (!post) throw `Error: Update failed! Could not update post with id of ${user.createdPosts[i]}`;
   };
 
-  // there might be a better way to do this
-  const updateInfo = await userCollection.findOneAndReplace(
-    { _id: new ObjectId(id) }, 
-    updatedUser,
-    { returnDocument: 'after' }
-    );
-  if (!updateInfo) throw `Error: Update failed! Could not update user with id of ${id}`;
   return updateInfo;
 }
 
@@ -251,11 +251,13 @@ export const addNotification = async (profileId, notification) => {
   profileId = validate.validId(profileId);
   notification = validate.validString(notification);
   const userCollection = await users();
+
   let newNotification = {
-    _id : new ObjectId(),
-    notification : notification,
-    dateCreated : new Date()
+    _id: new ObjectId().toString(),
+    notification: notification,
+    dateCreated: new Date()
   }
+  
   const insertNotification = await userCollection.findOneAndUpdate(
     { _id: new ObjectId(profileId) },
     { $push: { notifications: newNotification } },
@@ -265,15 +267,15 @@ export const addNotification = async (profileId, notification) => {
   return insertNotification;
 }
 
-export const removeNotification = async (profileId, notificationId) => { //idk if this works
+export const removeNotification = async (userId, notificationId) => { //idk if this works
   // handleId(userId);
   // handleId(notificationId);
-  profileId = validate.validId(profileId);
+  userId = validate.validId(userId);
   notificationId = validate.validId(notificationId);
   const userCollection = await users();
   const removeNotification = await userCollection.findOneAndUpdate(
-    { _id: new ObjectId(profileId) },
-    { $pull: { notifications: { _id: new ObjectId(notificationId) } } },
+    { _id: new ObjectId(userId) },
+    { $pull: { notifications: {_id : notificationId}} },
     { returnDocument: 'after' }
   );
   if (!removeNotification) throw "Error: Update failed! Could not remove notification";
