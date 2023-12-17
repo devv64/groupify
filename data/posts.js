@@ -23,17 +23,24 @@ export async function createPost(body, userId, lastfmSong, lastfmArtist) {
   // lastfmSong = validate.validString(lastfmSong);
   // lastfmArtist = validate.validString(lastfmArtist);  
 
+  body = validate.validString(body);
+  userId = validate.validId(userId);
+  lastfmSong = validate.validFmString(lastfmSong);
+  lastfmArtist = validate.validFmString(lastfmArtist);
+
   const postCollection = await posts();
   const userCollection = await users();
 
   // Need to decide how to handle picking a song/artist, this might be fine
   // why is it saying await is unnecessary here
   // TODO: probably some error handling needed here
-  const lastfmSong_ = await findTrackByName(lastfmSong);
-  const lastfmArtist_ = await findArtistByName(lastfmArtist);
+  const lastfmSong_ = lastfmSong ? await findTrackByName(lastfmSong) : null;
+  const lastfmArtist_ = lastfmArtist ? await findArtistByName(lastfmArtist) : null;
 
   const user = await getUserById(userId);
-  const username = user.username;
+  if (!user) throw "User not found";
+
+  const username = user.username
 
   // ? Should we have tags on posts.. need to check the doc if this was required or extra
   const newPost = {
@@ -52,12 +59,15 @@ export async function createPost(body, userId, lastfmSong, lastfmArtist) {
   if (!insertInfo.acknowledged || !insertInfo.insertedId) throw "Could not add post";  
   const newId = insertInfo.insertedId.toString();
   const post = await getPostById(newId);
+  if (!post) throw "Post not found";
 
   let newUser = await userCollection.findOneAndUpdate(
     { _id: new ObjectId(userId) },
-    { $push: {createdPosts: new ObjectId(newId)} },
+    { $push: {createdPosts: newId} },
     { returnDocument: 'after' }
     )
+  
+  if(!newUser) throw "User not found"
 
     // ! error check newUser
 
@@ -66,7 +76,7 @@ export async function createPost(body, userId, lastfmSong, lastfmArtist) {
 
 // get post by id
 export async function getPostById(id) {
-  // handleId(id);
+  id = validate.validId(id);
   const postCollection = await posts();
   const post = await postCollection.findOne({ _id: new ObjectId(id) });
   if (!post) throw "Post not found";
@@ -79,7 +89,7 @@ export async function getPostById(id) {
 
 // get all posts by user
 export async function getPostsByUser(id) {
-  // handleId(id);
+  id = validate.validId(id);
   const postCollection = await posts();
   const userPosts = await postCollection.find({ userId: id }).toArray();
   if (!userPosts) throw "Post not found";
@@ -90,9 +100,10 @@ export async function getPostsByUser(id) {
 // get all posts by artist
 // ? take in name or id
 export async function getPostsByArtist(name) {
-  // handleId(id);
+  name = validate.validString(name);
   const postCollection = await posts();
   const lastfmArtist_ = await lastfm.searchArtistByName(name, 1);
+  if (!lastfmArtist_) throw "Artist not found";
   // only trying to find lastfmArtist_ object because idk what we're actually gonna be storing
   const artistPosts = await postCollection.find({ artist: lastfmArtist_ }).toArray();
   if (!artistPosts) throw "Post not found";
@@ -112,23 +123,21 @@ export async function getSomePosts(n=25) {
 
 // remove post by id
 export async function removePostById(id) {
-  // handleId(id);
+  id = validate.validId(id);
   const postCollection = await posts();
   const userCollection = await users();
-  const user = await userCollection.findOne({ createdPosts : {$in: [new ObjectId(id)]}}) //finds user that created post by checking createdPosts for the id
-  // ! should I just do findOneAndDelete instead
+  const user = await userCollection.findOne({ createdPosts : {$in: [id]}}) //finds user that created post by checking createdPosts for the id
+  if (!user) throw "User not found";
   const post = await getPostById(id);
+  if (!post) throw "Post not found";
 
   let updateUser = await userCollection.findOneAndUpdate( //removes post from createdPosts from that user
     { username: user.username },
-    { $pull: {createdPosts: new ObjectId(id)} },
+    { $pull: {createdPosts: id} },
     { returnDocument: 'after' }
     )
 
     if(!updateUser) throw "User not found"
-
-    // ! error check
-
     // ? maybe remove from everyone that liekd thsi post
 
   const deletionInfo = await postCollection.deleteOne({ _id: new ObjectId(id) });
@@ -138,8 +147,8 @@ export async function removePostById(id) {
 
 // add like to post
 export async function addLikeToPost(postId, userId) {
-  // handleId(postId);
-  // handleId(userId);
+  postId = validate.validId(postId);
+  userId = validate.validId(userId);
   const postCollection = await posts();
   const userCollection = await user();
   const updateInfo = await postCollection.updateOne(
@@ -147,20 +156,24 @@ export async function addLikeToPost(postId, userId) {
     { $addToSet: { likes: userId } }
   );
 
+  if (!updateInfo.acknowledged || updateInfo.modifiedCount === 0) throw "Could not update post";
+
   let user = await userCollection.findOneAndUpdate(
     { _id: new ObjectId(userId) },
-    { $push: {likedPosts: new ObjectId(postId)} },
+    { $push: {likedPosts: postId} },
     { returnDocument: 'after' }
     )
 
   if (!updateInfo.acknowledged || updateInfo.modifiedCount === 0) throw "Could not update post";
-  return await getPostById(postId);
+  const post = await getPostById(postId);
+  if (!post) throw "Post not found";
+  return post;
 }
 
 // remove like from post
 export async function removeLikeFromPost(postId, userId) {
-  // handleId(postId);
-  // handleId(userId);
+  postId = validate.validId(postId);
+  userId = validate.validId(userId);
   const postCollection = await posts();
   const userCollection = await users();
   const updateInfo = await postCollection.updateOne(
@@ -169,19 +182,23 @@ export async function removeLikeFromPost(postId, userId) {
     { $pull: { likes: userId } }
   );
 
+  if (!updateInfo.acknowledged || updateInfo.modifiedCount === 0) throw "Could not update post";
+
   let user = await userCollection.findOneAndUpdate(
     { _id: new ObjectId(userId) },
-    { $pull: {likedPosts: new ObjectId(newId)} },
+    { $pull: {likedPosts: newId} },
     { returnDocument: 'after' }
     )
 
   if (!updateInfo.acknowledged || updateInfo.modifiedCount === 0) throw "Could not update post";
-  return await getPostById(postId);
+  const post = await getPostById(postId);
+  if (!post) throw "Post not found";
+  return post;
 }
 
 export async function isLiked(postId, userId) {
-  // handleId(postId);
-  // handleId(userId);
+  postId = validate.validId(postId);
+  userId = validate.validId(userId);
   const postCollection = await posts();
   const post = await postCollection.findOne({ _id: new ObjectId(postId) });
   if (!post) throw "Post not found";

@@ -130,6 +130,17 @@ app.use('/profile', (req, res, next) => {
   }
 });
 
+app.use('/notifications', (req, res, next) => {
+    if (!req.session.user) {
+      res.redirect('/login');
+    } else {
+      return res.render('notifications', { 
+        username: req.session.user.username,
+        notifications: req.session.user.notifications,
+      });
+    }
+  });
+
 app.use("/logout", (req, res, next) => {
     if (req.method === "GET") {
         if (req.session.user) {
