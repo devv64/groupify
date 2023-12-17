@@ -3,8 +3,13 @@ import { createUser } from './data/users.js';
 import { createPost } from './data/posts.js';
 
 
-
 try {
+    // Drop the database
+    const db = await dbConnection();
+    await db.dropDatabase();
+    console.log('Database dropped successfully!');
+    
+    console.log('Seeding database...gimme a sec...');
     // Create dummy users
     const user1 = await createUser('JohnDoe', "Password1!", 'johndoe@example.com');
     const user2 = await createUser('JaneSmith', "Password1!", 'janesmith@example.com');
@@ -34,9 +39,9 @@ try {
     const post20 = await createPost('Twentieth Post', user1._id, 'Bohemian Rhapsody', 'Queen');
 
     console.log('Dummy posts created successfully!');
+    console.log('Done Seeding the Database!');
 } catch (error) {
     console.error('Error creating dummy users or posts:', error);
 }
-console.log('Done Seeding the Database!');
     
 await closeConnection();
