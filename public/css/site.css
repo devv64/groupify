@@ -28,10 +28,6 @@ body{
     background-color: rgba(6, 70, 112, 0.85);
     -webkit-backdrop-filter: saturate(180%) blur(20px);
     backdrop-filter: saturate(180%) blur(20px);
-<<<<<<< HEAD
-    /* opacity: 0.5; */
-=======
->>>>>>> origin
 }
 
 .site-header a {

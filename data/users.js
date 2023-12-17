@@ -200,8 +200,6 @@ export async function updateUserById(id, username, password, lastfmUsername) {
   };
 
   const commentCollection = await comments();
-  console.log("Current username: ",user.username);
-  console.log("Old commetn User: ",oldUsername);
     const comment = await commentCollection.updateMany(
       { username: oldUsername}, 
       { $set: { username: updatedUser.username}},
