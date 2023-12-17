@@ -1,27 +1,45 @@
-const error = document.getElementById('errid');
-const success = document.getElementById('success');
+const validpost = (str) => {
+  if (!str) throw "String must be provided";
+  if (typeof str !== 'string') throw "String must be a string";
+  str = str.trim();
+  if (str.length === 0) throw "String must be a non-empty string";
+  if (str.length > 1000) throw "String must be less than 1000 characters";
+  return str;
+}
+
+const validsongartist = (str) => {
+  if (!str) throw "String must be provided";
+  if (typeof str !== 'string') throw "String must be a string";
+  str = str.trim();
+  if (str.length > 50) throw "Song/Artist must be less than 50 characters";
+  return str;
+}
+
+
+let errid = document.getElementById('error');   
+let successid = document.getElementById('success');
+errid.hidden = true;
 
 const createPostForm = document.getElementById('create-post');
 
 if(createPostForm){
   createPostForm.addEventListener('submit', (event) => {
       event.preventDefault();
-      // const body = document.getElementById('post-body')?.value;
-      // console.log(body);
+      successid.textContent = "";
+      const body = document.getElementById('body').value;
+      const track = document.getElementById('track').value;
+      const artist = document.getElementById('artist').value;
       try {
-        // ? do I have to validate post-body client side
-        // success.hidden = false;
-        // console.log("post body validated");
-        // success.textContent = "Loading...";
-        // console.log(success);
-        // success.style.display = "block";
-        // console.log("submitting create post form");
+        let cleanbody = validpost(body);
+        let cleantrack = validsongartist(track)
+        let cleanartist = validsongartist(artist);
+        successid.textContent = "Loading...";
         createPostForm.submit();
       } catch (error) {
-        error.hidden = false;
-        error.textContent = error;
-        error.innerHTML = error;
-        error.style.display = "block";
+        errid.hidden = false;
+        errid.textContent = error;
+        errid.innerHTML = error;
+        errid.style.display = "block";
       }
   });
 }

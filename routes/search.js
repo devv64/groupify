@@ -11,6 +11,7 @@ router.get('/', async (req, res) => {
 router.post('/', async (req, res) => {
     const query = xss(req.body.searchinput);
     try {
+      if (query.length > 1000) throw 'Query too long';
       validate.validsearch(query);
     } catch (error) {
       return res.status(400).render('search', { error: error });
