@@ -4,9 +4,11 @@
     <h1>Manage Account</h1>
 
     <form method="POST" id="editForm" action="/users/{{username}}/manage">
+        <p>Change Username</p>
         <label for="username" id="usernameLabel">Username</label>
         <input type="text" name="username" id="username" placeholder="New Username">
 
+        <p>Change Password</p>
         <label for="oldPassword" id="passwordLabel">Old Password</label>
         <input type="password" name="oldPassword" id="oldPassword" placeholder="Old Password">
 
@@ -16,6 +18,8 @@
         <label for="confirmPassword" id="confirmPasswordLabel">Confirm Password</label>
         <input type="password" name="confirmPassword" id="confirmPassword" placeholder="Confirm Password">
 
+
+        <p>Change Lastfn Username</p>
         <label for="lastfmUsername" id="lastfmUsernameLabel">Lastfm Username</label>
         <input type="text" name="lastfmUsername" id="lastfmUsername" placeholder="New Lastfm Username (optional)">
 

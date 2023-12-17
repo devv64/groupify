@@ -115,6 +115,12 @@ router
     const userId = req.session.user._id;
     try {
       let { body, lastfmSong, lastfmArtist } = req.body;
+      body = xss(body);
+      lastfmSong = xss(lastfmSong);
+      lastfmArtist = xss(lastfmArtist);
+      body = body.trim();
+      lastfmSong = lastfmSong.trim();
+      lastfmArtist = lastfmArtist.trim();
       const post = await postsData.createPost(body, userId, lastfmSong, lastfmArtist);
       const user = await userData.getUserById(userId);
       const followers = user.followers;

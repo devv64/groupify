@@ -206,9 +206,13 @@ router.route('/:username/manage') //does not update name in feed
       oldPassword = validEditedPassword(oldPassword);
       newPassword = validEditedPassword(newPassword);
       confirmPassword = validEditedPassword(confirmPassword);
+      
+      if(username === null && lastfmUsername === null && oldPassword === null && newPassword === null && confirmPassword === null)
+        throw "No changes made";
+
       if(
-        (newPassword === null && oldPassword !== null) || 
-        (newPassword !== null && oldPassword === null)) 
+        ((newPassword === null || confirmPassword === null) && oldPassword !== null) || 
+        ((newPassword !== null || confirmPassword !== null) && oldPassword === null)) 
         throw "Enter old and new password to change password";
 
       if(oldPassword !== null){
@@ -233,9 +237,18 @@ router.route('/:username/manage') //does not update name in feed
         lastfmUsername
       } = req.body;
 
+      username = xss(username);
+      oldPassword = xss(oldPassword);
+      newPassword = xss(newPassword);
+      confirmPassword = xss(confirmPassword);
+      lastfmUsername = xss(lastfmUsername);
+
       const id = user._id;
       if(username ==='') username = user.username;
       if(lastfmUsername ==='') lastfmUsername = user.lastfmUsername;
+      username = username.trim();
+      newPassword = newPassword.trim();
+      if(lastfmUsername !== undefined) lastfmUsername = lastfmUsername.trim();
       
       const updatedUser = await updateUserById(id, username, newPassword, lastfmUsername); //wont work since lastfm is not connected i think
       req.session.user = updatedUser;

@@ -36,14 +36,21 @@ if(editForm){
             newPassword = validEditedPassword(newPassword);
             confirmPassword = validEditedPassword(confirmPassword);
             lastfmUsername = validEditedUsername(lastfmUsername);
+            
+            if(username === null && lastfmUsername === null && oldPassword === null && newPassword === null && confirmPassword === null)
+                throw "No changes made";
             if(
-                (newPassword === null && oldPassword !== null) || 
-                (newPassword !== null && oldPassword === null)) 
+                ((newPassword === null || confirmPassword === null) && oldPassword !== null) || 
+                ((newPassword !== null || confirmPassword !== null) && oldPassword === null)) 
                 throw "Enter old and new password to change password";
+
+            if(newPassword !== null && confirmPassword !== null && newPassword !== confirmPassword) 
+                throw "New passwords do not match";
+            
             editForm.submit();
         }
         catch(e){
-            console.log("Client side error:", e);
+            console.log("Client side error:", e); // do error stuff
         }
     })
 }
