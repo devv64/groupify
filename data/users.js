@@ -10,16 +10,21 @@ import * as validate from './validation.js';
 // this is needed to attach lastfm user to user object
 import * as lastfm from '../api/lastfm.js';
 
-
-export async function checkUsernameAndEmail(username, email) {
+export async function checkUsername(username) {
   username = validate.validName(username);
+
+  const userCollection = await users();
+  const existingUsername = await userCollection.findOne({ username: username });
+  if (existingUsername) throw "Username already exists";
+  return true;
+}
+
+export async function checkEmail(email) {
   email = validate.validEmail(email);
 
   const userCollection = await users();
   const existingEmail = await userCollection.findOne({ email: email });
   if (existingEmail) throw "Email already exists";
-  const existingUsername = await userCollection.findOne({ username: username });
-  if (existingUsername) throw "Username already exists";
   return true;
 }
 
@@ -32,7 +37,8 @@ export async function createUser(username, password, email) {
   const userCollection = await users();
 
   // check if username or email already exists
-  await checkUsernameAndEmail(username, email);
+  await checkUsername(username);
+  await checkEmail(email);
 
   //encrypt password
   const hash = await bcrypt.hash(password, 4); //remember to change to back to 16 or 12 for all bcrypts
@@ -127,6 +133,10 @@ export async function updateUserById(id, username, password, lastfmUsername) {
   if (!user) throw `Could not find user with id of ${id}`;
   const lastfmData = lastfmUsername ? await lastfm.getInfoByUser(lastfmUsername) : null;
   let hash = (password == null) ? null : await bcrypt.hash(password, 4);
+
+  if (username != user.username) {
+    await checkUsername(username);
+  }
 
   const updatedUser = {
     username: username || user.username,

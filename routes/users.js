@@ -240,7 +240,7 @@ router.route('/:username/manage') //does not update name in feed
       const updatedUser = await updateUserById(id, username, newPassword, lastfmUsername); //wont work since lastfm is not connected i think
       req.session.user = updatedUser;
       const success = encodeURIComponent('Profile updated!');
-      return res.redirect(`/users/${username}?success=${success}`);
+      return res.redirect(`/users/${req.session.user.username}?success=${success}`);
     }
     catch(e){
       return res.status(400).render('manage', {error: e});
