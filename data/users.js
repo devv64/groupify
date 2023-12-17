@@ -299,18 +299,3 @@ export const addNotification = async (profileId, notification) => {
   if (!insertNotification) throw "Error: Update failed! Could not add notification";
   return insertNotification;
 }
-
-export const removeNotification = async (userId, notificationId) => { //idk if this works
-  // handleId(userId);
-  // handleId(notificationId);
-  userId = validate.validId(userId);
-  notificationId = validate.validId(notificationId);
-  const userCollection = await users();
-  const removeNotification = await userCollection.findOneAndUpdate(
-    { _id: new ObjectId(userId) },
-    { $pull: { notifications: {_id : notificationId}} },
-    { returnDocument: 'after' }
-  );
-  if (!removeNotification) throw "Error: Update failed! Could not remove notification";
-  return removeNotification;
-}

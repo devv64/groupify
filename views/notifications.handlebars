@@ -5,10 +5,6 @@
     {{#if notifications}}
         {{#each notifications}}
             <p>{{this.notification}}</p>
-            <form method="post">
-                <input type="hidden" name="notificationToDelete" id="notificationToDelete" value="{{this._id}}">
-                <button type="submit">Delete Notification</button>
-            </form>
         {{/each}}
     {{else}}
         <p>No notifications yet</p>
