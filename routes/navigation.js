@@ -83,10 +83,8 @@ router
     try {
       const posts = await postsData.getSomePosts();
       const user = await userData.getUserByUsername(req.session.user.username);
-      // console.log(user.username)
-      // console.log(posts)
 
-      res.render('feed', 
+      return res.render('feed', 
       { 
         posts : posts, 
         username : user.username
@@ -122,12 +120,24 @@ router
       lastfmSong = lastfmSong.trim();
       lastfmArtist = lastfmArtist.trim();
       const post = await postsData.createPost(body, userId, lastfmSong, lastfmArtist);
+      if (!post) throw "Post not found";
       const user = await userData.getUserById(userId);
+      if (!user) throw "User not found";
+
+      let message = ''
+      if (lastfmSong && !post.lastfmSong) {
+        message = 'Could not find song on Last.fm'
+      } else if (lastfmArtist && !post.lastfmArtist) {
+        message = 'Could not find artist on Last.fm'
+      }
+
       const followers = user.followers;
       for (let i = 0; i < followers.length; i++) {
         await userData.addNotification(followers[i], `${user.username} created a post: "${post.body}" at ${post.createdAt.toLocaleString()}`)
       }
-      return res.redirect(`/posts/${post._id}`);
+
+      const success = encodeURIComponent(message);
+      return res.redirect(`/posts/${post._id}?success=${success}`);
     } catch (e) {
       try {
         const posts = await postsData.getSomePosts();
