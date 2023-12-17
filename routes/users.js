@@ -78,7 +78,7 @@ router.route('/:username')
 
     let profile;
     try{
-      const username = xss(req.params.username)
+      const username = xss(req.params.username);
       profile = await getUserByUsername(username);
     }
     catch(e){

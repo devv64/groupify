@@ -2,6 +2,7 @@ import { users, posts } from '../config/mongoCollections.js';
 import { ObjectId, ReturnDocument } from 'mongodb';
 import bcrypt from 'bcrypt';
 import * as validate from './validation.js';
+import axios from 'axios';
 
 // import validation functions
 // validateUser, handleId, etc.
@@ -43,7 +44,17 @@ export async function createUser(username, password, email) {
   //encrypt password
   const hash = await bcrypt.hash(password, 4); //remember to change to back to 16 or 12 for all bcrypts
 
-  const pfp = 'https://source.unsplash.com/1600x900/?' + username;
+  let pfp = 'https://source.unsplash.com/1600x900/?' + username;
+
+  await axios.head(pfp)
+    .then(response => {
+      if (response.request.res.responseUrl !== pfp) {
+        pfp = 'https://source.unsplash.com/1600x900/?'
+      }
+    })
+    .catch(error => {
+      console.error('Error fetching:', error);
+    });
 
   const newUser = {
     username: username,

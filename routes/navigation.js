@@ -33,7 +33,8 @@ try {
   cleanConfirmPass = validate.validPassword(cleanConfirmPass);
   if (cleanPassword !== cleanConfirmPass) throw "Passwords do not match";
   //check if user already exists
-  await userData.checkUsernameAndEmail(cleanUsername, cleanEmail);
+  await userData.checkUsername(cleanUsername);
+  await userData.checkEmail(cleanEmail);
 
   const newUser = await userData.createUser(cleanUsername, cleanPassword, cleanEmail);
   if (!newUser) throw "User not found";
