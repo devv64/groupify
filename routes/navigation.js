@@ -101,10 +101,9 @@ router
     // ? how do I send userId here (from session), is this valid
     // ! I don't like this code, theres definitely some stuff wrong with rendering posts
     try{
-      let { body, lastfmSong, lastfmArtist } = req.body;
-      body = xss(body);
-      lastfmSong = xss(lastfmSong);
-      lastfmArtist = xss(lastfmArtist);
+      let body = xss(req.body.body);
+      let lastfmSong = xss(req.body.lastfmSong);
+      let lastfmArtist = xss(req.body.lastfmArtist);
       body = validate.validString(body);
       lastfmSong = validate.validFmString(lastfmSong);
       lastfmArtist = validate.validFmString(lastfmArtist);
@@ -115,7 +114,10 @@ router
 
     const userId = req.session.user._id;
     try {
-      let { body, lastfmSong, lastfmArtist } = req.body;
+      let body = xss(req.body.body);
+      let lastfmSong = xss(req.body.lastfmSong);
+      let lastfmArtist = xss(req.body.lastfmArtist);
+
       const post = await postsData.createPost(body, userId, lastfmSong, lastfmArtist);
       const user = await userData.getUserById(userId);
       const followers = user.followers;

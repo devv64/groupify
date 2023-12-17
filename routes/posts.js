@@ -31,8 +31,8 @@ router
     // const lastfmSong = xss(req.body.lastfmSong);
     // const lastfmArtist = xss(req.body.lastfmArtist);
     try {
-        const post_id = req.params.post_id;
-        const username = req.session.user.username;
+        const post_id = xss(req.params.post_id);
+        const username = xss(req.session.user.username);
         const commentBody = xss(req.body.comment);
         let post = await postsData.getPostById(post_id);
         const comment = await commentsData.createComment(post_id, username, commentBody);

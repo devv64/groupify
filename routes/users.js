@@ -2,11 +2,7 @@ import { Router } from 'express';
 const router = Router();
 // import data functions
 import * as lastfm from '../api/lastfm.js';
-<<<<<<< HEAD
 import { getUserByUsername, updateUserById, followUser, unfollowUser, getUserById } from '../data/users.js';
-=======
-import { getUserByUsername, updateUserById, followUser, unfollowUser, getUserById, removeNotification } from '../data/users.js';
->>>>>>> main
 import { getPostsByUser, removePostById, getPostById } from '../data/posts.js';
 // import { getPostsByUser } from '../data/posts.js';
 import { validEditedUsername, validEditedPassword } from '../data/validation.js';
@@ -75,11 +71,7 @@ router.route('/:username')
       })
     }
     catch(e){
-<<<<<<< HEAD
       res.status(404).render('profilePage', {error: "Profile page error:" + e});
-=======
-      res.status(404).render('profilePage', {error: e});
->>>>>>> main
     }
 })
   .post(async (req, res) => { //for following and unfollowing functionality
