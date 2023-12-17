@@ -3,6 +3,7 @@
 <div class="container">
     <h1>Manage Account</h1>
 
+    <form method="POST" id="editForm" action="/manage">
     <form method="POST" id="editForm" action="/users/{{username}}/manage">
         <p>Change Username</p>
         <label for="username" id="usernameLabel">Username</label>
@@ -29,12 +30,4 @@
     <p>Number of Posts: {{numberOfPosts}}</p>
     <p>Total Likes Received: {{totalLikes}}</p>
     <a href="/users/{{username}}" class="backToProfile">Back to Profile Page</a>
-    <a href="/logout" class="logout">Logout</a>
-
-    {{#if error}}
-        <div class="error">
-            <p>{{error}}</p>
-        </div>
-    {{/if}}
-
 </div>

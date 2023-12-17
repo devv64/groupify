@@ -10,11 +10,9 @@ styling--}}
 
 <link rel="stylesheet" href="../public/css/profilepage.css">
 
-<div class="profileContainer">
-    <div class="user">
-        <img src="{{profilePic}}" alt="">
-        <h1 id="name">{{username}}</h1>
-    </div>
+<div>
+    <h1 id="name">{{username}}</h1>
+    <img src="{{profilePic}}" alt="Profile Picture">
 
     <div class="posts">
         <h2>Posts</h2>
@@ -48,9 +46,8 @@ styling--}}
     <div class="buttons">
         <div>
             {{#if isPersonalAccount}}
-                <div class="manageProfile"><a href="/users/{{username}}/manage">Manage Profile Account</a></div>
-                <div class="deletePost"><a href="/users/{{username}}/delete" class="delete">Delete Post</a></div>
-                <div class="notifications"><a href="/users/{{username}}/notifications">Notifications</a></div>
+                <div class="manageProfile"><a href="/manage">Manage Profile Account</a></div>
+                <div class="deletePost"><a href="/deleteposts" class="delete">Delete Post</a></div>
             {{else}}
                 <div id="buttonContainer" class="followingButton">
                     <button type="submit" class="{{followClass}}" id="followingButton">{{followingText}}</button>
