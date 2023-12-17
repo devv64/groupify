@@ -8,6 +8,8 @@ import session from 'express-session';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname =   dirname(__filename);
 
+import * as userData from './data/users.js';
+
 // import * as debug from './debug.js';
 
 const staticDir = express.static(__dirname + '/public');
@@ -45,8 +47,12 @@ app.use(
 );
 
 
-app.use('/', (req, res, next) => {
+app.use('/', async (req, res, next) => {
   console.log(`[${new Date().toUTCString()}]: ${req.method} ${req.originalUrl} (${req.session.user ? 'Authenticated' : 'Non-Authenticated User'})]`)
+
+  if (req.session.user) {
+    req.session.user = await userData.getUserById(req.session.user._id);
+  }
 
   if (!req.session.user && req.path !== '/login' && req.path !== '/register' && req.path !== '/home') {
     return res.redirect('/login');

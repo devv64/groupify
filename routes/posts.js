@@ -17,12 +17,13 @@ router
     try {
       const post_id = xss(req.params.post_id)
       const post = await postsData.getPostById(post_id)
+      const success = xss(req.query.success)
       const postComments = await commentsData.getAllCommentsByPostId(post_id);
       const username = req.session.user.username
       const likes = post.likes.length
       const isLiked = await postsData.isLiked(post_id, req.session.user._id)
       const liked = isLiked ? "Unlike" : "Like"
-      return res.render('posts', { post, postComments, username, likes, liked })
+      return res.render('posts', { post, postComments, username, likes, liked, success })
     } catch (e) {
       return res.status(400).render('feed', { error: e });
     }
