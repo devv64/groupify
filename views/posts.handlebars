@@ -1,3 +1,4 @@
+<link rel="stylesheet" href="../public/css/post.css">
 <div>
     <h1>Post</h1>
 
@@ -21,7 +22,7 @@
       </form>
       
       {{#if (eq post.username username)}}
-        <form action="/users/{{post.username}}/delete" method="POST">
+        <form action="/deleteposts" method="POST">
           <input type="hidden" name="postToDelete" id="postToDelete" value="{{post._id}}">
           <button type="submit">Delete</button>
         </form>

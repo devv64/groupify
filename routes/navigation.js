@@ -245,10 +245,11 @@ router.route('/deleteposts')
   .post(async (req, res) => {
     try{
       const postToDelete = xss(req.body.postToDelete);
-      await postsData.removePostById(postToDelete);
+      await postsData.removePostById(postToDelete, req.session.user._id);
       const success = encodeURIComponent(`Post Deleted!`);
       // const username = xss(req.params.username)
       const username = req.session.user.username;
+      if (pos)
       return res.redirect(`/users/${req.session.user.username}?success=${success}`);
     }
     catch(e){
