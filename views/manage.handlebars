@@ -1,33 +1,46 @@
 <link rel="stylesheet" href="../public/css/profilepage.css">
 
+<h1>Manage Account</h1>
+<p>Change your username, password, or Lastfm Username</p>
 <div class="container">
-    <h1>Manage Account</h1>
 
     <form method="POST" id="editForm" action="/manage">
-    <form method="POST" id="editForm" action="/users/{{username}}/manage">
-        <p>Change Username</p>
-        <label for="username" id="usernameLabel">Username</label>
-        <input type="text" name="username" id="username" placeholder="New Username">
+        <div class="changeUsername">
+            <p class="changeUsernameText">Change Username</p>
+            <label for="username" id="usernameLabel">Username</label>
+            <input type="text" name="username" id="username" placeholder="New Username">
+        </div>
 
-        <p>Change Password</p>
-        <label for="oldPassword" id="passwordLabel">Old Password</label>
-        <input type="password" name="oldPassword" id="oldPassword" placeholder="Old Password">
+        <div class="changePassword">
+            <p class="changePasswordText">Change Password</p>
+            <label for="oldPassword" id="passwordLabel">Old Password</label>
+            <input type="password" name="oldPassword" id="oldPassword" placeholder="Old Password">
 
-        <label for="newPassword" id="passwordLabel">New Password</label>
-        <input type="password" name="newPassword" id="newPassword" placeholder="New Password">
+            <label for="newPassword" id="passwordLabel">New Password</label>
+            <input type="password" name="newPassword" id="newPassword" placeholder="New Password">
 
-        <label for="confirmPassword" id="confirmPasswordLabel">Confirm Password</label>
-        <input type="password" name="confirmPassword" id="confirmPassword" placeholder="Confirm Password">
+            <label for="confirmPassword" id="confirmPasswordLabel">Confirm Password</label>
+            <input type="password" name="confirmPassword" id="confirmPassword" placeholder="Confirm Password">
+        </div>
 
-
-        <p>Change Lastfn Username</p>
-        <label for="lastfmUsername" id="lastfmUsernameLabel">Lastfm Username</label>
-        <input type="text" name="lastfmUsername" id="lastfmUsername" placeholder="New Lastfm Username (optional)">
+        <div class="changeLastfm">
+            <p class="changeLastfmText">Change Lastfm Username</p>
+            <label for="lastfmUsername" id="lastfmUsernameLabel">Lastfm Username</label>
+            <input type="text" name="lastfmUsername" id="lastfmUsername" placeholder="New Lastfm Username (optional)">
+        </div>
 
         <button class="manageSubmit" type="submit">Submit</button>
     </form>
-    <p>Created Profile on {{createdProfile}}</p>
-    <p>Number of Posts: {{numberOfPosts}}</p>
-    <p>Total Likes Received: {{totalLikes}}</p>
-    <a href="/users/{{username}}" class="backToProfile">Back to Profile Page</a>
+    
+    <div class="stats">
+        <h2>Stats</h2>
+        <div>Created Profile on {{createdProfile}}</div>
+        <div>Number of Posts: {{numberOfPosts}}</div>
+        <div>Total Likes Received: {{totalLikes}}</div>
+    </div>
 </div>
+<a href="/users/{{username}}" class="backToProfile">Back to Profile Page</a>
+
+{{#if error}}
+    <p id="error" class="">{{error}}</p>
+{{/if}}

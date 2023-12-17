@@ -9,7 +9,7 @@ img{
 
 
 input {
-    display: block;
+    display: inline;
     margin: 5px auto;
     padding: 8px;
     border-radius: 5px;
@@ -70,6 +70,7 @@ a:hover {
 
 .backToProfile, .logout{
     border: 1px solid black;
+
 }
 
 .logout{
@@ -129,11 +130,67 @@ footer {
 }
 
 .container {
-    max-width: 40%;
+    /* max-width: 100%; */
     margin: 50px auto;
     padding: 20px;
     background-color: lightblue;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     text-align: center;
+    display: grid;
+    grid-template-rows: 1fr;
+    grid-template-columns: 3fr 1fr;
+}
+
+.changeUsername{
+    grid-row: 1 / 1;
+    grid-column: 1 / 1;
+    border: black 2px solid;
+    border-radius: 10px;
+    padding: 5px;
+    margin: 5px;
+}
+
+.changeUsernameText{
+    font-weight: bold;
+}
+
+.changePassword{
+    grid-row: 2 / 2;
+    grid-column: 1 / 1;
+    border: black 2px solid;
+    border-radius: 10px;
+    padding: 5px;
+    margin: 5px;
+}
+
+.changePasswordText{
+    font-weight: bold;
+}
+
+.changeLastfm{
+    grid-row: 3 / 3;
+    grid-column: 1 / 1;
+    border: black 2px solid;
+    border-radius: 10px;
+    padding: 5px;
+    margin: 5px;
+}
+
+.changeLastfmText{
+    font-weight: bold;
+}
+
+.stats{
+    display: flex;
+    flex-direction: column;
+    border: black 2px solid;
+    border-radius: 10px;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    width: 300px;
+}
+h2{
+    display: block;
 }

@@ -22,9 +22,11 @@ const validEditedPassword = (password) => {
 // stuff for error
 // for edit profile page  
 let editForm = document.getElementById("editForm");
+let error = document.getElementById("error");
 if(editForm){
     editForm.addEventListener("submit", (event) => {
         event.preventDefault();
+        error.classList.add("hidden");
         try{
             let username = document.getElementById("username").value;
             let oldPassword = document.getElementById("oldPassword").value;
@@ -50,7 +52,9 @@ if(editForm){
             editForm.submit();
         }
         catch(e){
-            console.log("Client side error:", e); // do error stuff
+            event.preventDefault();
+            error.classList.remove("hidden");
+            error.textContent = e;
         }
     })
 }
