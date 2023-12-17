@@ -34,7 +34,7 @@ router
     try {
         const post_id = xss(req.params.post_id);
         const username = xss(req.session.user.username);
-        const commentBody = xss(req.body.comment);
+        let commentBody = xss(req.body.comment);
         commentBody = commentBody.trim();
         let post = await postsData.getPostById(post_id);
         const comment = await commentsData.createComment(post_id, username, commentBody);
