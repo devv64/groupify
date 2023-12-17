@@ -20,10 +20,12 @@
 
     <ul>
         {{#each posts}}
-            <li><a href="/users/{{this.username}}">{{this.username}}</a></li>
-            <li><a href="/posts/{{this._id}}">{{this.body}}</a></li>
-            <li>{{this.likes.length}} Likes</li>
-            <li><a href="/posts/{{this._id}}">{{this.comments.length}} Comments</a></li>
+            <div class = 'container'>
+                <li><a href="/users/{{this.username}}">{{this.username}}</a></li>
+                <li><a href="/posts/{{this._id}}">{{this.body}}</a></li>
+                <li>{{this.likes.length}} Likes</li>
+                <li><a href="/posts/{{this._id}}">{{this.comments.length}} Comments</a></li>
+            </div>
         {{/each}}
     </ul>
 
