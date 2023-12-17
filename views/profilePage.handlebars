@@ -42,6 +42,18 @@ styling--}}
         {{/if}}
     </div>
 
+    {{#if profile.lastfm}}
+    <div class="lastfm">
+        <h2>Last.fm</h2>
+        <p>Username: {{profile.lastfm.name}}</p>
+        <p>Playcount: {{profile.lastfm.playcount}}</p>
+        <p>Artist Count: {{profile.lastfm.artist_count}}</p>
+        <p>Track Count: {{profile.lastfm.track_count}}</p>
+        <p>Album Count: {{profile.lastfm.album_count}}</p>
+        <p>Profile URL: <a href="{{profile.lastfm.url}}" target="_blank" rel="noopener noreferrer">{{profile.lastfm.url}}</a></p>
+    </div>
+    {{/if}}
+
     <div class="buttons">
         <div>
             {{#if isPersonalAccount}}
