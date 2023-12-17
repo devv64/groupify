@@ -1,6 +1,7 @@
 import { posts, users } from '../config/mongoCollections.js';
 import { ObjectId } from 'mongodb';
 import * as validate from './validation.js';
+import * as lastfm from '../api/lastfm.js';
 
 // import validation functions
 // validatePost, handleId, etc.
