@@ -57,8 +57,6 @@ try {
   cleanPassword = validate.validPassword(cleanPassword);
   const user = await userData.loginUser(cleanEmail, cleanPassword);
   if (!user) throw "User not found";
-  // ? how do I keep track of user in session
-  // ? do I need to store user in session
   req.session.user = user;
   return res.redirect(`/users/${user.username}`);
 } catch (e) {

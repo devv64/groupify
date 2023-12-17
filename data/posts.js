@@ -42,13 +42,12 @@ export async function createPost(body, userId, lastfmSong, lastfmArtist) {
 
   const username = user.username
 
-  // ? Should we have tags on posts.. need to check the doc if this was required or extra
   const newPost = {
     // need to also give username, pfp, etc. to post
     userId,
     username,
     body,
-    comments: [], // ? comment objects or ids to comment objects
+    comments: [],
     track: lastfmSong_ || null,
     artist: lastfmArtist_ || null,
     likes: [], 
@@ -83,9 +82,6 @@ export async function getPostById(id) {
   return post;
 }
 
-// get all posts
-// ? do we even want this
-
 // get all posts by user
 export async function getPostsByUser(id) {
   id = validate.validId(id);
@@ -97,11 +93,10 @@ export async function getPostsByUser(id) {
 }
 
 // get all posts by artist
-// ? take in name or id
 export async function getPostsByArtist(name) {
   name = validate.validString(name);
   const postCollection = await posts();
-  const lastfmArtist_ = await lastfm.searchArtistByName(name, 1);
+  const lastfmArtist_ = await lastfm.findArtistByName(name);
   if (!lastfmArtist_) throw "Artist not found";
   // only trying to find lastfmArtist_ object because idk what we're actually gonna be storing
   const artistPosts = await postCollection.find({ artist: lastfmArtist_ }).toArray();
