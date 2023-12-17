@@ -1,27 +1,34 @@
 (function ($) {
 
-  let likeButton = $('#like');
+  let likeButton = $('#likeButton');
   
-  let requestConfig = {
-      method: 'POST',
-    };
+  let url = window.location.href;
+  let parts = url.split("/");
+  let postId = parts[parts.length - 1];
+
+
   
   likeButton.click(function (event) {
       // event.preventDefault();
-      requestConfig.method = 'POST';
+      let requestConfig = {
+        method: 'POST',
+        url: '/posts/' + postId + "/like",
+        contentType: 'application/json'
+      };
+
       $.ajax(requestConfig)
       .then(function (responseMessage) { 
-        if(responseMessage.liked == "Liked"){
+        if(responseMessage.liked == "Like"){
           $('#likes').html(responseMessage.likes + ' Likes')
-          $('#liked').html('Unlike')
-          $('#liked').removeClass('Liked')
-          $('#liked').addClass('Unliked')
+          $('#likeButton').html('Unlike')
+          $('#likeButton').removeClass('Like')
+          $('#likeButton').addClass('Unlike')
         }
         else{
           $('#likes').html(responseMessage.likes + ' Likes')
-          $('#liked').html('Like')
-          $('#liked').removeClass('Unliked')
-          $('#liked').addClass('Liked')
+          $('#likeButton').html('Like')
+          $('#likeButton').removeClass('Unlike')
+          $('#likeButton').addClass('Like')
         }
       })
       .fail(function (xhr, status, error) {
