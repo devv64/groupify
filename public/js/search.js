@@ -15,6 +15,8 @@ const searchform = document.getElementById('searchquery');
 if (searchform) { 
     searchform.addEventListener('submit', (event) => {
         event.preventDefault();
+        error.fadeOut();
+
         successid.textContent = "";
         const search = document.getElementById('searchinput').value;
         

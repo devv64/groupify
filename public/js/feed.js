@@ -25,6 +25,8 @@ const createPostForm = document.getElementById('create-post');
 if(createPostForm){
   createPostForm.addEventListener('submit', (event) => {
       event.preventDefault();
+      error.fadeOut();
+
       successid.textContent = "";
       const body = document.getElementById('body').value;
       const track = document.getElementById('track').value;

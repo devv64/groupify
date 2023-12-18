@@ -29,6 +29,8 @@ let error = document.getElementById("error");
 if(editForm){
     editForm.addEventListener("submit", (event) => {
         event.preventDefault();
+        error.fadeOut();
+
         successid.textContent = "";
         error.classList.add("hidden")
         try{

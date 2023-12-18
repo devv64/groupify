@@ -5,7 +5,7 @@ import * as search from '../data/search.js';
 import * as validate from '../data/validation.js';
 
 router.get('/', async (req, res) => {
-  res.status(200).render('search', { query: "", similarUsers: [" "], songposts: [" "], artistposts: [" "] });
+  res.status(200).render('search', { query: "", similarUsers: ["Click here to show all users"], songposts: [" "], artistposts: [" "] });
 });
 
 router.post('/', async (req, res) => {
