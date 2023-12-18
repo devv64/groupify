@@ -1,7 +1,6 @@
 import { ObjectId } from "mongodb";
 import {posts, comments, users} from '../config/mongoCollections.js';
-import {getPostById} from "./posts.js";
-import { validEditedUsername, validId, validUsername } from "./validation.js";
+import { validId, validUsername } from "./validation.js";
 
 
 //Returns post with new comment ID added to comments array
@@ -9,26 +8,16 @@ export const createComment = async (postId, username, commentBody) => {
     
     postId = validId(postId);
 
-    if(!commentBody || !(typeof commentBody === "string") || commentBody.trim().length === 0) throw  "Comment cannot be empty or all spaces";
-    // if(!dateCreated || !(typeof dateCreated === "string")) throw  "Comment creation date must be provided}
-    
+    if(!commentBody || !(typeof commentBody === "string") || commentBody.trim().length === 0) throw  "Comment cannot be empty or all spaces";    
     
     const commentsCollection = await comments();
-    const userCollection = await users();
     const postCollection = await posts();
-    
-
-    //Get User for userid
-    // const commenter = await userCollection.findOne({ _id: new ObjectId(userId) });
-    //Check if userId of commenter exists
-    // if(commenter === null) throw `No user with id ${userId}`;
 
     let newComment = {
         _id : new ObjectId(),
         username : username,
         postId : postId,
         body : commentBody,
-        // Date Format: Fri Dec 08 2023 12:07:55 GMT-0500 (Eastern Standard Time)
         dateCreated : new Date()
     }
     const insertComment = await commentsCollection.insertOne(newComment);
@@ -68,7 +57,6 @@ export const getAllCommentsByPostId = async (postId) => {
 
     let commentList = await commentsCollection
         .find({ postId: postId })
-        // .project({ _id: 1, body: 1, dateCreated:1 })
         .toArray();
 
     if (!commentList) throw "Could not get all comments";
@@ -88,7 +76,6 @@ export const removeComment = async (commentId) =>{
     const postCollection = await posts();
 
     const comment = await getCommentById(commentId);
-    // console.log("Data comment: ", comment);
 
     //Delete comment from the Comments Collection
     const deletionInfo = await commentsCollection.findOneAndDelete({ _id: new ObjectId(commentId) });

@@ -5,7 +5,6 @@ import postRoutes from './posts.js';
 import searchRoutes from './search.js';
 
 const constructorMethod = (app) => {
-  //app.use routes
   app.use('/', navigationRoutes);
   app.use('/users', userRoutes);
   app.use('/posts', postRoutes);

@@ -1,17 +1,9 @@
 import { Router } from 'express';
 const router = Router();
-// import data functions
-import * as lastfm from '../api/lastfm.js';
 import { getUserByUsername, updateUserById, followUser, unfollowUser, getUserById } from '../data/users.js';
 import { getPostsByUser, removePostById, getPostById } from '../data/posts.js';
 import { getCommentByUsername } from '../data/comments.js';
-// import { getPostsByUser } from '../data/posts.js';
-import { validEditedUsername, validEditedPassword } from '../data/validation.js';
-import bcrypt from 'bcrypt';
 import xss from 'xss';
-import { users } from '../config/mongoCollections.js';
-
-// import validation functions 
 
 router.route('/:username')
   .get(async (req, res) => { //public profile page / personal page

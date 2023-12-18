@@ -3,12 +3,6 @@ import { ObjectId, ReturnDocument } from 'mongodb';
 import bcrypt from 'bcrypt';
 import * as validate from './validation.js';
 import axios from 'axios';
-
-// import validation functions
-// validateUser, handleId, etc.
-
-// import api functions
-// this is needed to attach lastfm user to user object
 import * as lastfm from '../api/lastfm.js';
 
 export async function checkUsername(username) {
@@ -59,7 +53,6 @@ export async function createUser(username, password, email) {
   const newUser = {
     username: username,
     password: hash,
-    // * Should I make these default to null in function def instead? also should it be empty string or null 
     email : email,
     pfp : pfp,
     lastfm: null,
@@ -69,7 +62,6 @@ export async function createUser(username, password, email) {
     likedPosts: [],
     createdPosts: [],
     createdAt: new Date(),
-    // can be useful to have updatedAt to limit how often user can update their profile
     updatedAt: new Date()
   };
   const insertInfo = await userCollection.insertOne(newUser);
@@ -176,18 +168,12 @@ export async function updateUserById(id, username, password, lastfmUsername) {
     updatedAt: new Date()
   };
   const oldUsername = user.username;
-  // there might be a better way to do this
   const updateInfo = await userCollection.findOneAndReplace(
     { _id: new ObjectId(id) }, 
     updatedUser,
     { returnDocument: 'after' }
     );
   if (!updateInfo) throw `Error: Update failed! Could not update user with id of ${id}`;
-
-  // need to update all the posts that the user has created
-  // need to update all the posts that the user has liked
-  // ? need to update all the posts that the user has commented on -- depending on how comments work
-  // ? need to update followers / following maybe
 
   const postCollection = await posts();
   for (let i = 0; i < user.createdPosts.length; i++) {
@@ -203,7 +189,6 @@ export async function updateUserById(id, username, password, lastfmUsername) {
     const comment = await commentCollection.updateMany(
       { username: oldUsername}, 
       { $set: { username: updatedUser.username}},
-    //   { returnDocument: 'after' }
     );
     if (!comment) throw `Error: Update failed! Could not update comment`;
 
@@ -211,7 +196,6 @@ export async function updateUserById(id, username, password, lastfmUsername) {
 }
 
 export const loginUser = async (email, password) => {
-  // validateUser(username, password);
   email = validate.validEmail(email);
   password = validate.validPassword(password); 
 
@@ -225,8 +209,6 @@ export const loginUser = async (email, password) => {
 };
 
 export const followUser = async (userId, profileId) => { //adds profile to user following list and adds user to profile's followers list
-  // handleId(followerId); 
-  // handleId(followingId);
   userId = validate.validId(userId);
   profileId = validate.validId(profileId);
   const userCollection = await users();
@@ -257,8 +239,6 @@ export const followUser = async (userId, profileId) => { //adds profile to user 
 }
 
 export const unfollowUser = async (userId, profileId) => { //removes profile form user following list and removes user form profile's followers list
-  // handleId(followerId);
-  // handleId(followingId);
   userId = validate.validId(userId);
   profileId = validate.validId(profileId);
   const userCollection = await users();

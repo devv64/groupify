@@ -3,26 +3,12 @@ import { ObjectId } from 'mongodb';
 import * as validate from './validation.js';
 import * as lastfm from '../api/lastfm.js';
 
-// import validation functions
-// validatePost, handleId, etc.
-
-// import api functions
-// this is needed to attach lastfm song/artist data to post object
-import {searchTrackByName, searchArtistByName, findTrackByName, findArtistByName} from "../api/lastfm.js"
+import {findTrackByName, findArtistByName} from "../api/lastfm.js"
 import { getUserById } from './users.js';
 
 
 // create post
-// how should we design this, would lastfmSong and lastfmArtist be params like this? seems fine to me
 export async function createPost(body, userId, lastfmSong, lastfmArtist) {
-  // validatePost(body, username, lastfmSong, lastfmArtist);
-  body = validate.validString(body);
-  // username = validate.validString(username);
-
-  // TODO: Need to figure out how this should work
-  // lastfmSong = validate.validString(lastfmSong);
-  // lastfmArtist = validate.validString(lastfmArtist);  
-
   body = validate.validString(body);
   userId = validate.validId(userId);
   lastfmSong = validate.validFmString(lastfmSong);
@@ -31,9 +17,6 @@ export async function createPost(body, userId, lastfmSong, lastfmArtist) {
   const postCollection = await posts();
   const userCollection = await users();
 
-  // Need to decide how to handle picking a song/artist, this might be fine
-  // why is it saying await is unnecessary here
-  // TODO: probably some error handling needed here
   const lastfmSong_ = lastfmSong ? await findTrackByName(lastfmSong) : null;
   const lastfmArtist_ = lastfmArtist ? await findArtistByName(lastfmArtist) : null;
 
@@ -43,7 +26,6 @@ export async function createPost(body, userId, lastfmSong, lastfmArtist) {
   const username = user.username
 
   const newPost = {
-    // need to also give username, pfp, etc. to post
     userId,
     username,
     body,
@@ -52,7 +34,6 @@ export async function createPost(body, userId, lastfmSong, lastfmArtist) {
     artist: lastfmArtist_ || null,
     likes: [], 
     createdAt: new Date(),
-    // updatedAt: new Date()
   };
   const insertInfo = await postCollection.insertOne(newPost);
   if (!insertInfo.acknowledged || !insertInfo.insertedId) throw "Could not add post";  
@@ -98,7 +79,6 @@ export async function getPostsByArtist(name) {
   const postCollection = await posts();
   const lastfmArtist_ = await lastfm.findArtistByName(name);
   if (!lastfmArtist_) throw "Artist not found";
-  // only trying to find lastfmArtist_ object because idk what we're actually gonna be storing
   const artistPosts = await postCollection.find({ artist: lastfmArtist_ }).toArray();
   if (!artistPosts) throw "Post not found";
   artistPosts.forEach(post => post._id = post._id.toString());
@@ -136,10 +116,6 @@ export async function removePostById(id, userId) {
     )
 
     if(!updateUser) throw "User not found"
-
-    // ! error check
-
-    // ? maybe remove from everyone that liekd thsi post
 
   const deletionInfo = await postCollection.deleteOne({ _id: new ObjectId(id) });
   if (!deletionInfo.acknowledged || deletionInfo.deletedCount === 0) throw `Could not delete post with id of ${id}`;
@@ -181,13 +157,11 @@ export async function removeLikeFromPost(postId, userId) {
   const userCollection = await users();
   const updateInfo = await postCollection.updateOne(
     { _id: new ObjectId(postId) },
-    // not sure if this works, from stackoverflow
     { $pull: { likes: userId } }
   );
   if (!updateInfo.acknowledged || updateInfo.modifiedCount === 0) throw "Could not update post";
   let user = await userCollection.findOneAndUpdate(
     { _id: new ObjectId(userId) },
-    // { $pull: {likedPosts: newId} },
     { $pull: {likedPosts: postId} },
     { returnDocument: 'after' }
     )

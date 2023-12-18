@@ -5,35 +5,26 @@ import * as validate from '../data/validation.js';
 import xss from 'xss';
 import bcrypt from 'bcrypt';
 const router = Router();
-
-// import { posts } from '../config/mongoCollections.js';
-
-// TODO: clean up the way this is being done
 import * as postsData from '../data/posts.js';
-import * as commentsData from '../data/comments.js';
 
 router.get('/home', async (req, res) => {
   res.status(200).render('home', { login: true });
 });
 
 router.get('/register', async (req, res) => {
-  // if (res.session.user !== undefined) res.redirect('/profile');
   return res.status(200).render('register', { login: true });
 });
 router.post('/register', async (req, res) => {
 try {
-  // console.log(req.body.regemailinput);
   let cleanEmail = xss(req.body.regemailinput);
   let cleanUsername = xss(req.body.regusernameinput);
   let cleanPassword = xss(req.body.regpasswordinput);
   let cleanConfirmPass = xss(req.body.regconfirmpasswordinput);
-  // console.log(cleanEmail);
   cleanEmail = validate.validEmail(cleanEmail);
   cleanUsername = validate.validName(cleanUsername);
   cleanPassword = validate.validPassword(cleanPassword);
   cleanConfirmPass = validate.validPassword(cleanConfirmPass);
   if (cleanPassword !== cleanConfirmPass) throw "Passwords do not match";
-  //check if user already exists
   await userData.checkUsername(cleanUsername);
   await userData.checkEmail(cleanEmail);
 
@@ -46,7 +37,6 @@ try {
 });
 
 router.get('/login', async (req, res) => {
-  // if (res.session.user !== undefined) res.redirect('/profile');
   return res.status(200).render('login',  {login: true});
 });
 router.post('/login', async (req, res) => {
@@ -96,8 +86,6 @@ router
     }
   })
   .post(async (req, res) => {
-    // ? how do I send userId here (from session), is this valid
-    // ! I don't like this code, theres definitely some stuff wrong with rendering posts
     try{
       let body = xss(req.body.body);
       let lastfmSong = xss(req.body.lastfmSong);
@@ -148,11 +136,10 @@ router
     }
   });
 
-  router.route('/manage') //does not update name in feed
+  router.route('/manage')
   .get(async (req, res) => { //manage profile page
   try{
-    // ? Should this not be req.session.user=
-    // const username = xss(req.params.username)
+
     if (req.session.user === undefined) return res.redirect('/login');
     const username = req.session.user.username;
     const user = await userData.getUserByUsername(username);
@@ -175,7 +162,6 @@ router
   }
 })
   .post(async (req, res) => { //edit profile page
-    // const username = xss(req.params.username)
     const username = req.session.user.username;
     const user = await userData.getUserByUsername(username);
     try{
@@ -184,7 +170,7 @@ router
         oldPassword,
         newPassword,
         confirmPassword,
-        lastfmUsername //if empty, get lastfm data from logged in user, else update lastfm data with this
+        lastfmUsername
       } = req.body;
 
       username = xss(username);
@@ -240,7 +226,6 @@ router
 router.route('/deleteposts')
   .get(async (req, res) => { //delete post page
   try{
-    // const username = xss(req.params.username)
     const username = req.session.user.username;
     const user = await userData.getUserByUsername(username);
     const posts = await postsData.getPostsByUser(user._id);
@@ -258,7 +243,6 @@ router.route('/deleteposts')
       const postToDelete = xss(req.body.postToDelete);
       await postsData.removePostById(postToDelete, req.session.user._id);
       const success = encodeURIComponent(`Post Deleted!`);
-      // const username = xss(req.params.username)
       
       return res.redirect(`/users/${req.session.user.username}?success=${success}`);
     }

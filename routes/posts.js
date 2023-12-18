@@ -1,18 +1,12 @@
 import { Router } from 'express';
 import * as userData from '../data/users.js';
-import * as validate from '../data/validation.js';
 import xss from 'xss';
 const router = Router();
-
-// import { posts } from '../config/mongoCollections.js';
-
-// TODO: clean up the way this is being done
 import * as postsData from "../data/posts.js";
 import * as commentsData from "../data/comments.js";
 
 router
   .route('/:post_id')
-  // ! Need to fix when it isn't a proper post_id
   .get(async (req, res) => {
     try {
       const post_id = xss(req.params.post_id)
@@ -29,8 +23,6 @@ router
     }
   })
   .post(async (req, res) => {
-    // const lastfmSong = xss(req.body.lastfmSong);
-    // const lastfmArtist = xss(req.body.lastfmArtist);
     try {
         const post_id = xss(req.params.post_id);
         const username = xss(req.session.user.username);
