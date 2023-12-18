@@ -1,5 +1,6 @@
 import axios from 'axios';
 import 'dotenv/config.js'
+import * as validate from '../data/validation.js';
 
 const LAST_FM_API_KEY = process.env.LAST_FM_API_KEY;
 const base = 'https://ws.audioscrobbler.com';
@@ -18,7 +19,7 @@ const urlGen = (query) => {
   * @return {String[]}      Artists relevant to input name.
   */
 export const searchArtistByName = async (name, results) => {
-  // name = validateString(name) // ! maybe
+  name = validate.validFmString(name)
   const queryUrl = '/2.0/?method=artist.search&artist=' + name + '&limit=' + results;
   const url = urlGen(queryUrl);
   console.log(`searchArtistByName: ${name} -`, url)
@@ -28,7 +29,7 @@ export const searchArtistByName = async (name, results) => {
 }
 
 export const findArtistByName = async (name) => {
-  // name = validateString(name) // ! maybe
+  name = validate.validFmString(name)
   const queryUrl = '/2.0/?method=artist.search&artist=' + name;
   const url = urlGen(queryUrl);
   console.log(`findArtistByName: ${name} -`, url)
@@ -46,7 +47,7 @@ export const findArtistByName = async (name) => {
   * @return {String[]}      Tracks relevant to input name.
   */
 export const searchTrackByName = async (name, results) => {
-  // name = validateString(name) // ! maybe
+  name = validate.validFmString(name)
   const queryUrl = '/2.0/?method=track.search&track=' + name + '&limit=' + results;
   const url = urlGen(queryUrl);
   console.log(`searchTrackByName: ${name} -`, url);
@@ -56,7 +57,7 @@ export const searchTrackByName = async (name, results) => {
 }
 
 export const findTrackByName = async (name) => {
-  // name = validateString(name) // ! maybe
+  name = validate.validFmString(name)
   const queryUrl = '/2.0/?method=track.search&track=' + name;
   const url = urlGen(queryUrl);
   console.log(`findTrackByName: ${name} -`, url);
@@ -73,6 +74,7 @@ export const findTrackByName = async (name) => {
   * @return {UserInfo}   Information relevant to input name.
   */
 export const getInfoByUser = async (name) => {
+  name = validate.validFmString(name)
   const queryUrl = '/2.0/?method=user.getinfo&user=' + name;
   const url = urlGen(queryUrl);
   console.log(`getInfoByUser: ${name} -`, url);
