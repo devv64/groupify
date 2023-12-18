@@ -125,9 +125,9 @@ router
       if (!post) throw "Post not found";
 
       let message = ''
-      if (lastfmSong && !post.lastfmSong) {
+      if (lastfmSong && !post.track) {
         message = 'Could not find song on Last.fm, but post was created'
-      } else if (lastfmArtist && !post.lastfmArtist) {
+      } else if (lastfmArtist && !post.artist) {
         message = 'Could not find artist on Last.fm, but post was created'
       }
 
