@@ -1,7 +1,7 @@
 import { posts, users } from '../config/mongoCollections.js';
 import * as validate from './validation.js';
 
-//the idea of validations is just to check if its a string
+//the idea of validations is just to check if its a string and its alphanumeric
 //this is because the user can search for anything since
 //there is so much variety in song names
 

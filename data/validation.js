@@ -118,5 +118,6 @@ export const validsearch = (str) => {
   if (typeof str !== 'string') throw "String must be a string";
   str = str.trim();
   if (str.length === 0) throw "String must be a non-empty string";
+  if (!/^[a-zA-Z0-9]+$/.test(str)) throw "String must be alphanumeric";
   return str;
 }
