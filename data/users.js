@@ -42,7 +42,7 @@ export async function createUser(username, password, email) {
   await checkEmail(email);
 
   //encrypt password
-  const hash = await bcrypt.hash(password, 4); //remember to change to back to 16 or 12 for all bcrypts
+  const hash = await bcrypt.hash(password, 16);
 
   let pfp = 'https://source.unsplash.com/1600x900/?' + username;
 
@@ -142,8 +142,13 @@ export async function updateUserById(id, username, password, lastfmUsername) {
   const userCollection = await users();
   const user = await getUserById(id);
   if (!user) throw `Could not find user with id of ${id}`;
-  const lastfmData = lastfmUsername ? await lastfm.getInfoByUser(lastfmUsername) : null;
-  let hash = (password == null) ? null : await bcrypt.hash(password, 4);
+  let lastfmData;
+  try {
+    lastfmData = lastfmUsername ? await lastfm.getInfoByUser(lastfmUsername) : null;
+  } catch (e) {
+    throw "Last.fm username not found";
+  }
+  let hash = (password == null) ? null : await bcrypt.hash(password, 16);
 
   if (username != user.username) {
     await checkUsername(username);
@@ -287,15 +292,17 @@ export const unfollowUser = async (userId, profileId) => { //removes profile for
 
 }
 
-export const addNotification = async (profileId, notification) => {
+export const addNotification = async (profileId, notification, postId) => {
   // handleId(userId);
   profileId = validate.validId(profileId);
   notification = validate.validString(notification);
+  postId = validate.validId(postId);
   const userCollection = await users();
 
   let newNotification = {
     _id: new ObjectId().toString(),
     notification: notification,
+    postId: postId,
     dateCreated: new Date()
   }
   

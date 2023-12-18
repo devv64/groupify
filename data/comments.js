@@ -3,6 +3,7 @@ import {posts, comments, users} from '../config/mongoCollections.js';
 import {getPostById} from "./posts.js";
 import { validEditedUsername, validId, validUsername } from "./validation.js";
 
+import * as userData from './users.js';
 
 //Returns post with new comment ID added to comments array
 export const createComment = async (postId, username, commentBody) => {
@@ -42,6 +43,10 @@ export const createComment = async (postId, username, commentBody) => {
         { $addToSet: { comments: newCommentId } }
     );
     if (!updatedPost.acknowledged || updatedPost.modifiedCount === 0) throw  "Could not add comment to post";
+
+    const post = await getPostById(postId);
+
+    await userData.addNotification(post.userId, `${username} commented on your post: "${post.body}" at ${new Date().toLocaleString()}`, postId);
 
     return comment;
 };

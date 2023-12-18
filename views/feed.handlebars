@@ -1,11 +1,10 @@
-<link rel="stylesheet" href="../public/css/feed.css">
+<link rel="stylesheet" href="/public/css/feed.css">
 
-<div>
+<div class="feed-container">
     <h1>Feed</h1>
-    <p>Feed content</p>
+    <p class="feed-content">Feed content</p>
 
-    {{!-- ! MAKE SURE U CAN'T POST WITH ONLY SPECIAL CHARACTERS --}}
-    <form action="/feed" method="POST" class="create-post" id="create-post">
+    <form action="/feed" method="POST" class="create-post-form" id="create-post">
         <label for="body">Post something: </label>
         <input type="text" name="body" id="body" placeholder="Post something">
 
@@ -15,19 +14,22 @@
         <label for="track">Track: </label>
         <input type="text" name="lastfmSong" id="track" placeholder="Track">
 
-        <button type="submit">Create Post</button>
+        <button type="submit" class="create-post-btn">Create Post</button>
     </form>
 
-    <ul>
+    <div class="post-container">
         {{#each posts}}
-            <div class = 'container'>
-                <li><a href="/users/{{this.username}}">{{this.username}}</a></li>
-                <li><a href="/posts/{{this._id}}">{{this.body}}</a></li>
-                <li>{{this.likes.length}} Likes</li>
-                <li><a href="/posts/{{this._id}}">{{this.comments.length}} Comments</a></li>
+            <div class="post" onclick="location.href='/posts/{{this._id}}';">
+                <div class="user-profile">
+                    <img src="{{this.pfp}}" alt="Profile Picture" class="profile-picture">
+                    <p><a href="/users/{{this.username}}" class="username-link">{{this.username}}</a></p>
+                </div>
+                {{!-- <p><a href="/users/{{this.username}}" class="username-link">{{this.username}}</a></p> --}}
+                <p><a href="/posts/{{this._id}}" class="post-body">{{this.body}}</a></p>
+                <p class="likes-count">{{this.likes.length}} Likes</p>
+                <p><a href="/posts/{{this._id}}" class="comments-count">{{this.comments.length}} Comments</a></p>
             </div>
         {{/each}}
-    </ul>
-
+    </div>
 </div>
 <script src="../public/js/feed.js"></script>
