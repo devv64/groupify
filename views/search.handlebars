@@ -1,72 +1,83 @@
-{{!-- <div class = "error" id="errid">{{error}}</div> --}}
-
 <link rel="stylesheet" href="/public/css/search.css">
 
 <h1>Search: {{query}}</h1>
-<p>Search for users, Posts by song, Posts by artist</p>
+<p>Search for users, Posts by song, Posts by artist!</p>
+<p>Searches must be alphanumeric.</p>
 <form id= 'searchquery' action = "/search" method = "POST">
     <input class = "searchbox" type = "text" name = "searchinput" id="searchinput" placeholder = "Search here">
     <input class = "searchbtn" type = "submit" value = "Search">
 </form>
 
-<h2>Users: </h2>
-<div class = "userResult">
-    {{#unless similarUsers}}    
-        <p>No users found</p>
-    {{/unless}}
-    {{#each similarUsers}}
-    <a href = "/users/{{this.username}}">
-        <div class = "searchResult">
-            {{#if this.pfp}}
-            <img src="{{this.pfp}}" alt="pfp">
-            {{/if}}
-            <h4>{{this.username}}</h4>
-        </div>
-    </a>
-    {{/each}}
-</div>
-
-<h2>Posts with song: </h2>
-<div class = "songResult">
-    {{#unless songposts}}    
-        <p>No songs found</p>
-    {{/unless}}
-    {{#each songposts}}
-        <a href = "/posts/{{this._id}}">
+<div class = 'results'>
+    <h2>Users: </h2>
+    <div class = "userResult">
+        {{#unless similarUsers}}    
+            <p>No users found</p>
+        {{/unless}}
+        {{#each similarUsers}}
+        <a href = "/users/{{this.username}}">
             <div class = "searchResult">
-                {{!-- Last Fm's album art is broken not us --}}
-                {{#each this.track.image.[1]}}
-                    {{#if @first}}
-                        <img src = '{{this}}' alt="song art">
-                    {{/if}}
-                {{/each}}
-                <h4>{{this.track.name}} {{this.username}}</h4>
-                <p>{{this.body}}</p>
+                {{#if this.pfp}}
+                <img src="{{this.pfp}}" alt="pfp">
+                {{/if}}
+                {{#unless (eq this.username "nosearchyet")}}
+                    <h4 class = "userss">{{this.username}}</h4>
+                {{/unless}}
             </div>
         </a>
-    {{/each}}
-</div>
+        {{/each}}
+    </div>
+
+    <h2>Posts with song: </h2>
+    <div class = "songResult">
+        {{#unless songposts}}    
+            <p>No songs found</p>
+        {{/unless}}
+        {{#each songposts}}
+            <a href = "/posts/{{this._id}}">
+                <div class = "searchResult">
+                    {{!-- Last Fm's album art is broken not us --}}
+                    <div class = "songartdiv">
+                        {{#each this.track.image.[1]}}
+                            {{#if @first}}
+                            <img src='{{this}}' alt="song art">
+                            {{/if}}
+                        {{/each}}
+                        {{#unless (eq this.username "nosearchyet")}}
+                            <h4>{{this.track.name}} - {{this.username}}</h4>
+                        {{/unless}}
+                        <p>{{this.body}}</p>
+                    </div> 
+                </div>
+            </a>
+        {{/each}}
+    </div>
 
 
-<h2>Posts with artist: </h2>
-<div class = "artistResult">
-    {{#unless artistposts}}    
-        <p>No artist found</p>
-    {{/unless}}
-    {{#each artistposts}}
-        <a href = "/posts/{{this._id}}">
-            <div class = "searchResult">
-                {{!-- Last Fm's img is broken not us --}}
-                {{#each this.artist.image.[1]}}
-                    {{#if @first}}
-                        <img src = '{{this}}' alt="song art">
-                    {{/if}}
-                {{/each}}
-                <h4>{{this.artist.name}} {{this.username}}</h4>
-                <p>{{this.body}}</p>
-            </div>
-        </a>
-    {{/each}}
+    <h2>Posts with artist: </h2>
+    <div class = "artistResult">
+        {{#unless artistposts}}    
+            <p>No artist found</p>
+        {{/unless}}
+        {{#each artistposts}}
+            <a href = "/posts/{{this._id}}">
+                <div class = "searchResult">
+                    {{!-- Last Fm's img is broken not us --}}
+                    <div class = "songartdiv">
+                        {{#each this.artist.image.[1]}}
+                            {{#if @first}}
+                                <img src = '{{this}}' alt="song art">
+                            {{/if}}
+                        {{/each}}
+                        {{#unless (eq this.username "nosearchyet")}}
+                            <h4>{{this.artist.name}} - {{this.username}}</h4>
+                        {{/unless}}
+                        <p>{{this.body}}</p>
+                    </div> 
+                </div>
+            </a>
+        {{/each}}
+    </div>
 </div>
 
 <script src="/public/js/search.js"></script>
