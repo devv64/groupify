@@ -142,7 +142,12 @@ export async function updateUserById(id, username, password, lastfmUsername) {
   const userCollection = await users();
   const user = await getUserById(id);
   if (!user) throw `Could not find user with id of ${id}`;
-  const lastfmData = lastfmUsername ? await lastfm.getInfoByUser(lastfmUsername) : null;
+  let lastfmData;
+  try {
+    lastfmData = lastfmUsername ? await lastfm.getInfoByUser(lastfmUsername) : null;
+  } catch (e) {
+    throw "Last.fm username not found";
+  }
   let hash = (password == null) ? null : await bcrypt.hash(password, 4);
 
   if (username != user.username) {

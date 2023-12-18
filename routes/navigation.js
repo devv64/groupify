@@ -223,6 +223,12 @@ router
         lastfmUsername
       } = req.body;
 
+      username = xss(username);
+      oldPassword = xss(oldPassword);
+      newPassword = xss(newPassword);
+      confirmPassword = xss(confirmPassword);
+      lastfmUsername = xss(lastfmUsername);
+
       const id = user._id;
       if(username ==='') username = user.username;
       if(lastfmUsername ==='') lastfmUsername = user.lastfmUsername;
