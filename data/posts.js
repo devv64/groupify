@@ -188,7 +188,7 @@ export async function removeLikeFromPost(postId, userId) {
   let user = await userCollection.findOneAndUpdate(
     { _id: new ObjectId(userId) },
     // { $pull: {likedPosts: newId} },
-    { $pull: {likedPosts: new ObjectId(postId)} },
+    { $pull: {likedPosts: postId} },
     { returnDocument: 'after' }
     )
 

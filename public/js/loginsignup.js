@@ -36,6 +36,9 @@ const validPassword = (password) => {
 };
 
 const validName = (name) => {
+    if (!name) throw "name must be provided";
+    if (typeof name !== 'string') throw "name must be a string";
+    name = name.trim();
     if (name.length < 2 || name.length > 25) throw "name must be between 2 and 25 characters";
     if (!/^[a-zA-Z0-9]+$/.test(name)) throw "name must be a valid string";
     return name;

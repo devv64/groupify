@@ -18,9 +18,9 @@ styling--}}
         <h2>Posts</h2>
         {{#if posts}}
             {{#each posts}}
-            <p>
+            <a href="/posts/{{this._id}}">
                 {{this.body}}
-            </p>
+            </a>
             {{/each}}
         {{else}}
         <p>No posts yet</p>
@@ -34,7 +34,9 @@ styling--}}
             <ul>
                 {{#each likedPosts}}
                 <li>
-                    {{this.body}} 
+                    <a href="/posts/{{this._id}}">
+                        {{this.body}} 
+                    </a>
                 </li>
                 {{/each}}
             </ul>
@@ -47,13 +49,13 @@ styling--}}
         <h2>{{username}} Comments</h2>
         {{#if comments}}
             {{#each comments}}
-                <p>{{this.body}} </p>
+                <a href="/posts/{{this.postId}}">{{this.body}}</a>
             {{/each}}
         {{else}}
             <p>No comments yet</p>
         {{/if}}
     </div>
-
+    
     {{#if profile.lastfm}}
     <div class="lastfm">
         <h2>Last.fm</h2>
@@ -66,6 +68,7 @@ styling--}}
         <a href="{{profile.lastfm.url}}" target="_blank" rel="noopener noreferrer"><img src="https://lastfm-recently-played.vercel.app/api?user={{profile.lastfm.name}}" height="auto" width="auto"/></a>
     </div>
     {{/if}}
+
 
     <div class="buttons">
         <div>

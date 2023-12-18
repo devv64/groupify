@@ -26,7 +26,7 @@ router.route('/:username')
       }
 
       let likedPosts = [];
-      for(let i = 0; i < profile.likedPosts.length; i++){ 
+      for(let i = profile.likedPosts.length - 1; i >= 0; i--){ 
         let likedPost = await getPostById(profile.likedPosts[i]);
         likedPosts.push(likedPost);
       }
