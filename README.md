@@ -1,8 +1,8 @@
-# harmoniq
+# harmoniq 🎵
 
-## Make sure to have NodeJS installed
-```npm i``` to install dependencies
+*Make sure to have NodeJS installed*
 
-```npm run seed``` to seed the database
-
-```npm start``` to start the server
+**✨Here are the steps✨**
+- Install dependencies: `npm i`
+- Seed the database: `npm run seed`
+- Start the server: `npm start`
