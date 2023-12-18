@@ -83,7 +83,20 @@ app.use('/notifications', (req, res, next) => {
     notifications: reversedNotifications,
   });
 });
-  
+
+const blockemptysearch = (req, res, next) => {
+  if (req.url === "/users/nosearchyet" || req.url === "/posts/nosearchyet") {
+    const error = encodeURIComponent("Link is invalid because you have not searched for anything yet!");
+    return res.status(400).redirect(`/search?error=${error}`);
+  }
+  else {
+    next();
+  }
+}
+
+app.use(blockemptysearch);
+
+
 configRoutes(app);
 
 app.listen(3000, () => {
