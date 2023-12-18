@@ -81,13 +81,15 @@ router
   .route('/feed')
   .get(async (req, res) => {
     try {
-      const posts = await postsData.getSomePosts();
+      let posts = await postsData.getAllPosts();
+      posts = posts.reverse();
       const user = await userData.getUserByUsername(req.session.user.username);
 
       return res.render('feed', 
       { 
         posts : posts, 
-        username : user.username
+        username : user.username,
+        pfp: user.pfp
       }
       )   
 
@@ -121,19 +123,12 @@ router
       lastfmArtist = lastfmArtist.trim();
       const post = await postsData.createPost(body, userId, lastfmSong, lastfmArtist);
       if (!post) throw "Post not found";
-      const user = await userData.getUserById(userId);
-      if (!user) throw "User not found";
 
       let message = ''
       if (lastfmSong && !post.lastfmSong) {
-        message = 'Could not find song on Last.fm'
+        message = 'Could not find song on Last.fm, but post was created'
       } else if (lastfmArtist && !post.lastfmArtist) {
-        message = 'Could not find artist on Last.fm'
-      }
-
-      const followers = user.followers;
-      for (let i = 0; i < followers.length; i++) {
-        await userData.addNotification(followers[i], `${user.username} created a post: "${post.body}" at ${post.createdAt.toLocaleString()}`)
+        message = 'Could not find artist on Last.fm, but post was created'
       }
 
       const success = encodeURIComponent(message);

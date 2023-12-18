@@ -35,13 +35,11 @@ router
         const post_id = xss(req.params.post_id);
         const username = xss(req.session.user.username);
         let commentBody = xss(req.body.comment);
-        commentBody = commentBody.trim();
-        let post = await postsData.getPostById(post_id);
+        if (!commentBody) throw "Comment must be provided";
+        if (typeof commentBody !== "string") throw "Invalid comment type";
+        if ((commentBody = commentBody.trim()).length === 0) throw "Comment cannot be empty";
+        if (commentBody.length > 300) throw "Comment must be less than 300 characters";
         const comment = await commentsData.createComment(post_id, username, commentBody);
-        post = await postsData.getPostById(post_id);
-        post.body = post.body.trim();
-
-        await userData.addNotification(post.userId, `${username} commented on your post: "${post.body}" at ${new Date().toLocaleString()}`)
         
         return res.render('partials/comment', {layout:null, ...comment, user: username});
     } catch (e) {
@@ -78,13 +76,8 @@ router
         })
       } else {
         const updatedPost = await postsData.addLikeToPost(post_id, userId);
-        const username = xss(req.session.user.username);
         let updatedUser = await userData.getUserById(userId);
         req.session.user = updatedUser;
-
-        const post = await postsData.getPostById(post_id);
-
-        await userData.addNotification(post.userId, `${username} liked your post: "${post.body}" at ${new Date().toLocaleString()}`)
 
         return res.status(200).json({
           likes: updatedPost.likes.length,

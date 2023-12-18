@@ -1,14 +1,10 @@
-<link rel="stylesheet" href="../public/css/profilepage.css">
+<link rel="stylesheet" href="/public/css/profilepage.css">
 
 <h1>{{username}}'s' Notifications</h1>
 <section>
     {{#if notifications}}
         {{#each notifications}}
-            <p>{{this.notification}}</p>
-            <form method="post">
-                <input type="hidden" name="notificationToDelete" id="notificationToDelete" value="{{this._id}}">
-                <button type="submit">Delete Notification</button>
-            </form>
+            <p class="noti"><a href="/posts/{{this.postId}}">{{this.notification}}</a></p>
         {{/each}}
     {{else}}
         <p>No notifications yet</p>

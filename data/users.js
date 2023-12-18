@@ -292,15 +292,17 @@ export const unfollowUser = async (userId, profileId) => { //removes profile for
 
 }
 
-export const addNotification = async (profileId, notification) => {
+export const addNotification = async (profileId, notification, postId) => {
   // handleId(userId);
   profileId = validate.validId(profileId);
   notification = validate.validString(notification);
+  postId = validate.validId(postId);
   const userCollection = await users();
 
   let newNotification = {
     _id: new ObjectId().toString(),
     notification: notification,
+    postId: postId,
     dateCreated: new Date()
   }
   

@@ -5,11 +5,11 @@
   let url = window.location.href;
   let parts = url.split("/");
   let postId = parts[parts.length - 1];
+  if (postId.includes("?")) {
+    postId = postId.split("?")[0];
+  }
 
-
-  
   likeButton.click(function (event) {
-      // event.preventDefault();
       let requestConfig = {
         method: 'POST',
         url: '/posts/' + postId + "/like",
@@ -18,14 +18,14 @@
 
       $.ajax(requestConfig)
       .then(function (responseMessage) { 
+        let likesText = responseMessage.likes === 1 ? '1 like' : responseMessage.likes + ' likes';
+        $('#likes').html(likesText);
         if(responseMessage.liked == "Like"){
-          $('#likes').html(responseMessage.likes + ' Likes')
           $('#likeButton').html('Unlike')
           $('#likeButton').removeClass('Like')
           $('#likeButton').addClass('Unlike')
         }
         else{
-          $('#likes').html(responseMessage.likes + ' Likes')
           $('#likeButton').html('Like')
           $('#likeButton').removeClass('Unlike')
           $('#likeButton').addClass('Like')
@@ -35,4 +35,4 @@
         console.log(error, status, xhr);
       });
   });
-  })(window.jQuery)
+})(window.jQuery)

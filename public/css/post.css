@@ -4,9 +4,46 @@
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.35);
     position: relative;
     overflow: hidden;
-    width: 384px;
-    max-width: 75%;
+    /* width: 384px; */
+    width: 100%;
     min-height: 100px;
-    margin-bottom: 10px;
-    margin-top: 10px;
+    margin: 10px auto;
+    padding: 20px;
+}
+
+.show-comments {
+    background-color: #4baedf;
+    border-radius: 5%;
+    margin: 5px;
+    padding: 5px;
+}
+
+.comment-box {
+    margin: 5px;
+    padding: 5px;
+}
+
+.commenter {
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.commenter:hover {
+    cursor: pointer;
+    text-decoration: underline;
+    transform: scale(2);
+    transition: cubic-bezier(1, 0, 0, 1) 0.3s;
+}
+
+.comment-delete {
+    cursor: pointer;
+    color: red;
+    margin-top: 1.5vh;
+}
+
+.profile-picture {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-top: 2%;
 }
