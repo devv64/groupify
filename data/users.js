@@ -42,7 +42,7 @@ export async function createUser(username, password, email) {
   await checkEmail(email);
 
   //encrypt password
-  const hash = await bcrypt.hash(password, 4); //remember to change to back to 16 or 12 for all bcrypts
+  const hash = await bcrypt.hash(password, 16);
 
   let pfp = 'https://source.unsplash.com/1600x900/?' + username;
 
@@ -148,7 +148,7 @@ export async function updateUserById(id, username, password, lastfmUsername) {
   } catch (e) {
     throw "Last.fm username not found";
   }
-  let hash = (password == null) ? null : await bcrypt.hash(password, 4);
+  let hash = (password == null) ? null : await bcrypt.hash(password, 16);
 
   if (username != user.username) {
     await checkUsername(username);
