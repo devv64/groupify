@@ -18,9 +18,9 @@ styling--}}
         <h2>Posts</h2>
         {{#if posts}}
             {{#each posts}}
-            <p>
+            <a href="/posts/{{this._id}}">
                 {{this.body}}
-            </p>
+            </a>
             {{/each}}
         {{else}}
         <p>No posts yet</p>
@@ -34,7 +34,9 @@ styling--}}
             <ul>
                 {{#each likedPosts}}
                 <li>
-                    {{this.body}} 
+                    <a href="/posts/{{this._id}}">
+                        {{this.body}} 
+                    </a>
                 </li>
                 {{/each}}
             </ul>
@@ -43,6 +45,17 @@ styling--}}
         {{/if}}
     </div>
 
+    <div class="comments">
+        <h2>{{username}} Comments</h2>
+        {{#if comments}}
+            {{#each comments}}
+                <a href="/posts/{{this.postId}}">{{this.body}}</a>
+            {{/each}}
+        {{else}}
+            <p>No comments yet</p>
+        {{/if}}
+    </div>
+    
     {{#if profile.lastfm}}
     <div class="lastfm">
         <h2>Last.fm</h2>
@@ -56,17 +69,6 @@ styling--}}
     </div>
     {{/if}}
 
-
-    <div class="comments">
-        <h2>{{username}} Comments</h2>
-        {{#if comments}}
-            {{#each comments}}
-                <p>{{this.body}} </p>
-            {{/each}}
-        {{else}}
-            <p>No comments yet</p>
-        {{/if}}
-    </div>
 
     <div class="buttons">
         <div>
