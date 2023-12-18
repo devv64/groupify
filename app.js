@@ -8,6 +8,8 @@ import session from 'express-session';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname =   dirname(__filename);
 import * as userData from './data/users.js';
+import path from 'path';
+import favicon from 'serve-favicon';
 
 // import * as debug from './debug.js';
 
@@ -26,6 +28,8 @@ app.use('/public', staticDir);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(rewriteUnsupportedBrowserMethods);
+
+app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 
 app.engine('handlebars', exphbs.engine({ 
   defaultLayout: 'main',
