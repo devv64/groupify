@@ -47,7 +47,7 @@ input {
     font-size: 20px; 
 }
 
-a{
+a, .postE{
     display: inline-block;
     padding: 8px 16px;
     background-color: lightgray; 
@@ -62,10 +62,6 @@ a{
 
 a:hover {
     background-color: darkgray;
-}
-
-.followers, .following{
-    display: inline-block;
 }
 
 .backToProfile, .logout{
@@ -129,7 +125,6 @@ footer {
 }
 
 .container {
-    /* max-width: 100%; */
     margin: 50px auto;
     padding: 20px;
     background-color: lightblue;
