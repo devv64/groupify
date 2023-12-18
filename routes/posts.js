@@ -34,7 +34,7 @@ router
     try {
         const post_id = xss(req.params.post_id);
         const username = xss(req.session.user.username);
-        const commentBody = xss(req.body.comment);
+        let commentBody = xss(req.body.comment);
         commentBody = commentBody.trim();
         let post = await postsData.getPostById(post_id);
         const comment = await commentsData.createComment(post_id, username, commentBody);
@@ -46,7 +46,7 @@ router
         return res.render('partials/comment', {layout:null, ...comment, user: username});
     } catch (e) {
         if (
-            e &&
+            e && typeof(e) === "string" &&
             (e.indexOf("No user with id") >= 0 ||
                 e.indexOf("Comment not found") >= 0 ||
                 e.indexOf("Could not get all events") >= 0)
@@ -99,11 +99,22 @@ router
 router
     .route('/:post_id/deletecomment')
     .post(async (req, res) => {
-       try{
-        //Need to implement
-       }catch(e){
-       
-        } 
+        try {
+            const postId = xss(req.params.post_id);
+            const commentToDelete = xss(req.body.commentToDelete);
+            const commentFromId = await commentsData.getCommentById(commentToDelete);
+
+            if(req.session.user.username !== commentFromId.username){
+                return res.status(400).render("posts", { error: "Cannot Delete other users comments" });
+            }
+
+            const comment = await commentsData.removeComment(commentToDelete);
+            const success = encodeURIComponent("Comment Deleted!");
+            
+            return res.redirect(`/posts/${postId}?success=${success}`);
+        } catch (e) {
+            return res.status(404).render("posts", {error: e });
+        }
     });
 
 export default router;

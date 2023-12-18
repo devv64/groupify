@@ -31,8 +31,9 @@
                 <div id="comment-box">
                     <a href="/users/{{this.username}}">{{this.username}}</a>
                     <p>{{body}}</p>
+                    {{!-- if the commenter Username == session username --}}
                     {{#if (eq this.username ../username)}}
-                        <form method="POST" action="/posts/{{post._id}}/deletecomment">
+                        <form method="POST" action="/posts/{{../post._id}}/deletecomment">
                             {{!-- Sends comment Id to deletecomment route --}}
                             <input type="hidden" name="commentToDelete" id="commentToDelete" value="{{this._id}}">
                             <button type="submit">Delete</button>

@@ -8,7 +8,7 @@ const validpost = (str) => {
 }
 
 const validsongartist = (str) => {
-  if (!str) throw "String must be provided";
+  if (!str) return null;
   if (typeof str !== 'string') throw "String must be a string";
   str = str.trim();
   if (str.length > 50) throw "Song/Artist must be less than 50 characters";

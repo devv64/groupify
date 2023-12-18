@@ -1,8 +1,9 @@
 const validEditedUsername = (username) => {
     if (!username) return null;
     if (typeof username !== 'string') throw "username must be a string";
-    if (username.trim().length === 0) throw "username must be a non-empty string";
-    if (username.length < 5 || username.length > 15) throw "username must be between 5 and 15 characters";
+    username = username.trim();
+    if (username.length === 0) throw "username must be a non-empty string";
+    if (username.length < 2 || username.length > 25) throw "name must be between 2 and 25 characters";
     if (!/^[a-zA-Z0-9]+$/.test(username)) throw "username must be a valid string with no spaces";
     return username;
   }
