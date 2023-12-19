@@ -63,11 +63,11 @@ try {
 
     console.log('Dummy likes created successfully!');
 
-    const comment = await commentData.createComment(post1._id, user1.username, "COMMENT1");
-    const comment2 = await commentData.createComment(post1._id, user2.username, "COMMENT2";
-    const comment3 = await commentData.createComment(post1._id, user3.username, "COMMENT3";
-    const comment4 = await commentData.createComment(post2._id, user1.username, "COMMENT4";
-    const comment5 = await commentData.createComment(post2._id, user2.username, "COMMENT5";
+    const comment = await commentData.createComment(post1._id, user1.username, "COMMENT1")
+    const comment2 = await commentData.createComment(post1._id, user2.username, "COMMENT2")
+    const comment3 = await commentData.createComment(post1._id, user3.username, "COMMENT3")
+    const comment4 = await commentData.createComment(post2._id, user1.username, "COMMENT4")
+    const comment5 = await commentData.createComment(post2._id, user2.username, "COMMENT5")
 
 
     console.log('Dummy posts created successfully!');
