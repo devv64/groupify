@@ -41,7 +41,7 @@ router.route('/:username')
       // if req.session.user.username equals comment.username
 
       let commentsByUser = []
-      let comments = await getCommentByUsername(req.session.user.username);
+      let comments = await getCommentByUsername(username);
       for(let i = 0; i < comments.length; i++){
         commentsByUser.push(comments[i]);
       }
