@@ -49,6 +49,19 @@ app.use(
   })
 );
 
+app.use((err, req, res, next) => {
+  console.error(err);
+
+  if (err) {
+    if (req.session.user) {
+      res.redirect('/feed');
+    } else {
+      res.redirect('/home');
+    }
+  } else {
+    res.redirect('/home');
+  }
+});
 
 app.use('/', async (req, res, next) => {
   console.log(`[${new Date().toUTCString()}]: ${req.method} ${req.originalUrl} (${req.session.user ? 'Authenticated' : 'Non-Authenticated User'})]`)

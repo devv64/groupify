@@ -81,6 +81,7 @@ if (registerForm) {
 else if (loginForm) { 
   loginForm.addEventListener('submit', (event) => {
       event.preventDefault();
+
       successid.textContent = "";
       errid.hidden = true;
       const email = document.getElementById('liemailinput').value;

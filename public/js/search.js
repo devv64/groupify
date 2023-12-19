@@ -16,6 +16,7 @@ if (searchform) {
     searchform.addEventListener('submit', (event) => {
         event.preventDefault();
         errid.hidden = true;
+
         successid.textContent = "";
         const search = document.getElementById('searchinput').value;
         

@@ -16,6 +16,16 @@
     width: 100%;
 }
 
+.post-body {
+    font-size: 16px;
+    text-decoration: none;
+    transition: font-size 0.3s;
+}
+
+.post-body:hover {
+    font-size: 20px;
+}
+
 h1 {
     padding-top: 10px;
     text-align: center;
@@ -49,6 +59,7 @@ h1 {
 
 .create-post-btn:hover {
     background-color: #27ae60;
+    transition: background-color 0.3s ease;
 }
 
 .username-link {
