@@ -1,10 +1,10 @@
-<div id="comment-box">
+<div class="comment-box">
     <a href="/users/{{username}}">{{username}}</a>
     <p>{{body}}</p>
     {{#if (eq username user)}}
-        <form method="POST" action="/posts/{{../post._id}}/deletecomment">
+        <form method="POST" action="/posts/{{postId}}/deletecomment">
             {{!-- Sends comment Id to deletecomment route --}}
-            <input type="hidden" name="commentToDelete" id="commentToDelete" value="{{this._id}}">
+            <input type="hidden" name="commentToDelete" class="commentToDelete" value="{{_id}}">
             <button class="comment-delete" type="submit">Delete This Comment</button>
         </form>
     {{/if}}

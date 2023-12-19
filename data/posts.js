@@ -1,4 +1,4 @@
-import { posts, users } from '../config/mongoCollections.js';
+import { posts, users, comments } from '../config/mongoCollections.js';
 import { ObjectId } from 'mongodb';
 import * as validate from './validation.js';
 import * as lastfm from '../api/lastfm.js';
@@ -116,6 +116,7 @@ export async function removePostById(id, userId) {
 
   const postCollection = await posts();
   const userCollection = await users();
+  const commentCollection = await comments();
   const user = await userCollection.findOne({ _id: new ObjectId(userId) });
   if (!user) throw "User not found";
   const post = await getPostById(id);
@@ -133,6 +134,14 @@ export async function removePostById(id, userId) {
     if(!user) throw "User not found"
   }
 
+  for (let i = 0; i < post.comments.length; i++) {
+    let comment = await commentCollection.findOneAndDelete( //deletes all comments on that post
+      { _id: new ObjectId(post.comments[i]) }
+    )
+
+    if(!comment) throw "Comment not found"
+  }
+
   let updateUser = await userCollection.findOneAndUpdate( //removes post from createdPosts from that user
     { username: user.username },
     { $pull: {createdPosts: id} },
@@ -142,10 +151,6 @@ export async function removePostById(id, userId) {
     if(!updateUser) throw "User not found"
 
     // ! error check
-
-    // ? maybe remove from everyone that liekd thsi post
-
-
 
   const deletionInfo = await postCollection.deleteOne({ _id: new ObjectId(id) });
   if (!deletionInfo.acknowledged || deletionInfo.deletedCount === 0) throw `Could not delete post with id of ${id}`;

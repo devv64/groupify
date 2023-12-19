@@ -17,6 +17,86 @@
     margin: 10px auto;
 }
 
+.post-body {
+    font-size: 16px;
+    text-decoration: none;
+    transition: font-size 0.3s;
+}
+
+.post-body:hover {
+    font-size: 20px;
+}
+
+.post-body {
+    font-size: 16px;
+    text-decoration: none;
+    transition: font-size 0.3s;
+}
+
+.post-body:hover {
+    font-size: 20px;
+}
+
 h1 {
     padding-top: 10px;
+    text-align: center;
+}
+
+.feed-content {
+    text-align: center;
+}
+
+.create-post-form {
+    margin-bottom: 20px;
+}
+
+.create-post-form label,
+.create-post-form input,
+.create-post-btn {
+    display: block;
+    margin-bottom: 10px;
+    width: 100%;
+}
+
+.create-post-btn {
+    padding: 8px;
+    border: none;
+    border-radius: 5px;
+    background-color: #2ecc71;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.create-post-btn:hover {
+    background-color: #27ae60;
+    transition: background-color 0.3s ease;
+}
+
+.username-link {
+    font-weight: bold;
+    text-decoration: none;
+    color: black;
+}
+
+.username-link:hover {
+    text-decoration: underline;
+}
+
+.likes-count,
+.comments-count {
+    margin-top: 5px;
+    font-size: 14px;
+}
+
+.profile-picture {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
 }

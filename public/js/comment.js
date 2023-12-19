@@ -11,6 +11,9 @@
     let url = window.location.href;
     let parts = url.split("/");
     let postId = parts[parts.length - 1];
+    if (postId.includes("?")) {
+        postId = postId.split("?")[0];
+    }
 
     // console.log("Post Id HERE: '", postId, "'");
     let error = $("#error");

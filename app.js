@@ -8,6 +8,8 @@ import session from 'express-session';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname =   dirname(__filename);
 import * as userData from './data/users.js';
+import path from 'path';
+import favicon from 'serve-favicon';
 
 // import * as debug from './debug.js';
 
@@ -27,6 +29,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(rewriteUnsupportedBrowserMethods);
 
+app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+
 app.engine('handlebars', exphbs.engine({ 
   defaultLayout: 'main',
   helpers: {
@@ -45,6 +49,19 @@ app.use(
   })
 );
 
+app.use((err, req, res, next) => {
+  console.error(err);
+
+  if (err) {
+    if (req.session.user) {
+      res.redirect('/feed');
+    } else {
+      res.redirect('/home');
+    }
+  } else {
+    res.redirect('/home');
+  }
+});
 
 app.use('/', async (req, res, next) => {
   console.log(`[${new Date().toUTCString()}]: ${req.method} ${req.originalUrl} (${req.session.user ? 'Authenticated' : 'Non-Authenticated User'})]`)
@@ -79,7 +96,20 @@ app.use('/notifications', (req, res, next) => {
     notifications: reversedNotifications,
   });
 });
-  
+
+const blockemptysearch = (req, res, next) => {
+  if (req.url === "/users/nosearchyet" || req.url === "/posts/nosearchyet") {
+    const error = encodeURIComponent("Link is invalid because you have not searched for anything yet!");
+    return res.status(400).redirect(`/search?error=${error}`);
+  }
+  else {
+    next();
+  }
+}
+
+app.use(blockemptysearch);
+
+
 configRoutes(app);
 
 app.listen(3000, () => {

@@ -12,10 +12,16 @@ try {
     
     console.log('Seeding database...gimme a sec...');
     // Create dummy users
-    const user4 = await userData.createUser('Encirclement', "Password1!", 'johndoe@example.com');
-    const user2 = await userData.createUser('Explosion', "Password1!", 'janesmith@example.com');
-    const user3 = await userData.createUser('Marathon', "Password1!", 'mikejohnson@example.com');
-    const user1 = await userData.createUser('Spelling', "Pass!234", 'd@ste.edu')
+    let user4 = await userData.createUser('Encirclement', "Password1!", 'johndoe@example.com');
+    let user2 = await userData.createUser('Explosion', "Password1!", 'janesmith@example.com');
+    let user3 = await userData.createUser('Marathon', "Password1!", 'mikejohnson@example.com');
+    let user1 = await userData.createUser('Spelling', "Pass!234", 'd@ste.edu');
+    user1._id = user1._id.toString();
+    user2._id = user2._id.toString();
+    user3._id = user3._id.toString();
+    user4._id = user4._id.toString();
+    user1 = await userData.updateUserById(user1._id, user1.username, 'Pass!234', 'devv64');
+    user1._id = user1._id.toString();
     console.log('Dummy users created successfully!');
 
     const follow = await userData.followUser(user1._id, user2._id);

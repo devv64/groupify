@@ -1,7 +1,11 @@
 img {
     width: 30px;
     height: 30px;
-    /* margin-bottom: -3%; */
+}
+
+.results{
+    width: 500px;
+    max-width: 800px;
 }
 
 .searchResult {
@@ -26,5 +30,33 @@ a {
 }
 
 .searchbox {
-    width: 95%;
+    width: 100%;
+}
+
+.songartdiv{
+    display: flex; 
+    flex-direction: column;
+}
+
+.userss{
+    margin-left: 1vh;
+}
+
+.searchbtn {
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+    padding: 7px 15px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 0;
+    cursor: pointer;
+    width: 100%;
+    transition-duration: 0.4s;
+}
+
+.searchbtn:hover {
+    background-color: #45a049;
 }

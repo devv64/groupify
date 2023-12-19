@@ -1,11 +1,22 @@
 import { Router } from 'express';
 const router = Router();
-import { getUserByUsername, followUser, unfollowUser, getUserById } from '../data/users.js';
+import { getUserByUsername, followUser, unfollowUser, getUserById, getAllUsers } from '../data/users.js';
 import { getPostsByUser, getPostById } from '../data/posts.js';
 import { getUserByUsername, updateUserById, followUser, unfollowUser, getUserById } from '../data/users.js';
 import { getPostsByUser, removePostById, getPostById } from '../data/posts.js';
 import { getCommentByUsername } from '../data/comments.js';
 import xss from 'xss';
+
+router.route('/')
+  .get(async (req, res) => {
+    try{
+      const users = await getAllUsers();
+      return res.status(200).render('search', {query: "", similarUsers: users, songposts: [" "], artistposts: [" "] });
+    }
+    catch(e){
+      return res.status(404).json({error: "Users not found"});
+    }
+  })
 
 router.route('/:username')
   .get(async (req, res) => { //public profile page / personal page
