@@ -1,42 +1,46 @@
-<link rel="stylesheet" href="../public/css/post.css">
+<link rel="stylesheet" href="/public/css/post.css">
 <div>
     <h1>Post</h1>
 
     <div class="container">
-      <a href="/users/{{post.username}}">{{post.username}}</a>
-      <p>Post Content: {{post.body}}</p>
+      <div class="user-profile">
+        <img src="{{post.pfp}}" alt="Profile Picture" class="profile-picture">
+        <p><a href="/users/{{post.username}}" class="username-link">{{post.username}}</a></p>
+      </div>
+      <p>{{post.body}}</p>
       <form action="/posts/{{post._id}}" method="POST" class="create-comment" id="create-comment">
         <label for="comment-body"> Make Comment: </label>
         <input type="text" id="comment-body" name="comment-body" placeholder="Reply with a Comment">
         <button type="submit">Create Comment</button>
       </form>
-        {{#if post.likes}}
-        <p id="likes">{{post.likes}} likes</p>
+        {{#if (eq post.likes.length 1)}}
+        <p id="likes">{{post.likes.length}} like</p>
         {{else}}
-        <p id="likes">0 likes</p>
+        <p id="likes">{{post.likes.length}} likes</p>
         {{/if}}
+        
       <button type="submit" class="{{liked}}" id="likeButton">{{liked}}</button>
       
       {{#if (eq post.username username)}}
         <form action="/deleteposts" method="POST">
           <input type="hidden" name="postToDelete" id="postToDelete" value="{{post._id}}">
-          <button type="submit">Delete</button>
+          <button type="submit">Delete This Post</button>
         </form>
       {{/if}}
 
 
 
-      <div id="show-comments">
+      <div id="show-comments" class="show-comments">
             {{#each postComments}}
-                <div id="comment-box">
-                    <a href="/users/{{this.username}}">{{this.username}}</a>
+                <div id="comment-box" class="comment-box">
+                    <a class="commenter" href="/users/{{this.username}}">{{this.username}}</a>
                     <p>{{body}}</p>
                     {{!-- if the commenter Username == session username --}}
                     {{#if (eq this.username ../username)}}
                         <form method="POST" action="/posts/{{../post._id}}/deletecomment">
                             {{!-- Sends comment Id to deletecomment route --}}
                             <input type="hidden" name="commentToDelete" id="commentToDelete" value="{{this._id}}">
-                            <button type="submit">Delete</button>
+                            <button class="comment-delete" type="submit">Delete This Comment</button>
                         </form>
                     {{/if}}
                 </div>

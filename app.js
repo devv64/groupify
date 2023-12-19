@@ -73,11 +73,12 @@ app.use('/', async (req, res, next) => {
 });
 
 app.use('/notifications', (req, res, next) => {
-    return res.render('notifications', { 
-      username: req.session.user.username,
-      notifications: req.session.user.notifications,
-    });
+  const reversedNotifications = req.session.user.notifications.reverse();
+  return res.render('notifications', { 
+    username: req.session.user.username,
+    notifications: reversedNotifications,
   });
+});
   
 configRoutes(app);
 

@@ -1,5 +1,7 @@
 import { Router } from 'express';
 const router = Router();
+import { getUserByUsername, followUser, unfollowUser, getUserById } from '../data/users.js';
+import { getPostsByUser, getPostById } from '../data/posts.js';
 import { getUserByUsername, updateUserById, followUser, unfollowUser, getUserById } from '../data/users.js';
 import { getPostsByUser, removePostById, getPostById } from '../data/posts.js';
 import { getCommentByUsername } from '../data/comments.js';

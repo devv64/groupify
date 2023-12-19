@@ -1,17 +1,21 @@
-.container{
-    background-color: #fff;
-    border-radius: 30px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.35);
-    position: relative;
-    overflow: hidden;
-    width: 384px;
-    max-width: 75%;
-    min-height: 100px;
-    margin-bottom: 10px;
-    margin-top: 10px;
-    margin: 10px auto;
+.feed-container {
+    max-width: 800px;
+    width: 500px;
+    height: 400px;
+    margin: 0 auto;
+    padding: 20px;
 }
 
+.post {
+    cursor: pointer;
+    background-color: #9addff;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.35);
+    padding: 15px;
+    margin-bottom: 20px;
+    width: 100%;
+    margin: 10px auto;
+}
 
 h1 {
     padding-top: 10px;

@@ -5,6 +5,7 @@ import * as lastfm from '../api/lastfm.js';
 
 import {findTrackByName, findArtistByName} from "../api/lastfm.js"
 import { getUserById } from './users.js';
+import * as userData from './users.js';
 
 
 // create post
@@ -28,6 +29,7 @@ export async function createPost(body, userId, lastfmSong, lastfmArtist) {
   const newPost = {
     userId,
     username,
+    pfp: user.pfp,
     body,
     comments: [],
     track: lastfmSong_ || null,
@@ -48,7 +50,10 @@ export async function createPost(body, userId, lastfmSong, lastfmArtist) {
     )
 
   if(!newUser) throw "User not found"
-    // ! error check newUser
+
+  for (let i = 0; i < user.followers.length; i++) {
+    await userData.addNotification(user.followers[i], `${user.username} created a post: "${post.body}" at ${post.createdAt.toLocaleString()}`, newId)
+  }
 
   return post;
 }
@@ -95,6 +100,15 @@ export async function getSomePosts(n=25) {
   return _posts;
 }
 
+// get all posts
+export async function getAllPosts() {
+  const postCollection = await posts();
+  const _posts = await postCollection.find().sort({ createAt: -1}).toArray();
+  if (!_posts || _posts.length === 0) throw "Posts not found";
+  _posts.forEach(post => post._id = post._id.toString());
+  return _posts;
+}
+
 // remove post by id
 export async function removePostById(id, userId) {
   id = validate.validId(id);
@@ -109,13 +123,29 @@ export async function removePostById(id, userId) {
 
   if (user._id.toString() !== post.userId) throw "User does not own post"; 
 
+  for (let i = 0; i < post.likes.length; i++) {
+    let user = await userCollection.findOneAndUpdate( //removes post from likedPosts from that user
+      { _id: new ObjectId(post.likes[i]) },
+      { $pull: {likedPosts: id} },
+      { returnDocument: 'after' }
+    )
+
+    if(!user) throw "User not found"
+  }
+
   let updateUser = await userCollection.findOneAndUpdate( //removes post from createdPosts from that user
     { username: user.username },
     { $pull: {createdPosts: id} },
     { returnDocument: 'after' }
-    )
+  )
 
     if(!updateUser) throw "User not found"
+
+    // ! error check
+
+    // ? maybe remove from everyone that liekd thsi post
+
+
 
   const deletionInfo = await postCollection.deleteOne({ _id: new ObjectId(id) });
   if (!deletionInfo.acknowledged || deletionInfo.deletedCount === 0) throw `Could not delete post with id of ${id}`;
@@ -146,6 +176,10 @@ export async function addLikeToPost(postId, userId) {
   if (!updateInfo.acknowledged || updateInfo.modifiedCount === 0) throw "Could not update post";
   const post = await getPostById(postId);
   if (!post) throw "Post not found";
+
+  const username = user.username
+  await userData.addNotification(post.userId, `${username} liked your post: "${post.body}" at ${new Date().toLocaleString()}`, postId)
+
   return post;
 }
 
