@@ -6,7 +6,7 @@ import * as validate from '../data/validation.js';
 
 router.get('/', async (req, res) => {
   try {
-    const error = req.query.error;
+    const error = xss(req.query.error);
     const nosearchyet = [{username: "nosearchyet", _id: "nosearchyet"}];
     res.status(200).render('search', { error: error, query: "", similarUsers: nosearchyet, songposts: nosearchyet, artistposts: nosearchyet });
   } catch (e) {

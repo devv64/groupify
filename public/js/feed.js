@@ -18,14 +18,13 @@ const validsongartist = (str) => {
 
 let errid = document.getElementById('error');   
 let successid = document.getElementById('success');
-errid.hidden = true;
 
 const createPostForm = document.getElementById('create-post');
 
 if(createPostForm){
   createPostForm.addEventListener('submit', (event) => {
       event.preventDefault();
-      error.fadeOut();
+      errid.hidden = true;
 
       successid.textContent = "";
       const body = document.getElementById('body').value;

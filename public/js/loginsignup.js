@@ -81,7 +81,6 @@ if (registerForm) {
 else if (loginForm) { 
   loginForm.addEventListener('submit', (event) => {
       event.preventDefault();
-      error.fadeOut();
 
       successid.textContent = "";
       errid.hidden = true;
